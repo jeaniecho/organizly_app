@@ -5,5 +5,14 @@ class AppBloc {
   Stream<int> get bottomIndex => _bottomIndex.stream;
   Function get setBottomIndex => _bottomIndex.add;
 
-  AppBloc();
+  final BehaviorSubject<int> _taskCount = BehaviorSubject();
+  Stream<int> get taskCount => _taskCount.stream;
+
+  AppBloc() {
+    getTaskCount();
+  }
+
+  getTaskCount() {
+    _taskCount.add(42);
+  }
 }
