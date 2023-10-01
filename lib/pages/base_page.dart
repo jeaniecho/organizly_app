@@ -64,9 +64,15 @@ class BasePage extends StatelessWidget {
             ),
             body: IndexedStack(
               index: bottomIndex,
-              children: const [
-                HomePage(),
-                TaskPage(),
+              children: [
+                MultiProvider(
+                  providers: [Provider(create: (context) => taskBloc)],
+                  child: HomePage(),
+                ),
+                Provider(
+                  create: (context) => taskBloc,
+                  child: const TaskPage(),
+                ),
                 ProjectPage(),
                 NotePage(),
               ],
