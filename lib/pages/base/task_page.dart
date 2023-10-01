@@ -89,12 +89,26 @@ class CompletedTasks extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
-          'Completed',
-          style: TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.w500,
-          ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            const Text(
+              'Completed',
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+            SizedBox(
+              height: 32,
+              child: ElevatedButton(
+                onPressed: () {
+                  taskBloc.clearCompletedTasks();
+                },
+                child: const Text('Clear'),
+              ),
+            ),
+          ],
         ),
         const SizedBox(height: 12),
         StreamBuilder(
