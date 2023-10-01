@@ -146,9 +146,7 @@ class HomeTasks extends StatelessWidget {
                   return const Center(child: CircularProgressIndicator());
                 }
 
-                List<TaskVM> tasks = snapshot.data!
-                    .where((element) => !element.completed)
-                    .toList();
+                List<TaskVM> tasks = snapshot.data!;
 
                 if (tasks.isEmpty) {
                   return const Padding(
@@ -161,6 +159,13 @@ class HomeTasks extends StatelessWidget {
                     ),
                   );
                 }
+
+                List<TaskVM> pendingTasks =
+                    tasks.where((element) => !element.completed).toList();
+                List<TaskVM> completedTasks =
+                    tasks.where((element) => element.completed).toList();
+
+                tasks = pendingTasks + completedTasks;
 
                 return ListView.separated(
                   shrinkWrap: true,

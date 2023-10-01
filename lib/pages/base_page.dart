@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:what_to_do/blocs/app_bloc.dart';
 import 'package:what_to_do/blocs/note_bloc.dart';
+import 'package:what_to_do/blocs/project_bloc.dart';
 import 'package:what_to_do/blocs/task_bloc.dart';
 import 'package:what_to_do/models/note_model.dart';
 import 'package:what_to_do/models/task_model.dart';
@@ -16,6 +17,7 @@ class BasePage extends StatelessWidget {
   Widget build(BuildContext context) {
     AppBloc appBloc = context.read<AppBloc>();
     TaskBloc taskBloc = context.read<TaskBloc>();
+    ProjectBloc projectBloc = context.read<ProjectBloc>();
     NoteBloc noteBloc = context.read<NoteBloc>();
 
     return StreamBuilder<int>(
@@ -109,6 +111,7 @@ class BasePage extends StatelessWidget {
                   providers: [
                     Provider(create: (context) => taskBloc),
                     Provider(create: (context) => noteBloc),
+                    Provider(create: (context) => projectBloc),
                   ],
                   child: const HomePage(),
                 ),
@@ -116,7 +119,10 @@ class BasePage extends StatelessWidget {
                   create: (context) => taskBloc,
                   child: const TaskPage(),
                 ),
-                ProjectPage(),
+                Provider(
+                  create: (context) => projectBloc,
+                  child: const ProjectPage(),
+                ),
                 Provider(
                   create: (context) => noteBloc,
                   child: const NotePage(),
