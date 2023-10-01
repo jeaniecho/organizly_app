@@ -37,12 +37,14 @@ class BasePage extends StatelessWidget {
                   ),
                   const SizedBox(height: 2),
                   StreamBuilder<List<TaskVM>>(
-                      stream: taskBloc.pendingTasks,
+                      stream: taskBloc.tasks,
                       builder: (context, snapshot) {
-                        List<TaskVM> pendingTasks = snapshot.data ?? [];
+                        List<TaskVM> tasks = snapshot.data ?? [];
+                        int pendingCount =
+                            tasks.where((element) => !element.completed).length;
 
                         return Text(
-                          '${pendingTasks.length} tasks pending',
+                          '$pendingCount tasks pending',
                           style: const TextStyle(
                             color: Colors.blue,
                             fontSize: 12,

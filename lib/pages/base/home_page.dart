@@ -47,7 +47,9 @@ class HomePage extends StatelessWidget {
                   return const Center(child: CircularProgressIndicator());
                 }
 
-                List<TaskVM> tasks = snapshot.data!;
+                List<TaskVM> tasks = snapshot.data!
+                    .where((element) => !element.completed)
+                    .toList();
 
                 return ListView.separated(
                   shrinkWrap: true,
@@ -61,6 +63,7 @@ class HomePage extends StatelessWidget {
                         boxWidth: constraints.maxWidth,
                         toggle: () => taskBloc.toggleTask(task),
                         edit: (String text) => taskBloc.editTask(task, text),
+                        remove: () => taskBloc.removeTask(task),
                       );
                     });
                   }),
