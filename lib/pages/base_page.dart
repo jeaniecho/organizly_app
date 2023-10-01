@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:what_to_do/blocs/app_bloc.dart';
+import 'package:what_to_do/blocs/note_bloc.dart';
 import 'package:what_to_do/blocs/task_bloc.dart';
 import 'package:what_to_do/models/task_model.dart';
 import 'package:what_to_do/pages/pages.dart';
@@ -13,6 +14,7 @@ class BasePage extends StatelessWidget {
   Widget build(BuildContext context) {
     AppBloc appBloc = context.read<AppBloc>();
     TaskBloc taskBloc = context.read<TaskBloc>();
+    NoteBloc noteBloc = context.read<NoteBloc>();
 
     return StreamBuilder<int>(
         stream: appBloc.bottomIndex,
@@ -22,6 +24,7 @@ class BasePage extends StatelessWidget {
           return Scaffold(
             appBar: AppBar(
               automaticallyImplyLeading: false,
+              scrolledUnderElevation: 0,
               elevation: 0,
               titleSpacing: 20,
               title: Column(
@@ -68,15 +71,21 @@ class BasePage extends StatelessWidget {
               index: bottomIndex,
               children: [
                 MultiProvider(
-                  providers: [Provider(create: (context) => taskBloc)],
-                  child: HomePage(),
+                  providers: [
+                    Provider(create: (context) => taskBloc),
+                    Provider(create: (context) => noteBloc),
+                  ],
+                  child: const HomePage(),
                 ),
                 Provider(
                   create: (context) => taskBloc,
                   child: const TaskPage(),
                 ),
                 ProjectPage(),
-                NotePage(),
+                Provider(
+                  create: (context) => noteBloc,
+                  child: const NotePage(),
+                ),
               ],
             ),
             bottomNavigationBar: BottomNavigationBar(
@@ -92,10 +101,10 @@ class BasePage extends StatelessWidget {
               type: BottomNavigationBarType.fixed,
               items: const [
                 BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
-                BottomNavigationBarItem(icon: Icon(Icons.task), label: 'Task'),
+                BottomNavigationBarItem(icon: Icon(Icons.task), label: 'Tasks'),
                 BottomNavigationBarItem(
-                    icon: Icon(Icons.rocket_launch), label: 'Project'),
-                BottomNavigationBarItem(icon: Icon(Icons.note), label: 'Note'),
+                    icon: Icon(Icons.rocket_launch), label: 'Projects'),
+                BottomNavigationBarItem(icon: Icon(Icons.note), label: 'Notes'),
               ],
             ),
           );

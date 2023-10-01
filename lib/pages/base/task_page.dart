@@ -77,19 +77,33 @@ class PendingTasks extends StatelessWidget {
                   .where((element) => !element.completed)
                   .toList();
 
+              if (tasks.isEmpty) {
+                return const Padding(
+                  padding: EdgeInsets.symmetric(vertical: 12),
+                  child: Center(
+                    child: Text(
+                      'No tasks',
+                      style: TextStyle(color: Colors.grey),
+                    ),
+                  ),
+                );
+              }
+
               return ListView.separated(
                 shrinkWrap: true,
                 physics: const NeverScrollableScrollPhysics(),
                 itemBuilder: ((context, index) {
                   TaskVM task = tasks[index];
 
-                  return TaskBox(
-                    task: task,
-                    boxWidth: 100,
-                    toggle: () => taskBloc.toggleTask(task),
-                    edit: (String text) => taskBloc.editTask(task, text),
-                    remove: () => taskBloc.removeTask(task),
-                  );
+                  return LayoutBuilder(builder: (context, constraints) {
+                    return TaskBox(
+                      task: task,
+                      boxWidth: constraints.maxWidth,
+                      toggle: () => taskBloc.toggleTask(task),
+                      edit: (String text) => taskBloc.editTask(task, text),
+                      remove: () => taskBloc.removeTask(task),
+                    );
+                  });
                 }),
                 separatorBuilder: ((context, index) {
                   return const SizedBox(height: 12);
@@ -143,6 +157,18 @@ class CompletedTasks extends StatelessWidget {
 
               List<TaskVM> tasks =
                   snapshot.data!.where((element) => element.completed).toList();
+
+              if (tasks.isEmpty) {
+                return const Padding(
+                  padding: EdgeInsets.symmetric(vertical: 12),
+                  child: Center(
+                    child: Text(
+                      'No completed tasks',
+                      style: TextStyle(color: Colors.grey),
+                    ),
+                  ),
+                );
+              }
 
               return ListView.separated(
                 shrinkWrap: true,
