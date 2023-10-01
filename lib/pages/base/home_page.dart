@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:what_to_do/blocs/note_bloc.dart';
+import 'package:what_to_do/blocs/project_bloc.dart';
 import 'package:what_to_do/blocs/task_bloc.dart';
 import 'package:what_to_do/models/note_model.dart';
+import 'package:what_to_do/models/project_model.dart';
 import 'package:what_to_do/models/task_model.dart';
 import 'package:what_to_do/widgets/note_box.dart';
+import 'package:what_to_do/widgets/project_box.dart';
 import 'package:what_to_do/widgets/task_box.dart';
 
 class HomePage extends StatelessWidget {
@@ -82,7 +85,7 @@ class HomeNotes extends StatelessWidget {
                       itemBuilder: (context, index) {
                         NoteVM note = notes[index];
 
-                        return SmallNoteBox(note: note, boxWidth: noteSize);
+                        return HomeNoteBox(note: note, boxWidth: noteSize);
                       },
                       separatorBuilder: (context, index) {
                         return const SizedBox(width: 12);
@@ -101,10 +104,12 @@ class HomeProjects extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Column(
+    ProjectBloc projectBloc = context.read<ProjectBloc>();
+
+    return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Padding(
+        const Padding(
           padding: EdgeInsets.symmetric(horizontal: 20),
           child: Text(
             'Projects',
@@ -114,6 +119,45 @@ class HomeProjects extends StatelessWidget {
             ),
           ),
         ),
+        StreamBuilder<List<ProjectVM>>(
+            stream: projectBloc.projects,
+            builder: (context, snapshot) {
+              if (!snapshot.hasData) {
+                return const Center(child: CircularProgressIndicator());
+              }
+
+              List<ProjectVM> projects = snapshot.data!;
+
+              return SizedBox(
+                height: 124,
+                child: ListView.builder(
+                  shrinkWrap: true,
+                  scrollDirection: Axis.horizontal,
+                  padding: const EdgeInsets.symmetric(horizontal: 14),
+                  itemBuilder: (context, index) {
+                    ProjectVM project = projects[index];
+
+                    List<TaskVM> pendingTasks = project.tasks
+                        .where((element) => !element.completed)
+                        .toList();
+                    List<TaskVM> completedTasks = project.tasks
+                        .where((element) => element.completed)
+                        .toList();
+
+                    return SizedBox(
+                      width: MediaQuery.sizeOf(context).width * 0.6,
+                      child: ProjectBox(
+                        project: project,
+                        isSelected: false,
+                        pendingTasks: pendingTasks.length,
+                        completedTasks: completedTasks.length,
+                      ),
+                    );
+                  },
+                  itemCount: projects.length,
+                ),
+              );
+            }),
       ],
     );
   }

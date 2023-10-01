@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:what_to_do/blocs/project_bloc.dart';
 import 'package:what_to_do/models/project_model.dart';
 import 'package:what_to_do/models/task_model.dart';
+import 'package:what_to_do/widgets/project_box.dart';
 import 'package:what_to_do/widgets/task_box.dart';
 
 class ProjectPage extends StatelessWidget {
@@ -50,108 +51,11 @@ class ProjectPage extends StatelessWidget {
                             int pageIndex = snapshot.data ?? 0;
                             bool isSelected = pageIndex == index;
 
-                            return AnimatedContainer(
-                              duration: const Duration(milliseconds: 150),
-                              margin: const EdgeInsets.symmetric(
-                                  vertical: 12, horizontal: 6),
-                              padding: const EdgeInsets.all(16),
-                              decoration: BoxDecoration(
-                                color: isSelected ? Colors.blue : Colors.white,
-                                borderRadius: BorderRadius.circular(12),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Colors.grey.withOpacity(0.25),
-                                    blurRadius: 8,
-                                    spreadRadius: 2,
-                                    offset: const Offset(0, 0),
-                                  ),
-                                ],
-                              ),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Text(
-                                        project.title,
-                                        style: TextStyle(
-                                          fontSize: 16,
-                                          color: isSelected
-                                              ? Colors.white
-                                              : Colors.black,
-                                          fontWeight: FontWeight.w500,
-                                        ),
-                                      ),
-                                      GestureDetector(
-                                        onTap: () {},
-                                        child: Icon(
-                                          Icons.edit_note,
-                                          color: isSelected
-                                              ? Colors.white
-                                              : Colors.grey,
-                                          size: 24,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                  const SizedBox(height: 2),
-                                  Text(
-                                    '${pendingTasks.length} tasks pending',
-                                    style: TextStyle(
-                                      fontSize: 10,
-                                      color: isSelected
-                                          ? Colors.white
-                                          : Colors.black,
-                                    ),
-                                  ),
-                                  const Spacer(),
-                                  Align(
-                                    alignment: Alignment.centerRight,
-                                    child: Text(
-                                      '${project.tasks.isEmpty ? 0 : ((completedTasks.length / project.tasks.length) * 100).round()}%',
-                                      style: TextStyle(
-                                        fontSize: 10,
-                                        color: isSelected
-                                            ? Colors.white
-                                            : Colors.black,
-                                      ),
-                                    ),
-                                  ),
-                                  const SizedBox(height: 4),
-                                  LayoutBuilder(
-                                      builder: (context, constraints) {
-                                    return Stack(
-                                      children: [
-                                        Container(
-                                          height: 4,
-                                          width: constraints.maxWidth,
-                                          decoration: BoxDecoration(
-                                            color: Colors.grey[200],
-                                            borderRadius:
-                                                BorderRadius.circular(2),
-                                          ),
-                                        ),
-                                        if (project.tasks.isNotEmpty)
-                                          Container(
-                                            height: 4,
-                                            width: constraints.maxWidth *
-                                                (completedTasks.length /
-                                                    project.tasks.length),
-                                            decoration: BoxDecoration(
-                                              color: isSelected
-                                                  ? Colors.grey[800]
-                                                  : Colors.blue,
-                                              borderRadius:
-                                                  BorderRadius.circular(2),
-                                            ),
-                                          ),
-                                      ],
-                                    );
-                                  }),
-                                ],
-                              ),
+                            return ProjectBox(
+                              project: project,
+                              isSelected: isSelected,
+                              pendingTasks: pendingTasks.length,
+                              completedTasks: completedTasks.length,
                             );
                           });
                     },

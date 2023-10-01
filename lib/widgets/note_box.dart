@@ -99,10 +99,10 @@ class NoteBox extends StatelessWidget {
   }
 }
 
-class SmallNoteBox extends StatelessWidget {
+class HomeNoteBox extends StatelessWidget {
   final NoteVM note;
   final double boxWidth;
-  const SmallNoteBox({required this.note, required this.boxWidth, super.key});
+  const HomeNoteBox({required this.note, required this.boxWidth, super.key});
 
   @override
   Widget build(BuildContext context) {
