@@ -23,14 +23,19 @@ class TaskBloc {
 
   addTask(TaskVM task) {
     List<TaskVM> allTasks = _tasks.value;
-    allTasks.add(task);
+    allTasks.insert(0, task);
     _tasks.add(allTasks);
   }
 
   editTask(TaskVM task, String text) {
     List<TaskVM> allTasks = _tasks.value;
-    int index = allTasks.indexWhere((element) => element.id == task.id);
-    allTasks[index] = task.copyWith(text: text);
+    if (text.isEmpty) {
+      allTasks.removeWhere((element) => element.id == task.id);
+    } else {
+      int index = allTasks.indexWhere((element) => element.id == task.id);
+      allTasks[index] = task.copyWith(text: text);
+    }
+
     _tasks.add(allTasks);
   }
 

@@ -35,12 +35,35 @@ class PendingTasks extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
-          'Tasks',
-          style: TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.w500,
-          ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            const Text(
+              'Tasks',
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+            SizedBox(
+              height: 32,
+              child: ElevatedButton(
+                onPressed: () {
+                  FocusNode focusNode = FocusNode();
+                  taskBloc.addTask(
+                    TaskVM(
+                      id: DateTime.now().millisecondsSinceEpoch,
+                      completed: false,
+                      text: '',
+                      focusNode: focusNode,
+                    ),
+                  );
+                  focusNode.requestFocus();
+                },
+                child: const Text('Add'),
+              ),
+            ),
+          ],
         ),
         const SizedBox(height: 12),
         StreamBuilder(

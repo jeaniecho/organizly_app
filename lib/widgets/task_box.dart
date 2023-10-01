@@ -65,6 +65,7 @@ class TaskBox extends StatelessWidget {
             const SizedBox(width: 8),
             Expanded(
               child: TextField(
+                focusNode: task.focusNode,
                 controller: textController,
                 enabled: !task.completed,
                 style: TextStyle(
@@ -81,6 +82,12 @@ class TaskBox extends StatelessWidget {
                 onSubmitted: edit,
                 onTapOutside: (event) {
                   FocusScope.of(context).unfocus();
+
+                  if (textController.text.isEmpty) {
+                    remove();
+                  } else {
+                    edit(textController.text);
+                  }
                 },
                 decoration: const InputDecoration(
                   border: InputBorder.none,
