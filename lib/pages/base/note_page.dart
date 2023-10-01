@@ -49,8 +49,8 @@ class NotePage extends StatelessWidget {
                   note: note,
                   boxWidth: constraints.maxWidth,
                   pin: () => noteBloc.pinNote(note),
-                  edit: (String text) => null,
-                  remove: () => null,
+                  edit: (String text) => noteBloc.editNote(note, text),
+                  remove: () => noteBloc.removeNote(note),
                 );
               });
             },

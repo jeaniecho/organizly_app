@@ -21,4 +21,28 @@ class NoteBloc {
     notes.insert(0, note.copyWith(pinned: !note.pinned));
     _notes.add(notes);
   }
+
+  addNote(NoteVM note) {
+    List<NoteVM> notes = _notes.value;
+    notes.insert(0, note);
+    _notes.add(notes);
+  }
+
+  editNote(NoteVM note, String text) {
+    List<NoteVM> notes = _notes.value;
+    if (text.isEmpty) {
+      notes.removeWhere((element) => element.id == note.id);
+    } else {
+      int index = notes.indexWhere((element) => element.id == note.id);
+      notes[index] = note.copyWith(text: text, dateTime: DateTime.now());
+    }
+
+    _notes.add(notes);
+  }
+
+  removeNote(NoteVM note) {
+    List<NoteVM> notes = _notes.value;
+    notes.removeWhere((element) => element.id == note.id);
+    _notes.add(notes);
+  }
 }

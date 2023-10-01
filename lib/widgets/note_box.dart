@@ -50,6 +50,7 @@ class NoteBox extends StatelessWidget {
                 ),
                 const Spacer(),
                 GestureDetector(
+                  onTap: remove,
                   child: Icon(
                     Icons.remove_circle_outline,
                     size: 16,
