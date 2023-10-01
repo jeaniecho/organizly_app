@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:what_to_do/blocs/app_bloc.dart';
+import 'package:what_to_do/blocs/task_bloc.dart';
+import 'package:what_to_do/models/task_model.dart';
 import 'package:what_to_do/pages/pages.dart';
 
 class BasePage extends StatelessWidget {
@@ -10,6 +12,7 @@ class BasePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     AppBloc appBloc = context.read<AppBloc>();
+    TaskBloc taskBloc = context.read<TaskBloc>();
 
     return StreamBuilder<int>(
         stream: appBloc.bottomIndex,
@@ -33,13 +36,13 @@ class BasePage extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 2),
-                  StreamBuilder<int>(
-                      stream: appBloc.taskCount,
+                  StreamBuilder<List<TaskVM>>(
+                      stream: taskBloc.tasks,
                       builder: (context, snapshot) {
-                        int taskCount = snapshot.data ?? 0;
+                        List<TaskVM> tasks = snapshot.data ?? [];
 
                         return Text(
-                          '$taskCount tasks pending',
+                          '${tasks.length} tasks pending',
                           style: const TextStyle(
                             color: Colors.blue,
                             fontSize: 12,

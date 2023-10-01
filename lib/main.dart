@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:what_to_do/blocs/app_bloc.dart';
+import 'package:what_to_do/blocs/task_bloc.dart';
 import 'package:what_to_do/pages/pages.dart';
 
 void main() {
@@ -18,7 +19,10 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
         useMaterial3: true,
       ),
-      home: Provider(create: (context) => AppBloc(), child: const BasePage()),
+      home: MultiProvider(providers: [
+        Provider(create: (context) => AppBloc()),
+        Provider(create: (context) => TaskBloc()),
+      ], child: const BasePage()),
     );
   }
 }
