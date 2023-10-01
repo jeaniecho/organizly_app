@@ -33,7 +33,24 @@ class TaskPage extends StatelessWidget {
 
                 List<TaskVM> tasks = snapshot.data!;
 
-                return TaskList(tasks: tasks);
+                return ListView.separated(
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  itemBuilder: ((context, index) {
+                    TaskVM task = tasks[index];
+
+                    return TaskBox(
+                      task: task,
+                      onTap: () {
+                        taskBloc.toggleTask(task);
+                      },
+                    );
+                  }),
+                  separatorBuilder: ((context, index) {
+                    return const SizedBox(height: 12);
+                  }),
+                  itemCount: tasks.length,
+                );
               })
         ],
       ),
