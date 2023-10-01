@@ -11,6 +11,14 @@ class NoteBloc {
   }
 
   getMockNotes() {
+    // noteMockList0.sort((a, b) => -a.dateTime.compareTo(b.dateTime));
     _notes.add(noteMockList0);
+  }
+
+  pinNote(NoteVM note) {
+    List<NoteVM> notes = _notes.value;
+    notes.removeWhere((element) => element.id == note.id);
+    notes.insert(0, note.copyWith(pinned: !note.pinned));
+    _notes.add(notes);
   }
 }

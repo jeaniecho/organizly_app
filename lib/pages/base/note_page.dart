@@ -32,6 +32,13 @@ class NotePage extends StatelessWidget {
             );
           }
 
+          List<NoteVM> pinnedNotes =
+              notes.where((element) => element.pinned).toList();
+          List<NoteVM> justNotes =
+              notes.where((element) => !element.pinned).toList();
+
+          notes = pinnedNotes + justNotes;
+
           return ListView.separated(
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
             itemBuilder: (context, index) {
@@ -41,6 +48,7 @@ class NotePage extends StatelessWidget {
                 return NoteBox(
                   note: note,
                   boxWidth: constraints.maxWidth,
+                  pin: () => noteBloc.pinNote(note),
                   edit: (String text) => null,
                   remove: () => null,
                 );

@@ -15,39 +15,39 @@ class TaskBloc {
   }
 
   toggleTask(TaskVM task) {
-    List<TaskVM> allTasks = _tasks.value;
-    allTasks.removeWhere((element) => element.id == task.id);
-    allTasks.add(task.copyWith(completed: !task.completed));
-    _tasks.add(allTasks);
+    List<TaskVM> tasks = _tasks.value;
+    tasks.removeWhere((element) => element.id == task.id);
+    tasks.add(task.copyWith(completed: !task.completed));
+    _tasks.add(tasks);
   }
 
   addTask(TaskVM task) {
-    List<TaskVM> allTasks = _tasks.value;
-    allTasks.insert(0, task);
-    _tasks.add(allTasks);
+    List<TaskVM> tasks = _tasks.value;
+    tasks.insert(0, task);
+    _tasks.add(tasks);
   }
 
   editTask(TaskVM task, String text) {
-    List<TaskVM> allTasks = _tasks.value;
+    List<TaskVM> tasks = _tasks.value;
     if (text.isEmpty) {
-      allTasks.removeWhere((element) => element.id == task.id);
+      tasks.removeWhere((element) => element.id == task.id);
     } else {
-      int index = allTasks.indexWhere((element) => element.id == task.id);
-      allTasks[index] = task.copyWith(text: text);
+      int index = tasks.indexWhere((element) => element.id == task.id);
+      tasks[index] = task.copyWith(text: text);
     }
 
-    _tasks.add(allTasks);
+    _tasks.add(tasks);
   }
 
   removeTask(TaskVM task) {
-    List<TaskVM> allTasks = _tasks.value;
-    allTasks.removeWhere((element) => element.id == task.id);
-    _tasks.add(allTasks);
+    List<TaskVM> tasks = _tasks.value;
+    tasks.removeWhere((element) => element.id == task.id);
+    _tasks.add(tasks);
   }
 
   clearCompletedTasks() {
-    List<TaskVM> allTasks = _tasks.value;
-    allTasks.removeWhere((element) => element.completed);
-    _tasks.add(allTasks);
+    List<TaskVM> tasks = _tasks.value;
+    tasks.removeWhere((element) => element.completed);
+    _tasks.add(tasks);
   }
 }

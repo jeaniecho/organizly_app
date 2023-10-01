@@ -1,20 +1,25 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:what_to_do/models/note_model.dart';
 
 class NoteBox extends StatelessWidget {
   final NoteVM note;
   final double boxWidth;
+  final Function() pin;
   final Function(String text) edit;
   final Function() remove;
   const NoteBox(
       {required this.note,
       required this.boxWidth,
+      required this.pin,
       required this.edit,
       required this.remove,
       super.key});
 
   @override
   Widget build(BuildContext context) {
+    Color iconColor = const Color(0xFF424242);
+
     TextEditingController textController =
         TextEditingController(text: note.text);
     textController.selection =
@@ -35,30 +40,60 @@ class NoteBox extends StatelessWidget {
             ),
           ],
         ),
-        child: TextField(
-          focusNode: note.focusNode,
-          controller: textController,
-          style: const TextStyle(
-            fontSize: 14,
-          ),
-          minLines: 1,
-          maxLines: 10,
-          keyboardType: TextInputType.text,
-          onSubmitted: edit,
-          onTapOutside: (event) {
-            FocusScope.of(context).unfocus();
+        child: Column(
+          children: [
+            Row(
+              children: [
+                Text(
+                  DateFormat('yyyy.MM.dd').format(note.dateTime),
+                  style: const TextStyle(color: Colors.grey, fontSize: 11),
+                ),
+                const Spacer(),
+                GestureDetector(
+                  child: Icon(
+                    Icons.remove_circle_outline,
+                    size: 16,
+                    color: iconColor,
+                  ),
+                ),
+                const SizedBox(width: 8),
+                GestureDetector(
+                  onTap: pin,
+                  child: Icon(
+                    note.pinned ? Icons.push_pin : Icons.push_pin_outlined,
+                    size: 16,
+                    color: note.pinned ? Colors.blue : iconColor,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 4),
+            TextField(
+              focusNode: note.focusNode,
+              controller: textController,
+              style: const TextStyle(
+                fontSize: 14,
+              ),
+              minLines: 1,
+              maxLines: 100,
+              keyboardType: TextInputType.text,
+              onSubmitted: edit,
+              onTapOutside: (event) {
+                FocusScope.of(context).unfocus();
 
-            if (textController.text.isEmpty) {
-              remove();
-            } else {
-              edit(textController.text);
-            }
-          },
-          decoration: const InputDecoration(
-            border: InputBorder.none,
-            isCollapsed: true,
-            contentPadding: EdgeInsets.zero,
-          ),
+                if (textController.text.isEmpty) {
+                  remove();
+                } else {
+                  edit(textController.text);
+                }
+              },
+              decoration: const InputDecoration(
+                border: InputBorder.none,
+                isCollapsed: true,
+                contentPadding: EdgeInsets.zero,
+              ),
+            ),
+          ],
         ));
   }
 }
