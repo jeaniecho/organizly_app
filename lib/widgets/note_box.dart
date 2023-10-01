@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:what_to_do/models/note_model.dart';
 
-class NoteBox extends StatelessWidget {
+class NoteBox extends StatefulWidget {
   final NoteVM note;
   final double boxWidth;
   final Function() pin;
@@ -17,16 +17,28 @@ class NoteBox extends StatelessWidget {
       super.key});
 
   @override
-  Widget build(BuildContext context) {
-    Color iconColor = const Color(0xFF424242);
+  State<NoteBox> createState() => _NoteBoxState();
+}
 
-    TextEditingController textController =
-        TextEditingController(text: note.text);
+class _NoteBoxState extends State<NoteBox> {
+  Color iconColor = const Color(0xFF424242);
+
+  TextEditingController textController = TextEditingController();
+
+  @override
+  void dispose() {
+    textController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    textController.text = widget.note.text;
     textController.selection =
         TextSelection.collapsed(offset: textController.text.length);
 
     return Container(
-        width: boxWidth,
+        width: widget.boxWidth,
         padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
           color: Colors.white,
@@ -45,12 +57,12 @@ class NoteBox extends StatelessWidget {
             Row(
               children: [
                 Text(
-                  DateFormat('yyyy.MM.dd').format(note.dateTime),
+                  DateFormat('yyyy.MM.dd').format(widget.note.dateTime),
                   style: const TextStyle(color: Colors.grey, fontSize: 11),
                 ),
                 const Spacer(),
                 GestureDetector(
-                  onTap: remove,
+                  onTap: widget.remove,
                   child: Icon(
                     Icons.remove_circle_outline,
                     size: 16,
@@ -59,18 +71,20 @@ class NoteBox extends StatelessWidget {
                 ),
                 const SizedBox(width: 8),
                 GestureDetector(
-                  onTap: pin,
+                  onTap: widget.pin,
                   child: Icon(
-                    note.pinned ? Icons.push_pin : Icons.push_pin_outlined,
+                    widget.note.pinned
+                        ? Icons.push_pin
+                        : Icons.push_pin_outlined,
                     size: 16,
-                    color: note.pinned ? Colors.blue : iconColor,
+                    color: widget.note.pinned ? Colors.blue : iconColor,
                   ),
                 ),
               ],
             ),
             const SizedBox(height: 4),
             TextField(
-              focusNode: note.focusNode,
+              focusNode: widget.note.focusNode,
               controller: textController,
               style: const TextStyle(
                 fontSize: 14,
@@ -78,14 +92,14 @@ class NoteBox extends StatelessWidget {
               minLines: 1,
               maxLines: 100,
               keyboardType: TextInputType.text,
-              onSubmitted: edit,
+              onSubmitted: widget.edit,
               onTapOutside: (event) {
                 FocusScope.of(context).unfocus();
 
                 if (textController.text.isEmpty) {
-                  remove();
+                  widget.remove();
                 } else {
-                  edit(textController.text);
+                  widget.edit(textController.text);
                 }
               },
               decoration: const InputDecoration(

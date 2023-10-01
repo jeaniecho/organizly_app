@@ -45,15 +45,13 @@ class NotePage extends StatelessWidget {
             itemBuilder: (context, index) {
               NoteVM note = notes[index];
 
-              return LayoutBuilder(builder: (context, constraints) {
-                return NoteBox(
-                  note: note,
-                  boxWidth: constraints.maxWidth,
-                  pin: () => noteBloc.pinNote(note),
-                  edit: (String text) => noteBloc.editNote(note, text),
-                  remove: () => noteBloc.removeNote(note),
-                );
-              });
+              return NoteBox(
+                note: note,
+                boxWidth: 100,
+                pin: () => noteBloc.pinNote(note),
+                edit: (String text) => noteBloc.editNote(note, text),
+                remove: () => noteBloc.removeNote(note),
+              );
             },
             separatorBuilder: (context, index) {
               return const SizedBox(height: 12);

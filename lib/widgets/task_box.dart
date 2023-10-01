@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:what_to_do/models/task_model.dart';
 
-class TaskBox extends StatelessWidget {
+class TaskBox extends StatefulWidget {
   final TaskVM task;
   final double boxWidth;
   final Function() toggle;
@@ -16,16 +16,27 @@ class TaskBox extends StatelessWidget {
       super.key});
 
   @override
-  Widget build(BuildContext context) {
-    Color completedColor = const Color(0xFFCDCDCD);
+  State<TaskBox> createState() => _TaskBoxState();
+}
 
-    TextEditingController textController =
-        TextEditingController(text: task.text);
+class _TaskBoxState extends State<TaskBox> {
+  Color completedColor = const Color(0xFFCDCDCD);
+  TextEditingController textController = TextEditingController();
+
+  @override
+  void dispose() {
+    textController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    textController.text = widget.task.text;
     textController.selection =
         TextSelection.collapsed(offset: textController.text.length);
 
     return Container(
-      width: boxWidth,
+      width: widget.boxWidth,
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
         color: Colors.white,
@@ -43,12 +54,12 @@ class TaskBox extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           GestureDetector(
-            onTap: toggle,
+            onTap: widget.toggle,
             child: Container(
               width: 16,
               height: 16,
               decoration: BoxDecoration(
-                color: task.completed ? completedColor : Colors.white,
+                color: widget.task.completed ? completedColor : Colors.white,
                 border: Border.all(color: completedColor, width: 1),
                 borderRadius: BorderRadius.circular(4),
               ),
@@ -64,30 +75,28 @@ class TaskBox extends StatelessWidget {
           const SizedBox(width: 8),
           Expanded(
             child: TextField(
-              focusNode: task.focusNode,
+              focusNode: widget.task.focusNode,
               controller: textController,
-              enabled: !task.completed,
+              enabled: !widget.task.completed,
               style: TextStyle(
-                color: task.completed ? completedColor : Colors.black,
+                color: widget.task.completed ? completedColor : Colors.black,
                 fontSize: 12,
                 height: 1.3,
-                decoration: task.completed ? TextDecoration.lineThrough : null,
+                decoration:
+                    widget.task.completed ? TextDecoration.lineThrough : null,
                 decorationColor: completedColor,
               ),
               minLines: 1,
               maxLines: 5,
               keyboardType: TextInputType.text,
-              onSubmitted: edit,
-              onChanged: (value) {
-                textController.text = value;
-              },
+              onSubmitted: widget.edit,
               onTapOutside: (event) {
                 FocusScope.of(context).unfocus();
 
                 if (textController.text.isEmpty) {
-                  remove();
+                  // remove();
                 } else {
-                  edit(textController.text);
+                  widget.edit(textController.text);
                 }
               },
               decoration: const InputDecoration(

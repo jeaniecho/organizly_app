@@ -94,15 +94,13 @@ class PendingTasks extends StatelessWidget {
                 itemBuilder: (context, index) {
                   TaskVM task = tasks[index];
 
-                  return LayoutBuilder(builder: (context, constraints) {
-                    return TaskBox(
-                      task: task,
-                      boxWidth: constraints.maxWidth,
-                      toggle: () => taskBloc.toggleTask(task),
-                      edit: (String text) => taskBloc.editTask(task, text),
-                      remove: () => taskBloc.removeTask(task),
-                    );
-                  });
+                  return TaskBox(
+                    task: task,
+                    boxWidth: 100,
+                    toggle: () => taskBloc.toggleTask(task),
+                    edit: (String text) => taskBloc.editTask(task, text),
+                    remove: () => taskBloc.removeTask(task),
+                  );
                 },
                 separatorBuilder: (context, index) {
                   return const SizedBox(height: 12);
