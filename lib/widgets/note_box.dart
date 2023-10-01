@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:what_to_do/models/note_model.dart';
 
-class NoteBox extends StatefulWidget {
+class NoteBox extends StatelessWidget {
   final NoteVM note;
   final double boxWidth;
   final Function() pin;
@@ -17,28 +17,16 @@ class NoteBox extends StatefulWidget {
       super.key});
 
   @override
-  State<NoteBox> createState() => _NoteBoxState();
-}
-
-class _NoteBoxState extends State<NoteBox> {
-  Color iconColor = const Color(0xFF424242);
-
-  TextEditingController textController = TextEditingController();
-
-  @override
-  void dispose() {
-    textController.dispose();
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
-    textController.text = widget.note.text;
+    Color iconColor = const Color(0xFF424242);
+
+    TextEditingController textController =
+        TextEditingController(text: note.text);
     textController.selection =
         TextSelection.collapsed(offset: textController.text.length);
 
     return Container(
-        width: widget.boxWidth,
+        width: boxWidth,
         padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
           color: Colors.white,
@@ -57,12 +45,12 @@ class _NoteBoxState extends State<NoteBox> {
             Row(
               children: [
                 Text(
-                  DateFormat('yyyy.MM.dd').format(widget.note.dateTime),
+                  DateFormat('yyyy.MM.dd').format(note.dateTime),
                   style: const TextStyle(color: Colors.grey, fontSize: 11),
                 ),
                 const Spacer(),
                 GestureDetector(
-                  onTap: widget.remove,
+                  onTap: remove,
                   child: Icon(
                     Icons.remove_circle_outline,
                     size: 16,
@@ -71,20 +59,18 @@ class _NoteBoxState extends State<NoteBox> {
                 ),
                 const SizedBox(width: 8),
                 GestureDetector(
-                  onTap: widget.pin,
+                  onTap: pin,
                   child: Icon(
-                    widget.note.pinned
-                        ? Icons.push_pin
-                        : Icons.push_pin_outlined,
+                    note.pinned ? Icons.push_pin : Icons.push_pin_outlined,
                     size: 16,
-                    color: widget.note.pinned ? Colors.blue : iconColor,
+                    color: note.pinned ? Colors.blue : iconColor,
                   ),
                 ),
               ],
             ),
             const SizedBox(height: 4),
             TextField(
-              focusNode: widget.note.focusNode,
+              focusNode: note.focusNode,
               controller: textController,
               style: const TextStyle(
                 fontSize: 14,
@@ -92,14 +78,14 @@ class _NoteBoxState extends State<NoteBox> {
               minLines: 1,
               maxLines: 100,
               keyboardType: TextInputType.text,
-              onSubmitted: widget.edit,
+              onSubmitted: edit,
               onTapOutside: (event) {
                 FocusScope.of(context).unfocus();
 
                 if (textController.text.isEmpty) {
-                  widget.remove();
+                  remove();
                 } else {
-                  widget.edit(textController.text);
+                  edit(textController.text);
                 }
               },
               decoration: const InputDecoration(
