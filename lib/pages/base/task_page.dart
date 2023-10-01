@@ -41,9 +41,8 @@ class TaskPage extends StatelessWidget {
 
                     return TaskBox(
                       task: task,
-                      onTap: () {
-                        taskBloc.toggleTask(task);
-                      },
+                      toggle: () => taskBloc.toggleTask(task),
+                      edit: (String text) => null,
                     );
                   }),
                   separatorBuilder: ((context, index) {

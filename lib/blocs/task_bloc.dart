@@ -35,4 +35,11 @@ class TaskBloc {
     allTasks[index] = task.copyWith(completed: !task.completed);
     _tasks.add(allTasks);
   }
+
+  editTask(TaskVM task, String text) {
+    List<TaskVM> allTasks = _tasks.value;
+    int index = allTasks.indexWhere((element) => element.id == task.id);
+    allTasks[index] = task.copyWith(text: text);
+    _tasks.add(allTasks);
+  }
 }

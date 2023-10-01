@@ -57,9 +57,8 @@ class HomePage extends StatelessWidget {
 
                     return TaskBox(
                       task: task,
-                      onTap: () {
-                        taskBloc.toggleTask(task);
-                      },
+                      toggle: () => taskBloc.toggleTask(task),
+                      edit: (String text) => taskBloc.editTask(task, text),
                     );
                   }),
                   separatorBuilder: ((context, index) {
