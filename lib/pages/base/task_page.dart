@@ -11,9 +11,10 @@ class TaskPage extends StatelessWidget {
   Widget build(BuildContext context) {
     TaskBloc taskBloc = context.read<TaskBloc>();
 
-    return const SingleChildScrollView(
-      padding: EdgeInsets.symmetric(horizontal: 20, vertical: 24),
-      child: Column(
+    return SingleChildScrollView(
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12)
+          .copyWith(bottom: 24),
+      child: const Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           PendingTasks(),
@@ -50,14 +51,12 @@ class PendingTasks extends StatelessWidget {
               child: ElevatedButton(
                 onPressed: () {
                   FocusNode focusNode = FocusNode();
-                  taskBloc.addTask(
-                    TaskVM(
-                      id: DateTime.now().millisecondsSinceEpoch,
-                      completed: false,
-                      text: '',
-                      focusNode: focusNode,
-                    ),
-                  );
+                  taskBloc.addTask(TaskVM(
+                    id: DateTime.now().millisecondsSinceEpoch,
+                    completed: false,
+                    text: '',
+                    focusNode: focusNode,
+                  ));
                   focusNode.requestFocus();
                 },
                 child: const Text('Add'),
@@ -92,7 +91,7 @@ class PendingTasks extends StatelessWidget {
               return ListView.separated(
                 shrinkWrap: true,
                 physics: const NeverScrollableScrollPhysics(),
-                itemBuilder: ((context, index) {
+                itemBuilder: (context, index) {
                   TaskVM task = tasks[index];
 
                   return LayoutBuilder(builder: (context, constraints) {
@@ -104,10 +103,10 @@ class PendingTasks extends StatelessWidget {
                       remove: () => taskBloc.removeTask(task),
                     );
                   });
-                }),
-                separatorBuilder: ((context, index) {
+                },
+                separatorBuilder: (context, index) {
                   return const SizedBox(height: 12);
-                }),
+                },
                 itemCount: tasks.length,
               );
             })

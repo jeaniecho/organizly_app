@@ -40,6 +40,7 @@ class NotePage extends StatelessWidget {
           notes = pinnedNotes + justNotes;
 
           return ListView.separated(
+            shrinkWrap: true,
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
             itemBuilder: (context, index) {
               NoteVM note = notes[index];
