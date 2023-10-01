@@ -42,7 +42,7 @@ class NoteBloc {
 
   removeNote(NoteVM note) {
     List<NoteVM> notes = _notes.value;
-    notes.removeWhere((element) => element.id == note.id);
+    notes.removeWhere((element) => element.id == note.id && !note.pinned);
     _notes.add(notes);
   }
 }

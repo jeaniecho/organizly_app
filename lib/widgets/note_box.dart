@@ -49,14 +49,15 @@ class NoteBox extends StatelessWidget {
                   style: const TextStyle(color: Colors.grey, fontSize: 11),
                 ),
                 const Spacer(),
-                GestureDetector(
-                  onTap: remove,
-                  child: Icon(
-                    Icons.remove_circle_outline,
-                    size: 16,
-                    color: iconColor,
+                if (!note.pinned)
+                  GestureDetector(
+                    onTap: remove,
+                    child: Icon(
+                      Icons.remove_circle_outline,
+                      size: 16,
+                      color: iconColor,
+                    ),
                   ),
-                ),
                 const SizedBox(width: 8),
                 GestureDetector(
                   onTap: pin,
