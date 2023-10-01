@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:what_to_do/blocs/task_bloc.dart';
 import 'package:what_to_do/models/task_model.dart';
-import 'package:what_to_do/widgets/task_widget.dart';
+import 'package:what_to_do/widgets/task_box.dart';
 
 class TaskPage extends StatelessWidget {
   const TaskPage({super.key});
@@ -41,8 +41,9 @@ class TaskPage extends StatelessWidget {
 
                     return TaskBox(
                       task: task,
+                      boxWidth: 100,
                       toggle: () => taskBloc.toggleTask(task),
-                      edit: (String text) => null,
+                      edit: (String text) => taskBloc.editTask(task, text),
                     );
                   }),
                   separatorBuilder: ((context, index) {

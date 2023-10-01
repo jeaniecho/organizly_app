@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:what_to_do/blocs/task_bloc.dart';
 import 'package:what_to_do/models/task_model.dart';
-import 'package:what_to_do/widgets/task_widget.dart';
+import 'package:what_to_do/widgets/task_box.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
@@ -55,11 +55,14 @@ class HomePage extends StatelessWidget {
                   itemBuilder: ((context, index) {
                     TaskVM task = tasks[index];
 
-                    return TaskBox(
-                      task: task,
-                      toggle: () => taskBloc.toggleTask(task),
-                      edit: (String text) => taskBloc.editTask(task, text),
-                    );
+                    return LayoutBuilder(builder: (context, constraints) {
+                      return TaskBox(
+                        task: task,
+                        boxWidth: constraints.maxWidth,
+                        toggle: () => taskBloc.toggleTask(task),
+                        edit: (String text) => taskBloc.editTask(task, text),
+                      );
+                    });
                   }),
                   separatorBuilder: ((context, index) {
                     return const SizedBox(height: 12);
