@@ -28,15 +28,19 @@ class TaskBloc {
   }
 
   editTask(TaskVM task, String text) {
-    List<TaskVM> tasks = _tasks.value;
-    if (text.isEmpty) {
-      tasks.removeWhere((element) => element.id == task.id);
-    } else {
-      int index = tasks.indexWhere((element) => element.id == task.id);
-      tasks[index] = task.copyWith(text: text);
-    }
+    try {
+      List<TaskVM> tasks = _tasks.value;
+      if (text.isEmpty) {
+        tasks.removeWhere((element) => element.id == task.id);
+      } else {
+        int index = tasks.indexWhere((element) => element.id == task.id);
+        tasks[index] = task.copyWith(text: text);
+      }
 
-    _tasks.add(tasks);
+      _tasks.add(tasks);
+    } catch (e) {
+      print('error in editTask: $text');
+    }
   }
 
   removeTask(TaskVM task) {

@@ -168,12 +168,10 @@ class HomeTasks extends StatelessWidget {
                   itemBuilder: ((context, index) {
                     TaskVM task = tasks[index];
 
-                    return TaskBox(
+                    return HomeTaskBox(
                       task: task,
                       boxWidth: 100,
                       toggle: () => taskBloc.toggleTask(task),
-                      edit: (String text) => taskBloc.editTask(task, text),
-                      remove: () => taskBloc.removeTask(task),
                     );
                   }),
                   separatorBuilder: ((context, index) {
