@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:what_to_do/models/project_model.dart';
 
 class ProjectBox extends StatelessWidget {
@@ -6,11 +7,15 @@ class ProjectBox extends StatelessWidget {
   final bool isSelected;
   final int pendingTasks;
   final int completedTasks;
+  final Function(String title) edit;
+  final Function() remove;
   const ProjectBox(
       {required this.project,
       required this.isSelected,
       required this.pendingTasks,
       required this.completedTasks,
+      required this.edit,
+      required this.remove,
       super.key});
 
   @override
@@ -47,11 +52,66 @@ class ProjectBox extends StatelessWidget {
               ),
               if (isSelected)
                 GestureDetector(
-                  onTap: () {},
+                  onTap: () {
+                    HapticFeedback.selectionClick();
+
+                    TextEditingController nameController =
+                        TextEditingController(text: project.title);
+
+                    showDialog(
+                        context: context,
+                        builder: (context) {
+                          return SimpleDialog(
+                            contentPadding: const EdgeInsets.all(24),
+                            children: [
+                              ElevatedButton(
+                                onPressed: () {
+                                  Navigator.pop(context);
+                                  showDialog(
+                                      context: context,
+                                      builder: (context) {
+                                        return SimpleDialog(
+                                          contentPadding:
+                                              const EdgeInsets.all(24),
+                                          children: [
+                                            const Text('Edit Project Name'),
+                                            TextField(
+                                              autofocus: true,
+                                              controller: nameController,
+                                              decoration: const InputDecoration(
+                                                hintText: 'Project Name',
+                                              ),
+                                            ),
+                                            const SizedBox(height: 12),
+                                            ElevatedButton(
+                                              onPressed: () {
+                                                edit(nameController.text);
+                                                Navigator.pop(context);
+                                              },
+                                              child: const Text('Done'),
+                                            ),
+                                          ],
+                                        );
+                                      });
+                                },
+                                child: const Text('Edit Project Name'),
+                              ),
+                              const SizedBox(height: 12),
+                              ElevatedButton(
+                                onPressed: () {
+                                  remove();
+                                  Navigator.pop(context);
+                                },
+                                child: const Text('Delete Project'),
+                              ),
+                            ],
+                          );
+                        });
+                  },
                   child: const Icon(
-                    Icons.edit_note,
+                    Icons.more,
                     color: Colors.white,
-                    size: 24,
+                    size: 18,
                   ),
                 ),
             ],

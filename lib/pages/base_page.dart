@@ -98,14 +98,16 @@ class BasePage extends StatelessWidget {
                             context: context,
                             builder: (context) {
                               return SimpleDialog(
-                                titlePadding:
-                                    const EdgeInsets.only(top: 24, left: 24),
-                                contentPadding:
-                                    const EdgeInsets.all(24).copyWith(top: 12),
-                                title: const Text('Add Project'),
+                                contentPadding: const EdgeInsets.all(24),
                                 children: [
+                                  const Text('Add Project'),
+                                  const SizedBox(height: 6),
                                   TextField(
                                     controller: projectController,
+                                    autofocus: true,
+                                    decoration: const InputDecoration(
+                                      hintText: 'Project Name',
+                                    ),
                                   ),
                                   const SizedBox(height: 12),
                                   ElevatedButton(
@@ -118,7 +120,7 @@ class BasePage extends StatelessWidget {
                                       ));
                                       Navigator.pop(context);
                                     },
-                                    child: Text('Add'),
+                                    child: const Text('Add'),
                                   ),
                                 ],
                               );

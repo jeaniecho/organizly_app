@@ -164,6 +164,9 @@ class HomeProjects extends StatelessWidget {
                           isSelected: false,
                           pendingTasks: pendingTasks.length,
                           completedTasks: completedTasks.length,
+                          edit: (title) =>
+                              projectBloc.editProject(project, title),
+                          remove: () => projectBloc.removeProject(project),
                         ),
                       ),
                     );

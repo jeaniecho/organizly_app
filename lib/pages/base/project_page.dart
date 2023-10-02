@@ -26,6 +26,15 @@ class ProjectPage extends StatelessWidget {
 
           int pageIndex = snapshot.data![1] ?? 0;
 
+          if (projects.isEmpty) {
+            return const Center(
+              child: Text(
+                'Add projects',
+                style: TextStyle(color: Colors.grey),
+              ),
+            );
+          }
+
           return SingleChildScrollView(
             padding: const EdgeInsets.only(bottom: 24),
             child: Column(
@@ -54,6 +63,9 @@ class ProjectPage extends StatelessWidget {
                         isSelected: isSelected,
                         pendingTasks: pendingTasks.length,
                         completedTasks: completedTasks.length,
+                        edit: (title) =>
+                            projectBloc.editProject(project, title),
+                        remove: () => projectBloc.removeProject(project),
                       );
                     },
                     itemCount: projects.length,
@@ -125,25 +137,35 @@ class PendingProjectTasks extends StatelessWidget {
           ],
         ),
         const SizedBox(height: 12),
-        ListView.separated(
-          shrinkWrap: true,
-          physics: const NeverScrollableScrollPhysics(),
-          itemBuilder: (context, index) {
-            TaskVM task = tasks[index];
+        tasks.isEmpty
+            ? Padding(
+                padding: const EdgeInsets.symmetric(vertical: 24),
+                child: Center(
+                  child: Text(
+                    project.tasks.isEmpty ? 'Add tasks' : 'Completed all tasks',
+                    style: const TextStyle(color: Colors.grey),
+                  ),
+                ),
+              )
+            : ListView.separated(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                itemBuilder: (context, index) {
+                  TaskVM task = tasks[index];
 
-            return TaskBox(
-              task: task,
-              boxWidth: 100,
-              toggle: () => null,
-              edit: (String text) => null,
-              remove: () => null,
-            );
-          },
-          separatorBuilder: (context, index) {
-            return const SizedBox(height: 12);
-          },
-          itemCount: tasks.length,
-        )
+                  return TaskBox(
+                    task: task,
+                    boxWidth: 100,
+                    toggle: () => null,
+                    edit: (String text) => null,
+                    remove: () => null,
+                  );
+                },
+                separatorBuilder: (context, index) {
+                  return const SizedBox(height: 12);
+                },
+                itemCount: tasks.length,
+              )
       ],
     );
   }
@@ -171,25 +193,35 @@ class CompletedProjectTasks extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 12),
-        ListView.separated(
-          shrinkWrap: true,
-          physics: const NeverScrollableScrollPhysics(),
-          itemBuilder: ((context, index) {
-            TaskVM task = tasks[index];
+        tasks.isEmpty
+            ? const Padding(
+                padding: EdgeInsets.symmetric(vertical: 24),
+                child: Center(
+                  child: Text(
+                    'Complete tasks',
+                    style: TextStyle(color: Colors.grey),
+                  ),
+                ),
+              )
+            : ListView.separated(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                itemBuilder: ((context, index) {
+                  TaskVM task = tasks[index];
 
-            return TaskBox(
-              task: task,
-              boxWidth: 100,
-              toggle: () => null,
-              edit: (String text) => null,
-              remove: () => null,
-            );
-          }),
-          separatorBuilder: ((context, index) {
-            return const SizedBox(height: 12);
-          }),
-          itemCount: tasks.length,
-        )
+                  return TaskBox(
+                    task: task,
+                    boxWidth: 100,
+                    toggle: () => null,
+                    edit: (String text) => null,
+                    remove: () => null,
+                  );
+                }),
+                separatorBuilder: ((context, index) {
+                  return const SizedBox(height: 12);
+                }),
+                itemCount: tasks.length,
+              )
       ],
     );
   }

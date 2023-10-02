@@ -40,60 +40,76 @@ class TaskBox extends StatelessWidget {
         ],
       ),
       child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          GestureDetector(
-            onTap: toggle,
-            child: Container(
-              width: 16,
-              height: 16,
-              decoration: BoxDecoration(
-                color: task.completed ? completedColor : Colors.white,
-                border: Border.all(color: completedColor, width: 1),
-                borderRadius: BorderRadius.circular(4),
-              ),
-              child: const Center(
-                child: Icon(
-                  Icons.check,
-                  size: 14,
-                  color: Colors.white,
-                ),
-              ),
-            ),
-          ),
-          const SizedBox(width: 8),
           Expanded(
-            child: TextField(
-              focusNode: task.focusNode,
-              controller: textController,
-              enabled: !task.completed,
-              style: TextStyle(
-                color: task.completed ? completedColor : Colors.black,
-                fontSize: 12,
-                height: 1.3,
-                decoration: task.completed ? TextDecoration.lineThrough : null,
-                decorationColor: completedColor,
-              ),
-              minLines: 1,
-              maxLines: 5,
-              keyboardType: TextInputType.text,
-              onSubmitted: edit,
-              onTapOutside: (event) {
-                FocusScope.of(context).unfocus();
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                GestureDetector(
+                  onTap: toggle,
+                  child: Container(
+                    width: 16,
+                    height: 16,
+                    decoration: BoxDecoration(
+                      color: task.completed ? completedColor : Colors.white,
+                      border: Border.all(color: completedColor, width: 1),
+                      borderRadius: BorderRadius.circular(4),
+                    ),
+                    child: const Center(
+                      child: Icon(
+                        Icons.check,
+                        size: 14,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: TextField(
+                    focusNode: task.focusNode,
+                    controller: textController,
+                    enabled: !task.completed,
+                    style: TextStyle(
+                      color: task.completed ? completedColor : Colors.black,
+                      fontSize: 12,
+                      height: 1.3,
+                      decoration:
+                          task.completed ? TextDecoration.lineThrough : null,
+                      decorationColor: completedColor,
+                    ),
+                    minLines: 1,
+                    maxLines: 5,
+                    keyboardType: TextInputType.text,
+                    onSubmitted: edit,
+                    onTapOutside: (event) {
+                      FocusScope.of(context).unfocus();
 
-                if (textController.text.isEmpty) {
-                  remove();
-                } else {
-                  edit(textController.text);
-                }
-              },
-              decoration: const InputDecoration(
-                border: InputBorder.none,
-                isCollapsed: true,
-                contentPadding: EdgeInsets.zero,
-              ),
+                      if (textController.text.isEmpty) {
+                        remove();
+                      } else {
+                        edit(textController.text);
+                      }
+                    },
+                    decoration: const InputDecoration(
+                      border: InputBorder.none,
+                      isCollapsed: true,
+                      contentPadding: EdgeInsets.zero,
+                    ),
+                  ),
+                ),
+              ],
             ),
           ),
+          const SizedBox(width: 2),
+          GestureDetector(
+            onTap: remove,
+            child: const Icon(
+              Icons.close,
+              size: 16,
+              color: Colors.grey,
+            ),
+          )
         ],
       ),
     );
