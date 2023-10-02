@@ -23,4 +23,13 @@ class NoteVM {
       dateTime: dateTime ?? this.dateTime,
     );
   }
+
+  Map<String, dynamic> toMap() {
+    return {
+      'id': id,
+      'pinned': pinned ? 1 : 0,
+      'text': text,
+      'dateTime': dateTime.toIso8601String(),
+    };
+  }
 }

@@ -6,13 +6,13 @@ class NoteBox extends StatelessWidget {
   final NoteVM note;
   final double boxWidth;
   final Function() pin;
-  final Function(String text) edit;
+  final Function(String text) submit;
   final Function() remove;
   const NoteBox(
       {required this.note,
       required this.boxWidth,
       required this.pin,
-      required this.edit,
+      required this.submit,
       required this.remove,
       super.key});
 
@@ -24,6 +24,8 @@ class NoteBox extends StatelessWidget {
         TextEditingController(text: note.text);
     textController.selection =
         TextSelection.collapsed(offset: textController.text.length);
+
+    FocusNode focusNode = note.focusNode ?? FocusNode();
 
     return Container(
         width: boxWidth,
@@ -71,7 +73,7 @@ class NoteBox extends StatelessWidget {
             ),
             const SizedBox(height: 4),
             TextField(
-              focusNode: note.focusNode,
+              focusNode: focusNode,
               controller: textController,
               style: const TextStyle(
                 fontSize: 14,
@@ -79,14 +81,11 @@ class NoteBox extends StatelessWidget {
               minLines: 1,
               maxLines: 100,
               keyboardType: TextInputType.text,
-              onSubmitted: edit,
+              onSubmitted: submit,
               onTapOutside: (event) {
-                FocusScope.of(context).unfocus();
-
-                if (textController.text.isEmpty) {
-                  remove();
-                } else {
-                  edit(textController.text);
+                if (focusNode.hasPrimaryFocus) {
+                  submit(textController.text);
+                  FocusScope.of(context).unfocus();
                 }
               },
               decoration: const InputDecoration(

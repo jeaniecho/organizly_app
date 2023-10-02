@@ -49,7 +49,7 @@ class NotePage extends StatelessWidget {
                 note: note,
                 boxWidth: 100,
                 pin: () => noteBloc.pinNote(note),
-                edit: (String text) => noteBloc.editNote(note, text),
+                submit: (String text) => noteBloc.editNote(note, text),
                 remove: () => noteBloc.removeNote(note),
               );
             },
