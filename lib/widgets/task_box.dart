@@ -5,12 +5,12 @@ class TaskBox extends StatelessWidget {
   final TaskVM task;
   final double boxWidth;
   final Function() toggle;
-  final Function(String text) edit;
+  final Function(String text) submit;
   final Function() remove;
   const TaskBox(
       {required this.task,
       required this.boxWidth,
-      required this.edit,
+      required this.submit,
       required this.toggle,
       required this.remove,
       super.key});
@@ -23,6 +23,8 @@ class TaskBox extends StatelessWidget {
         TextEditingController(text: task.text);
     textController.selection =
         TextSelection.collapsed(offset: textController.text.length);
+
+    FocusNode focusNode = task.focusNode ?? FocusNode();
 
     return Container(
       width: boxWidth,
@@ -67,7 +69,7 @@ class TaskBox extends StatelessWidget {
                 const SizedBox(width: 8),
                 Expanded(
                   child: TextField(
-                    focusNode: task.focusNode,
+                    focusNode: focusNode,
                     controller: textController,
                     enabled: !task.completed,
                     style: TextStyle(
@@ -81,14 +83,11 @@ class TaskBox extends StatelessWidget {
                     minLines: 1,
                     maxLines: 5,
                     keyboardType: TextInputType.text,
-                    onSubmitted: edit,
+                    onSubmitted: submit,
                     onTapOutside: (event) {
-                      FocusScope.of(context).unfocus();
-
-                      if (textController.text.isEmpty) {
-                        remove();
-                      } else {
-                        edit(textController.text);
+                      if (focusNode.hasPrimaryFocus) {
+                        submit(textController.text);
+                        FocusScope.of(context).unfocus();
                       }
                     },
                     decoration: const InputDecoration(

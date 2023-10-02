@@ -20,4 +20,12 @@ class TaskVM {
       text: text ?? this.text,
     );
   }
+
+  Map<String, dynamic> toMap() {
+    return {
+      'id': id,
+      'completed': completed ? 1 : 0,
+      'text': text,
+    };
+  }
 }

@@ -77,7 +77,7 @@ class PendingTasks extends StatelessWidget {
                     task: task,
                     boxWidth: 100,
                     toggle: () => taskBloc.toggleTask(task),
-                    edit: (String text) => taskBloc.editTask(task, text),
+                    submit: (String text) => taskBloc.editTask(task, text),
                     remove: () => taskBloc.removeTask(task),
                   );
                 },
@@ -99,74 +99,74 @@ class CompletedTasks extends StatelessWidget {
   Widget build(BuildContext context) {
     TaskBloc taskBloc = context.read<TaskBloc>();
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            const Text(
-              'Completed',
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-            SizedBox(
-              height: 32,
-              child: ElevatedButton(
-                onPressed: () {
-                  taskBloc.clearCompletedTasks();
-                },
-                child: const Text('Clear'),
-              ),
-            ),
-          ],
-        ),
-        const SizedBox(height: 12),
-        StreamBuilder(
-            stream: taskBloc.tasks,
-            builder: (context, snapshot) {
-              if (!snapshot.hasData) {
-                return const Center(child: CircularProgressIndicator());
-              }
+    return StreamBuilder<List<TaskVM>>(
+        stream: taskBloc.tasks,
+        builder: (context, snapshot) {
+          if (!snapshot.hasData) {
+            return const Center(child: CircularProgressIndicator());
+          }
 
-              List<TaskVM> tasks =
-                  snapshot.data!.where((element) => element.completed).toList();
+          List<TaskVM> tasks =
+              snapshot.data!.where((element) => element.completed).toList();
 
-              if (tasks.isEmpty) {
-                return const Padding(
-                  padding: EdgeInsets.symmetric(vertical: 12),
-                  child: Center(
-                    child: Text(
-                      'No completed tasks',
-                      style: TextStyle(color: Colors.grey),
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Text(
+                    'Completed',
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w500,
                     ),
                   ),
-                );
-              }
+                  if (tasks.isNotEmpty)
+                    SizedBox(
+                      height: 32,
+                      child: ElevatedButton(
+                        onPressed: () {
+                          taskBloc.clearCompletedTasks();
+                        },
+                        child: const Text('Clear'),
+                      ),
+                    ),
+                ],
+              ),
+              const SizedBox(height: 12),
+              tasks.isEmpty
+                  ? const Padding(
+                      padding: EdgeInsets.symmetric(vertical: 12),
+                      child: Center(
+                        child: Text(
+                          'No completed tasks',
+                          style: TextStyle(color: Colors.grey),
+                        ),
+                      ),
+                    )
+                  : ListView.separated(
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      itemBuilder: ((context, index) {
+                        TaskVM task = tasks[index];
 
-              return ListView.separated(
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                itemBuilder: ((context, index) {
-                  TaskVM task = tasks[index];
-
-                  return TaskBox(
-                    task: task,
-                    boxWidth: 100,
-                    toggle: () => taskBloc.toggleTask(task),
-                    edit: (String text) => taskBloc.editTask(task, text),
-                    remove: () => taskBloc.removeTask(task),
-                  );
-                }),
-                separatorBuilder: ((context, index) {
-                  return const SizedBox(height: 12);
-                }),
-                itemCount: tasks.length,
-              );
-            })
-      ],
-    );
+                        return TaskBox(
+                          task: task,
+                          boxWidth: 100,
+                          toggle: () => taskBloc.toggleTask(task),
+                          submit: (String text) =>
+                              taskBloc.editTask(task, text),
+                          remove: () => taskBloc.removeTask(task),
+                        );
+                      }),
+                      separatorBuilder: ((context, index) {
+                        return const SizedBox(height: 12);
+                      }),
+                      itemCount: tasks.length,
+                    )
+            ],
+          );
+        });
   }
 }
