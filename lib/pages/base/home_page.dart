@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:what_to_do/blocs/app_bloc.dart';
 import 'package:what_to_do/blocs/note_bloc.dart';
 import 'package:what_to_do/blocs/project_bloc.dart';
 import 'package:what_to_do/blocs/task_bloc.dart';
@@ -36,6 +37,7 @@ class HomeNotes extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     NoteBloc noteBloc = context.read<NoteBloc>();
+    AppBloc appBloc = context.read<AppBloc>();
 
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 12),
@@ -85,7 +87,11 @@ class HomeNotes extends StatelessWidget {
                       itemBuilder: (context, index) {
                         NoteVM note = notes[index];
 
-                        return HomeNoteBox(note: note, boxWidth: noteSize);
+                        return GestureDetector(
+                            onTap: () {
+                              appBloc.setBottomIndex(3);
+                            },
+                            child: HomeNoteBox(note: note, boxWidth: noteSize));
                       },
                       separatorBuilder: (context, index) {
                         return const SizedBox(width: 12);
@@ -105,6 +111,7 @@ class HomeProjects extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     ProjectBloc projectBloc = context.read<ProjectBloc>();
+    AppBloc appBloc = context.read<AppBloc>();
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -144,13 +151,20 @@ class HomeProjects extends StatelessWidget {
                         .where((element) => element.completed)
                         .toList();
 
-                    return SizedBox(
-                      width: MediaQuery.sizeOf(context).width * 0.6,
-                      child: ProjectBox(
-                        project: project,
-                        isSelected: false,
-                        pendingTasks: pendingTasks.length,
-                        completedTasks: completedTasks.length,
+                    return GestureDetector(
+                      onTap: () {
+                        appBloc.setBottomIndex(2);
+                        projectBloc.setPageIndex(index);
+                        projectBloc.pageController.jumpToPage(index);
+                      },
+                      child: SizedBox(
+                        width: MediaQuery.sizeOf(context).width * 0.6,
+                        child: ProjectBox(
+                          project: project,
+                          isSelected: false,
+                          pendingTasks: pendingTasks.length,
+                          completedTasks: completedTasks.length,
+                        ),
                       ),
                     );
                   },
@@ -169,6 +183,7 @@ class HomeTasks extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     TaskBloc taskBloc = context.read<TaskBloc>();
+    AppBloc appBloc = context.read<AppBloc>();
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -217,10 +232,16 @@ class HomeTasks extends StatelessWidget {
                   itemBuilder: ((context, index) {
                     TaskVM task = tasks[index];
 
-                    return HomeTaskBox(
-                      task: task,
-                      boxWidth: 100,
-                      toggle: () => taskBloc.toggleTask(task),
+                    return GestureDetector(
+                      onTap: () {
+                        // appBloc.setBottomIndex(1);
+                        // taskBloc.toggleTask(task);
+                      },
+                      child: HomeTaskBox(
+                        task: task,
+                        boxWidth: 100,
+                        toggle: () => taskBloc.toggleTask(task),
+                      ),
                     );
                   }),
                   separatorBuilder: ((context, index) {

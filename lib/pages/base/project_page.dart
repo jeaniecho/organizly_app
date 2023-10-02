@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:rxdart/rxdart.dart';
 import 'package:what_to_do/blocs/project_bloc.dart';
 import 'package:what_to_do/models/project_model.dart';
 import 'package:what_to_do/models/task_model.dart';
@@ -13,30 +14,33 @@ class ProjectPage extends StatelessWidget {
   Widget build(BuildContext context) {
     ProjectBloc projectBloc = context.read<ProjectBloc>();
 
-    PageController pageController = PageController(viewportFraction: 0.75);
-
-    return StreamBuilder<List<ProjectVM>>(
-        stream: projectBloc.projects,
+    return StreamBuilder<List>(
+        stream:
+            Rx.combineLatestList([projectBloc.projects, projectBloc.pageIndex]),
         builder: (context, snapshot) {
           if (!snapshot.hasData) {
             return const Center(child: CircularProgressIndicator());
           }
 
-          List<ProjectVM> projects = snapshot.data!;
+          List<ProjectVM> projects = snapshot.data![0];
+
+          int pageIndex = snapshot.data![1] ?? 0;
 
           return SingleChildScrollView(
+            padding: const EdgeInsets.only(bottom: 24),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 SizedBox(
                   height: 124,
                   child: PageView.builder(
-                    controller: pageController,
+                    controller: projectBloc.pageController,
                     onPageChanged: (value) {
                       projectBloc.setPageIndex(value);
                     },
                     itemBuilder: (context, index) {
                       ProjectVM project = projects[index];
+                      bool isSelected = pageIndex == index;
 
                       List<TaskVM> pendingTasks = project.tasks
                           .where((element) => !element.completed)
@@ -45,19 +49,12 @@ class ProjectPage extends StatelessWidget {
                           .where((element) => element.completed)
                           .toList();
 
-                      return StreamBuilder<int>(
-                          stream: projectBloc.pageIndex,
-                          builder: (context, snapshot) {
-                            int pageIndex = snapshot.data ?? 0;
-                            bool isSelected = pageIndex == index;
-
-                            return ProjectBox(
-                              project: project,
-                              isSelected: isSelected,
-                              pendingTasks: pendingTasks.length,
-                              completedTasks: completedTasks.length,
-                            );
-                          });
+                      return ProjectBox(
+                        project: project,
+                        isSelected: isSelected,
+                        pendingTasks: pendingTasks.length,
+                        completedTasks: completedTasks.length,
+                      );
                     },
                     itemCount: projects.length,
                   ),
@@ -77,7 +74,7 @@ class ProjectPage extends StatelessWidget {
                           ],
                         ),
                       );
-                    })
+                    }),
               ],
             ),
           );
