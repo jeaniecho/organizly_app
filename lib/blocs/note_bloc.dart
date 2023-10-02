@@ -7,6 +7,7 @@ import 'package:sqflite/sqflite.dart';
 
 class NoteBloc {
   late final Database noteDB;
+  final String dbName = 'notes';
 
   final BehaviorSubject<List<NoteVM>> _notes = BehaviorSubject.seeded([]);
   Stream<List<NoteVM>> get notes => _notes.stream;
@@ -21,11 +22,11 @@ class NoteBloc {
   }
 
   Future<Database> initDB() async {
-    String path = join(await getDatabasesPath(), 'notes.db');
+    String path = join(await getDatabasesPath(), '$dbName.db');
     return await openDatabase(path, version: 1, onCreate: (db, version) async {
       await db.execute(
         '''
-        CREATE TABLE notes(
+        CREATE TABLE $dbName(
             id INTEGER PRIMARY KEY, 
             pinned INTEGER, 
             text TEXT, 
@@ -43,7 +44,7 @@ class NoteBloc {
 
   // db
   Future<List<NoteVM>> getNotes({bool updateStream = true}) async {
-    final List<Map<String, dynamic>> data = await noteDB.query('notes');
+    final List<Map<String, dynamic>> data = await noteDB.query(dbName);
 
     if (data.isEmpty) {
       return [];
@@ -68,7 +69,7 @@ class NoteBloc {
 
   Future<void> insertNote(NoteVM note) async {
     await noteDB.insert(
-      'notes',
+      dbName,
       note.toMap(),
       conflictAlgorithm: ConflictAlgorithm.replace,
     );
@@ -78,7 +79,7 @@ class NoteBloc {
 
   Future<void> updateNote(NoteVM note) async {
     await noteDB.update(
-      'notes',
+      dbName,
       note.toMap(),
       where: 'id = ?',
       whereArgs: [note.id],
@@ -89,7 +90,7 @@ class NoteBloc {
 
   Future<void> deleteNote(NoteVM note) async {
     await noteDB.delete(
-      'notes',
+      dbName,
       where: 'id = ?',
       whereArgs: [note.id],
     );
