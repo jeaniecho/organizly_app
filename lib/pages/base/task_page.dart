@@ -9,8 +9,6 @@ class TaskPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    TaskBloc taskBloc = context.read<TaskBloc>();
-
     return SingleChildScrollView(
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12)
           .copyWith(bottom: 24),

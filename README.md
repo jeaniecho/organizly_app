@@ -1,4 +1,4 @@
-# what_to_do
+# Organizly
 
 A new Flutter project.
 
