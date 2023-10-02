@@ -149,7 +149,8 @@ class ProjectBox extends StatelessWidget {
                   ),
                 ),
                 if (project.tasks.isNotEmpty)
-                  Container(
+                  AnimatedContainer(
+                    duration: const Duration(milliseconds: 250),
                     height: 4,
                     width: constraints.maxWidth *
                         (completedTasks / project.tasks.length),

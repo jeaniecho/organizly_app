@@ -122,14 +122,16 @@ class PendingProjectTasks extends StatelessWidget {
               height: 32,
               child: ElevatedButton(
                 onPressed: () {
-                  // FocusNode focusNode = FocusNode();
-                  // projectBloc.addTask(TaskVM(
-                  //   id: DateTime.now().millisecondsSinceEpoch,
-                  //   completed: false,
-                  //   text: '',
-                  //   focusNode: focusNode,
-                  // ));
-                  // focusNode.requestFocus();
+                  FocusNode focusNode = FocusNode();
+                  projectBloc.addTask(
+                      project,
+                      TaskVM(
+                        id: DateTime.now().millisecondsSinceEpoch,
+                        completed: false,
+                        text: '',
+                        focusNode: focusNode,
+                      ));
+                  focusNode.requestFocus();
                 },
                 child: const Text('Add'),
               ),
@@ -156,9 +158,10 @@ class PendingProjectTasks extends StatelessWidget {
                   return TaskBox(
                     task: task,
                     boxWidth: 100,
-                    toggle: () => null,
-                    edit: (String text) => null,
-                    remove: () => null,
+                    toggle: () => projectBloc.toggleTask(project, task),
+                    edit: (String text) =>
+                        projectBloc.editTask(project, task, text),
+                    remove: () => projectBloc.removeTask(project, task),
                   );
                 },
                 separatorBuilder: (context, index) {
@@ -212,9 +215,10 @@ class CompletedProjectTasks extends StatelessWidget {
                   return TaskBox(
                     task: task,
                     boxWidth: 100,
-                    toggle: () => null,
-                    edit: (String text) => null,
-                    remove: () => null,
+                    toggle: () => projectBloc.toggleTask(project, task),
+                    edit: (String text) =>
+                        projectBloc.editTask(project, task, text),
+                    remove: () => projectBloc.removeTask(project, task),
                   );
                 }),
                 separatorBuilder: ((context, index) {

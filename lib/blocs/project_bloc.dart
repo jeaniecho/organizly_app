@@ -61,7 +61,47 @@ class ProjectBloc {
     List<ProjectVM> projects = _projects.value;
 
     int index = projects.indexWhere((element) => element.id == project.id);
-    projects[index] = project.copyWith(tasks: [...project.tasks, task]);
+    projects[index] = project.copyWith(tasks: [task, ...project.tasks]);
+
+    _projects.add(projects);
+  }
+
+  toggleTask(ProjectVM project, TaskVM task) {
+    List<ProjectVM> projects = _projects.value;
+
+    int index = projects.indexWhere((element) => element.id == project.id);
+    List<TaskVM> tasks = project.tasks;
+    tasks.removeWhere((element) => element.id == task.id);
+    tasks.add(task.copyWith(completed: !task.completed));
+    projects[index] = project.copyWith(tasks: tasks);
+
+    _projects.add(projects);
+  }
+
+  editTask(ProjectVM project, TaskVM task, String text) {
+    List<ProjectVM> projects = _projects.value;
+
+    int index = projects.indexWhere((element) => element.id == project.id);
+    List<TaskVM> tasks = project.tasks;
+
+    if (text.isEmpty) {
+      tasks.removeWhere((element) => element.id == task.id);
+    } else {
+      int index = tasks.indexWhere((element) => element.id == task.id);
+      tasks[index] = task.copyWith(text: text);
+    }
+    projects[index] = project.copyWith(tasks: tasks);
+
+    _projects.add(projects);
+  }
+
+  removeTask(ProjectVM project, TaskVM task) {
+    List<ProjectVM> projects = _projects.value;
+
+    int index = projects.indexWhere((element) => element.id == project.id);
+    List<TaskVM> tasks = project.tasks;
+    tasks.removeWhere((element) => element.id == task.id);
+    projects[index] = project.copyWith(tasks: tasks);
 
     _projects.add(projects);
   }

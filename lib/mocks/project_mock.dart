@@ -4,7 +4,7 @@ import 'package:what_to_do/models/project_model.dart';
 ProjectVM projectMock0 = ProjectVM(
   id: 0,
   title: 'Project 0',
-  tasks: taskMockList0,
+  tasks: projectTaskMockList0,
 );
 ProjectVM projectMock1 = ProjectVM(
   id: 1,
@@ -14,12 +14,12 @@ ProjectVM projectMock1 = ProjectVM(
 ProjectVM projectMock2 = ProjectVM(
   id: 2,
   title: 'Project 2',
-  tasks: taskMockList0,
+  tasks: [],
 );
 ProjectVM projectMock3 = ProjectVM(
   id: 3,
   title: 'Project3',
-  tasks: taskMockList0,
+  tasks: [],
 );
 
 List<ProjectVM> projectMockList0 = [

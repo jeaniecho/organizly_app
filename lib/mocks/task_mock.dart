@@ -15,6 +15,13 @@ TaskVM taskMock5 = TaskVM(
     completed: false,
     text: 'This is completed task mock 5.\nAnd this is a two liner.');
 
+TaskVM taskMock6 = TaskVM(id: 6, completed: false, text: 'test mock 6');
+TaskVM taskMock7 = TaskVM(id: 7, completed: false, text: 'test mock 7');
+TaskVM taskMock8 = TaskVM(id: 8, completed: true, text: 'test mock 8');
+TaskVM taskMock9 = TaskVM(id: 9, completed: false, text: 'test mock 9');
+TaskVM taskMock10 = TaskVM(id: 10, completed: false, text: 'test mock 10');
+TaskVM taskMock11 = TaskVM(id: 11, completed: false, text: 'test mock 11');
+
 List<TaskVM> taskMockList0 = [
   taskMock0,
   taskMock1,
@@ -22,4 +29,13 @@ List<TaskVM> taskMockList0 = [
   taskMock3,
   taskMock4,
   taskMock5,
+];
+
+List<TaskVM> projectTaskMockList0 = [
+  taskMock6,
+  taskMock7,
+  taskMock8,
+  taskMock9,
+  taskMock10,
+  taskMock11,
 ];
