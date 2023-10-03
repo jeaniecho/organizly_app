@@ -1,13 +1,16 @@
+import 'dart:io';
+
+import 'package:device_info/device_info.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_email_sender/flutter_email_sender.dart';
 import 'package:intl/intl.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:provider/provider.dart';
 import 'package:what_to_do/blocs/app_bloc.dart';
 import 'package:what_to_do/blocs/note_bloc.dart';
 import 'package:what_to_do/blocs/project_bloc.dart';
 import 'package:what_to_do/blocs/task_bloc.dart';
-import 'package:what_to_do/models/note_model.dart';
-import 'package:what_to_do/models/project_model.dart';
 import 'package:what_to_do/models/task_model.dart';
 import 'package:what_to_do/pages/pages.dart';
 
@@ -27,6 +30,8 @@ class BasePage extends StatelessWidget {
 
     final scaffoldKey = GlobalKey<ScaffoldState>();
 
+    double themeSize = 32;
+
     return StreamBuilder<int>(
         stream: appBloc.bottomIndex,
         builder: (context, snapshot) {
@@ -44,11 +49,12 @@ class BasePage extends StatelessWidget {
             //   onPressed: () {},
             // ),
             endDrawer: Drawer(
+              backgroundColor: Colors.white,
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(24)),
               child: Column(
                 children: [
-                  const SizedBox(height: 64),
+                  const SizedBox(height: 80),
                   Image.asset(
                     'assets/app_icon_transparent.png',
                     width: 120,
@@ -62,27 +68,147 @@ class BasePage extends StatelessWidget {
                     ),
                   ),
                   Container(
-                    height: 1,
+                    height: 2,
                     width: 200,
                     margin: const EdgeInsets.symmetric(vertical: 32),
-                    color: defaultColor,
+                    color: const Color(0xffeaeaea),
                   ),
-                  GestureDetector(
-                    onTap: () {},
-                    child: Text(
-                      'aaa',
-                      style: TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w500,
-                          color: selectedColor),
-                    ),
+                  const SizedBox(height: 16),
+                  Text(
+                    'Dark mode',
+                    style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w500,
+                        color: selectedColor),
+                  ),
+                  const SizedBox(height: 12),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Container(
+                        width: 48,
+                        height: 48,
+                        decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: primaryColor.withOpacity(0.1)),
+                        child: const Icon(
+                          Icons.sunny,
+                          color: Colors.amber,
+                        ),
+                      ),
+                      const SizedBox(width: 20),
+                      Container(
+                        width: 48,
+                        height: 48,
+                        decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: primaryColor.withOpacity(0)),
+                        child: Icon(
+                          Icons.nightlight,
+                          color: Colors.grey[350],
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 40),
+                  Text(
+                    'Theme',
+                    style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w500,
+                        color: selectedColor),
+                  ),
+                  const SizedBox(height: 16),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Container(
+                        width: themeSize,
+                        height: themeSize,
+                        margin: const EdgeInsets.symmetric(horizontal: 6),
+                        decoration: BoxDecoration(
+                            shape: BoxShape.circle, color: primaryColor),
+                        child: const Icon(
+                          Icons.check_rounded,
+                          color: Colors.white,
+                          size: 20,
+                        ),
+                      ),
+                      Container(
+                        width: themeSize,
+                        height: themeSize,
+                        margin: const EdgeInsets.symmetric(horizontal: 6),
+                        decoration: const BoxDecoration(
+                            shape: BoxShape.circle, color: Colors.lime),
+                      ),
+                      Container(
+                        width: themeSize,
+                        height: themeSize,
+                        margin: const EdgeInsets.symmetric(horizontal: 6),
+                        decoration: const BoxDecoration(
+                            shape: BoxShape.circle, color: Colors.amber),
+                      ),
+                      Container(
+                        width: themeSize,
+                        height: themeSize,
+                        margin: const EdgeInsets.symmetric(horizontal: 6),
+                        decoration: BoxDecoration(
+                            shape: BoxShape.circle, color: Colors.red[300]),
+                      ),
+                      Container(
+                        width: themeSize,
+                        height: themeSize,
+                        margin: const EdgeInsets.symmetric(horizontal: 6),
+                        decoration: const BoxDecoration(
+                            shape: BoxShape.circle, color: Colors.black54),
+                      ),
+                    ],
                   ),
                   const Spacer(),
                   Align(
                       alignment: Alignment.bottomRight,
                       child: Padding(
-                        padding: EdgeInsets.only(right: 32),
-                        child: Text('v1.0'),
+                        padding: const EdgeInsets.only(right: 24),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.end,
+                          children: [
+                            GestureDetector(
+                              onTap: () {
+                                _sendEmail();
+                              },
+                              child: Text(
+                                'Help & Support',
+                                style: TextStyle(
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w500,
+                                    color: selectedColor),
+                              ),
+                            ),
+                            const SizedBox(height: 12),
+                            GestureDetector(
+                              onTap: () {},
+                              child: Text(
+                                'Open Source Licenses',
+                                style: TextStyle(
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w500,
+                                    color: selectedColor),
+                              ),
+                            ),
+                            const SizedBox(height: 32),
+                            FutureBuilder<PackageInfo>(
+                                future: PackageInfo.fromPlatform(),
+                                builder: (context, snapshot) {
+                                  if (snapshot.hasData) {
+                                    PackageInfo packageInfo = snapshot.data!;
+
+                                    return Text('v${packageInfo.version}');
+                                  } else {
+                                    return const SizedBox.shrink();
+                                  }
+                                }),
+                          ],
+                        ),
                       )),
                   const SizedBox(height: 64),
                 ],
@@ -265,4 +391,79 @@ class BasePage extends StatelessWidget {
           );
         });
   }
+}
+
+void _sendEmail() async {
+  String body = await _getEmailBody();
+
+  final Email email = Email(
+    body: body,
+    subject: '[Organizly] Inquiry: ',
+    recipients: ['yeajeancho@gmail.com'],
+    cc: [],
+    bcc: [],
+    attachmentPaths: [],
+    isHTML: false,
+  );
+
+  try {
+    await FlutterEmailSender.send(email);
+  } catch (error) {
+    print(error.toString());
+  }
+}
+
+Future<String> _getEmailBody() async {
+  String appInfo = await PackageInfo.fromPlatform()
+      .then((value) => '${value.buildNumber} (${value.version})');
+  Map<String, dynamic> deviceInfo = await _getDeviceInfo();
+
+  String body = '';
+
+  body += "\n\n\n\n---------------\n";
+  body += "앱 정보\n";
+  body += "버전: $appInfo\n";
+  deviceInfo.forEach((key, value) {
+    body += "$key: $value\n";
+  });
+  body += "---------------\n";
+
+  return body;
+}
+
+Future<Map<String, dynamic>> _getDeviceInfo() async {
+  DeviceInfoPlugin deviceInfoPlugin = DeviceInfoPlugin();
+  Map<String, dynamic> deviceData = <String, dynamic>{};
+
+  try {
+    if (Platform.isAndroid) {
+      deviceData = _readAndroidDeviceInfo(await deviceInfoPlugin.androidInfo);
+    } else if (Platform.isIOS) {
+      deviceData = _readIosDeviceInfo(await deviceInfoPlugin.iosInfo);
+    }
+  } catch (error) {
+    deviceData = {"Error": "Failed to get platform version."};
+  }
+
+  return deviceData;
+}
+
+Map<String, dynamic> _readAndroidDeviceInfo(AndroidDeviceInfo info) {
+  var release = info.version.release;
+  var sdkInt = info.version.sdkInt;
+  var manufacturer = info.manufacturer;
+  var model = info.model;
+
+  return {
+    "OS": "Android $release (SDK $sdkInt)",
+    "Device": "$manufacturer $model"
+  };
+}
+
+Map<String, dynamic> _readIosDeviceInfo(IosDeviceInfo info) {
+  var systemName = info.systemName;
+  var version = info.systemVersion;
+  var machine = info.utsname.machine;
+
+  return {"OS": "$systemName $version", "Device": machine};
 }

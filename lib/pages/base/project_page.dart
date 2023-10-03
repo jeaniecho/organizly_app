@@ -191,6 +191,7 @@ class ProjectPage extends StatelessWidget {
                     stream: projectBloc.pageIndex,
                     builder: (context, snapshot) {
                       int pageIndex = snapshot.data ?? 0;
+
                       return Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 20),
                         child: Column(

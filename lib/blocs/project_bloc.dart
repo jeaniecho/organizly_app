@@ -72,7 +72,9 @@ class ProjectBloc {
 
     if (updateStream) {
       _projects.add(projects);
-      _tasks.add(projects[_pageIndex.value].tasks);
+      if (projects.isNotEmpty) {
+        _tasks.add(projects[_pageIndex.value].tasks);
+      }
     }
     return projects;
   }
@@ -161,6 +163,7 @@ class ProjectBloc {
       if (_pageIndex.value >= projects.length - 1 && projects.length > 1) {
         movePage(projects.length - 2);
       }
+
       getProjects();
     });
   }
