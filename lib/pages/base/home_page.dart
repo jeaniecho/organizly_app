@@ -23,7 +23,6 @@ class HomePage extends StatelessWidget {
         children: [
           HomeNotes(),
           HomeProjects(),
-          SizedBox(height: 12),
           HomeTasks(),
         ],
       ),
@@ -137,44 +136,53 @@ class HomeProjects extends StatelessWidget {
 
               return SizedBox(
                 height: 124,
-                child: ListView.builder(
-                  shrinkWrap: true,
-                  scrollDirection: Axis.horizontal,
-                  padding: const EdgeInsets.symmetric(horizontal: 14),
-                  itemBuilder: (context, index) {
-                    ProjectVM project = projects[index];
-
-                    List<TaskVM> pendingTasks = project.tasks
-                        .where((element) => !element.completed)
-                        .toList();
-                    List<TaskVM> completedTasks = project.tasks
-                        .where((element) => element.completed)
-                        .toList();
-
-                    return GestureDetector(
-                      onTap: () {
-                        appBloc.setBottomIndex(2);
-                        projectBloc.setPageIndex(index);
-                        projectBloc.pageController.jumpToPage(index);
-                      },
-                      child: SizedBox(
-                        width: MediaQuery.sizeOf(context).width * 0.6,
-                        child: ProjectBox(
-                          project: project,
-                          isSelected: false,
-                          pendingTasks: pendingTasks.length,
-                          completedTasks: completedTasks.length,
-                          edit: (title) =>
-                              projectBloc.editProject(project, title),
-                          remove: () => projectBloc.removeProject(project),
+                child: projects.isEmpty
+                    ? const Center(
+                        child: Text(
+                          'No projects',
+                          style: TextStyle(color: Colors.grey),
                         ),
+                      )
+                    : ListView.builder(
+                        shrinkWrap: true,
+                        scrollDirection: Axis.horizontal,
+                        padding: const EdgeInsets.symmetric(horizontal: 14),
+                        itemBuilder: (context, index) {
+                          ProjectVM project = projects[index];
+
+                          List<TaskVM> pendingTasks = project.tasks
+                              .where((element) => !element.completed)
+                              .toList();
+                          List<TaskVM> completedTasks = project.tasks
+                              .where((element) => element.completed)
+                              .toList();
+
+                          return GestureDetector(
+                            onTap: () {
+                              appBloc.setBottomIndex(2);
+                              projectBloc.setPageIndex(index);
+                              projectBloc.pageController.jumpToPage(index);
+                            },
+                            child: SizedBox(
+                              width: MediaQuery.sizeOf(context).width * 0.6,
+                              child: ProjectBox(
+                                project: project,
+                                isSelected: false,
+                                pendingTasks: pendingTasks.length,
+                                completedTasks: completedTasks.length,
+                                edit: (title) =>
+                                    projectBloc.editProject(project, title),
+                                remove: () =>
+                                    projectBloc.removeProject(project),
+                              ),
+                            ),
+                          );
+                        },
+                        itemCount: projects.length,
                       ),
-                    );
-                  },
-                  itemCount: projects.length,
-                ),
               );
             }),
+        const SizedBox(height: 12),
       ],
     );
   }

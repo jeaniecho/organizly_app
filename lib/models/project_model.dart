@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:what_to_do/models/task_model.dart';
 
 class ProjectVM {
@@ -17,5 +19,13 @@ class ProjectVM {
       title: title ?? this.title,
       tasks: tasks ?? this.tasks,
     );
+  }
+
+  Map<String, dynamic> toMap() {
+    return {
+      'id': id,
+      'title': title,
+      'tasks': jsonEncode(tasks.map((e) => e.toMap()).toList()),
+    };
   }
 }
