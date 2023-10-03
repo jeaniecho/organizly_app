@@ -43,10 +43,6 @@ class TaskBloc {
   Future<List<TaskVM>> getTasks({bool updateStream = true}) async {
     final List<Map<String, dynamic>> data = await taskDB.query(dbName);
 
-    if (data.isEmpty) {
-      return [];
-    }
-
     List<TaskVM> tasks = List.generate(data.length, (i) {
       return TaskVM(
         id: data[i]['id'],

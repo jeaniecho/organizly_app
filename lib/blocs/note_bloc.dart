@@ -46,10 +46,6 @@ class NoteBloc {
   Future<List<NoteVM>> getNotes({bool updateStream = true}) async {
     final List<Map<String, dynamic>> data = await noteDB.query(dbName);
 
-    if (data.isEmpty) {
-      return [];
-    }
-
     List<NoteVM> notes = List.generate(data.length, (i) {
       return NoteVM(
         id: data[i]['id'],

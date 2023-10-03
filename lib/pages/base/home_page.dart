@@ -65,7 +65,7 @@ class HomeNotes extends StatelessWidget {
 
                 if (notes.isEmpty) {
                   return const Padding(
-                    padding: EdgeInsets.symmetric(vertical: 12),
+                    padding: EdgeInsets.symmetric(vertical: 24),
                     child: Center(
                       child: Text(
                         'No notes',
@@ -134,52 +134,57 @@ class HomeProjects extends StatelessWidget {
 
               List<ProjectVM> projects = snapshot.data!;
 
+              if (projects.isEmpty) {
+                return const Padding(
+                  padding: EdgeInsets.symmetric(vertical: 24),
+                  child: Center(
+                      child: Text(
+                    'No projects',
+                    style: TextStyle(
+                      color: Colors.grey,
+                    ),
+                  )),
+                );
+              }
+
               return SizedBox(
                 height: 124,
-                child: projects.isEmpty
-                    ? const Center(
-                        child: Text(
-                          'No projects',
-                          style: TextStyle(color: Colors.grey),
+                child: ListView.builder(
+                  shrinkWrap: true,
+                  scrollDirection: Axis.horizontal,
+                  padding: const EdgeInsets.symmetric(horizontal: 14),
+                  itemBuilder: (context, index) {
+                    ProjectVM project = projects[index];
+
+                    List<TaskVM> pendingTasks = project.tasks
+                        .where((element) => !element.completed)
+                        .toList();
+                    List<TaskVM> completedTasks = project.tasks
+                        .where((element) => element.completed)
+                        .toList();
+
+                    return GestureDetector(
+                      onTap: () {
+                        appBloc.setBottomIndex(2);
+                        projectBloc.setPageIndex(index);
+                        projectBloc.pageController.jumpToPage(index);
+                      },
+                      child: SizedBox(
+                        width: MediaQuery.sizeOf(context).width * 0.6,
+                        child: ProjectBox(
+                          project: project,
+                          isSelected: false,
+                          pendingTasks: pendingTasks.length,
+                          completedTasks: completedTasks.length,
+                          edit: (title) =>
+                              projectBloc.editProject(project, title),
+                          remove: () => projectBloc.removeProject(project),
                         ),
-                      )
-                    : ListView.builder(
-                        shrinkWrap: true,
-                        scrollDirection: Axis.horizontal,
-                        padding: const EdgeInsets.symmetric(horizontal: 14),
-                        itemBuilder: (context, index) {
-                          ProjectVM project = projects[index];
-
-                          List<TaskVM> pendingTasks = project.tasks
-                              .where((element) => !element.completed)
-                              .toList();
-                          List<TaskVM> completedTasks = project.tasks
-                              .where((element) => element.completed)
-                              .toList();
-
-                          return GestureDetector(
-                            onTap: () {
-                              appBloc.setBottomIndex(2);
-                              projectBloc.setPageIndex(index);
-                              projectBloc.pageController.jumpToPage(index);
-                            },
-                            child: SizedBox(
-                              width: MediaQuery.sizeOf(context).width * 0.6,
-                              child: ProjectBox(
-                                project: project,
-                                isSelected: false,
-                                pendingTasks: pendingTasks.length,
-                                completedTasks: completedTasks.length,
-                                edit: (title) =>
-                                    projectBloc.editProject(project, title),
-                                remove: () =>
-                                    projectBloc.removeProject(project),
-                              ),
-                            ),
-                          );
-                        },
-                        itemCount: projects.length,
                       ),
+                    );
+                  },
+                  itemCount: projects.length,
+                ),
               );
             }),
         const SizedBox(height: 12),
