@@ -45,7 +45,7 @@ class ProjectPage extends StatelessWidget {
                   child: PageView.builder(
                     controller: projectBloc.pageController,
                     onPageChanged: (value) {
-                      projectBloc.setPageIndex(value);
+                      projectBloc.movePage(value);
                     },
                     itemBuilder: (context, index) {
                       ProjectVM project = projects[index];
@@ -102,75 +102,84 @@ class PendingProjectTasks extends StatelessWidget {
   Widget build(BuildContext context) {
     ProjectBloc projectBloc = context.read<ProjectBloc>();
 
-    List<TaskVM> tasks =
-        project.tasks.where((element) => !element.completed).toList();
+    // List<TaskVM> tasks =
+    //     project.tasks.where((element) => !element.completed).toList();
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            const Text(
-              'Tasks',
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-            SizedBox(
-              height: 32,
-              child: ElevatedButton(
-                onPressed: () {
-                  FocusNode focusNode = FocusNode();
-                  projectBloc.addTask(
-                      project,
-                      TaskVM(
-                        id: DateTime.now().millisecondsSinceEpoch,
-                        completed: false,
-                        text: '',
-                        focusNode: focusNode,
-                      ));
-                  focusNode.requestFocus();
-                },
-                child: const Text('Add'),
-              ),
-            ),
-          ],
-        ),
-        const SizedBox(height: 12),
-        tasks.isEmpty
-            ? Padding(
-                padding: const EdgeInsets.symmetric(vertical: 24),
-                child: Center(
-                  child: Text(
-                    project.tasks.isEmpty ? 'Add tasks' : 'Completed all tasks',
-                    style: const TextStyle(color: Colors.grey),
+    return StreamBuilder<List<TaskVM>>(
+        stream: projectBloc.tasks,
+        builder: (context, snapshot) {
+          List<TaskVM> tasks = snapshot.data ?? [];
+
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Text(
+                    'Tasks',
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w500,
+                    ),
                   ),
-                ),
-              )
-            : ListView.separated(
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                itemBuilder: (context, index) {
-                  TaskVM task = tasks[index];
+                  SizedBox(
+                    height: 32,
+                    child: ElevatedButton(
+                      onPressed: () {
+                        FocusNode focusNode = FocusNode();
+                        projectBloc
+                            .addTask(
+                                project,
+                                TaskVM(
+                                  id: DateTime.now().millisecondsSinceEpoch,
+                                  completed: false,
+                                  text: '',
+                                  focusNode: focusNode,
+                                ))
+                            .then((value) => focusNode.requestFocus());
+                      },
+                      child: const Text('Add'),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 12),
+              tasks.isEmpty
+                  ? Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 24),
+                      child: Center(
+                        child: Text(
+                          project.tasks.isEmpty
+                              ? 'Add tasks'
+                              : 'Completed all tasks',
+                          style: const TextStyle(color: Colors.grey),
+                        ),
+                      ),
+                    )
+                  : ListView.separated(
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      itemBuilder: (context, index) {
+                        TaskVM task = tasks[index];
 
-                  return TaskBox(
-                    task: task,
-                    boxWidth: 100,
-                    toggle: () => projectBloc.toggleTask(project, task),
-                    submit: (String text) =>
-                        projectBloc.editTask(project, task, text),
-                    remove: () => projectBloc.removeTask(project, task),
-                  );
-                },
-                separatorBuilder: (context, index) {
-                  return const SizedBox(height: 12);
-                },
-                itemCount: tasks.length,
-              )
-      ],
-    );
+                        return TaskBox(
+                          task: task,
+                          boxWidth: 100,
+                          toggle: () => projectBloc.toggleTask(project, task),
+                          submit: (String text) =>
+                              projectBloc.editTask(project, task, text),
+                          remove: () => projectBloc.removeTask(project, task),
+                        );
+                      },
+                      separatorBuilder: (context, index) {
+                        return const SizedBox(height: 12);
+                      },
+                      itemCount: tasks.length,
+                    )
+            ],
+          );
+        });
   }
 }
 

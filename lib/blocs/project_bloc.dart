@@ -15,6 +15,9 @@ class ProjectBloc {
   final BehaviorSubject<List<ProjectVM>> _projects = BehaviorSubject.seeded([]);
   Stream<List<ProjectVM>> get projects => _projects.stream;
 
+  final BehaviorSubject<List<TaskVM>> _tasks = BehaviorSubject.seeded([]);
+  Stream<List<TaskVM>> get tasks => _tasks.stream;
+
   final BehaviorSubject<int> _pageIndex = BehaviorSubject.seeded(0);
   Stream<int> get pageIndex => _pageIndex.stream;
   Function get setPageIndex => _pageIndex.add;
@@ -69,6 +72,7 @@ class ProjectBloc {
 
     if (updateStream) {
       _projects.add(projects);
+      _tasks.add(projects[_pageIndex.value].tasks);
     }
     return projects;
   }
@@ -82,7 +86,7 @@ class ProjectBloc {
     );
 
     if (updateStream) {
-      getProjects();
+      await getProjects();
     }
   }
 
@@ -96,7 +100,7 @@ class ProjectBloc {
     );
 
     if (updateStream) {
-      getProjects();
+      await getProjects();
     }
   }
 
@@ -109,13 +113,14 @@ class ProjectBloc {
     );
 
     if (updateStream) {
-      getProjects();
+      await getProjects();
     }
   }
   // db end
 
   movePage(int index) {
     _pageIndex.add(index);
+    _tasks.add(_projects.value[_pageIndex.value].tasks);
     pageController.animateToPage(index,
         duration: const Duration(milliseconds: 250), curve: Curves.easeInOut);
   }
@@ -160,7 +165,7 @@ class ProjectBloc {
     });
   }
 
-  addTask(ProjectVM project, TaskVM task) {
+  addTask(ProjectVM project, TaskVM task) async {
     // List<ProjectVM> projects = _projects.value;
 
     // int index = projects.indexWhere((element) => element.id == project.id);
@@ -168,7 +173,11 @@ class ProjectBloc {
 
     // _projects.add(projects);
 
-    updateProject(project.copyWith(tasks: [task, ...project.tasks]));
+    List<TaskVM> tasks = _tasks.value;
+    tasks.insert(0, task);
+    _tasks.add(tasks);
+
+    // await updateProject(project.copyWith(tasks: [task, ...project.tasks]));
   }
 
   toggleTask(ProjectVM project, TaskVM task) {
@@ -191,12 +200,18 @@ class ProjectBloc {
     // int index = projects.indexWhere((element) => element.id == project.id);
     List<TaskVM> tasks = project.tasks;
 
-    if (text.isEmpty) {
-      tasks.removeWhere((element) => element.id == task.id);
+    if (tasks.where((element) => element.id == task.id).isEmpty &&
+        text.isNotEmpty) {
+      updateProject(project.copyWith(tasks: [task, ...project.tasks]));
     } else {
-      int index = tasks.indexWhere((element) => element.id == task.id);
-      tasks[index] = task.copyWith(text: text);
+      if (text.isEmpty) {
+        tasks.removeWhere((element) => element.id == task.id);
+      } else {
+        int index = tasks.indexWhere((element) => element.id == task.id);
+        tasks[index] = task.copyWith(text: text);
+      }
     }
+
     // projects[index] = project.copyWith(tasks: tasks);
 
     // _projects.add(projects);

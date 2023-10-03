@@ -23,6 +23,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
         useMaterial3: true,
+        fontFamily: 'NotoSansKR',
       ),
       home: MultiProvider(providers: [
         Provider(create: (context) => AppBloc()),

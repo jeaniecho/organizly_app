@@ -60,7 +60,7 @@ class BasePage extends StatelessWidget {
                                 .length;
 
                             return Text(
-                              pendingCount == 0
+                              pendingCount == 0 && tasks.isNotEmpty
                                   ? 'All tasks completed'
                                   : '$pendingCount task${pendingCount == 1 ? '' : 's'} pending',
                               style: const TextStyle(
