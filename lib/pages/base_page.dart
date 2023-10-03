@@ -23,6 +23,9 @@ class BasePage extends StatelessWidget {
 
     Color selectedColor = const Color(0xff242424);
     Color defaultColor = const Color(0xffcccccc);
+    Color primaryColor = const Color(0xff39A0FF);
+
+    final scaffoldKey = GlobalKey<ScaffoldState>();
 
     return StreamBuilder<int>(
         stream: appBloc.bottomIndex,
@@ -30,7 +33,61 @@ class BasePage extends StatelessWidget {
           int bottomIndex = snapshot.data ?? 0;
 
           return Scaffold(
+            key: scaffoldKey,
             backgroundColor: const Color(0xffFCFDFF),
+            // floatingActionButton: FloatingActionButton(
+            //   backgroundColor: const Color(0xffD8ECFF),
+            //   foregroundColor: const Color(0xff39A0FF),
+            //   elevation: 5,
+            //   mini: true,
+            //   child: const Icon(Icons.add),
+            //   onPressed: () {},
+            // ),
+            endDrawer: Drawer(
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(24)),
+              child: Column(
+                children: [
+                  const SizedBox(height: 64),
+                  Image.asset(
+                    'assets/app_icon_transparent.png',
+                    width: 120,
+                  ),
+                  Text(
+                    'Organizly',
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w400,
+                      color: selectedColor,
+                    ),
+                  ),
+                  Container(
+                    height: 1,
+                    width: 200,
+                    margin: const EdgeInsets.symmetric(vertical: 32),
+                    color: defaultColor,
+                  ),
+                  GestureDetector(
+                    onTap: () {},
+                    child: Text(
+                      'aaa',
+                      style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w500,
+                          color: selectedColor),
+                    ),
+                  ),
+                  const Spacer(),
+                  Align(
+                      alignment: Alignment.bottomRight,
+                      child: Padding(
+                        padding: EdgeInsets.only(right: 32),
+                        child: Text('v1.0'),
+                      )),
+                  const SizedBox(height: 64),
+                ],
+              ),
+            ),
             appBar: AppBar(
               automaticallyImplyLeading: false,
               scrolledUnderElevation: 0,
@@ -83,15 +140,16 @@ class BasePage extends StatelessWidget {
                 IconButton(
                     onPressed: () {
                       HapticFeedback.selectionClick();
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => const SettingsPage()));
+                      scaffoldKey.currentState?.openEndDrawer();
+                      // Navigator.push(
+                      //     context,
+                      //     MaterialPageRoute(
+                      //         builder: (context) => const SettingsPage()));
                     },
                     icon: Image.asset(
-                      'assets/icons/settings.png',
+                      'assets/icons/grid.png',
                       width: 24,
-                      color: selectedColor,
+                      color: primaryColor,
                     ))
               ],
             ),
