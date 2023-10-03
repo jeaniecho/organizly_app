@@ -21,7 +21,15 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Organizly',
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
+        colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xff39A0FF)),
+        appBarTheme: const AppBarTheme(
+          backgroundColor: Color(0xffFCFDFF),
+        ),
+        scaffoldBackgroundColor: const Color(0xffFCFDFF),
+        splashColor: Colors.transparent,
+        primaryColor: const Color(0xff39A0FF),
+        focusColor: const Color(0xff39A0FF),
+        highlightColor: Colors.transparent,
         useMaterial3: true,
         fontFamily: 'NotoSansKR',
       ),

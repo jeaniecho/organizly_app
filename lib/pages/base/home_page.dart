@@ -39,7 +39,7 @@ class HomeNotes extends StatelessWidget {
     AppBloc appBloc = context.read<AppBloc>();
 
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 12),
+      padding: const EdgeInsets.symmetric(vertical: 16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

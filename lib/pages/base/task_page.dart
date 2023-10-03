@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:what_to_do/blocs/task_bloc.dart';
 import 'package:what_to_do/models/task_model.dart';
@@ -34,12 +35,57 @@ class PendingTasks extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
-          'Tasks',
-          style: TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.w500,
-          ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            const Text(
+              'Tasks',
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+            SizedBox(
+              height: 32,
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  elevation: 0,
+                  splashFactory: InkRipple.splashFactory,
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  backgroundColor: const Color(0xffD8ECFF),
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8)),
+                ),
+                onPressed: () {
+                  HapticFeedback.selectionClick();
+                  FocusNode focusNode = FocusNode();
+                  taskBloc.addTask(TaskVM(
+                    id: DateTime.now().millisecondsSinceEpoch,
+                    completed: false,
+                    text: '',
+                    focusNode: focusNode,
+                  ));
+                  focusNode.requestFocus();
+                },
+                child: const Row(
+                  children: [
+                    Icon(
+                      Icons.add_box,
+                      size: 16,
+                      color: Color(0xff39A0FF),
+                    ),
+                    SizedBox(width: 4),
+                    Text(
+                      'Add Task',
+                      style: TextStyle(
+                          fontSize: 12, height: 1, color: Color(0xff39A0FF)),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
         ),
         const SizedBox(height: 12),
         StreamBuilder(
@@ -110,26 +156,52 @@ class CompletedTasks extends StatelessWidget {
           return Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Row(
+              const Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  const Text(
+                  Text(
                     'Completed',
                     style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.w500,
                     ),
                   ),
-                  if (tasks.isNotEmpty)
-                    SizedBox(
-                      height: 32,
-                      child: ElevatedButton(
-                        onPressed: () {
-                          taskBloc.clearCompletedTasks();
-                        },
-                        child: const Text('Clear'),
-                      ),
-                    ),
+                  // if (tasks.isNotEmpty)
+                  //   SizedBox(
+                  //     height: 32,
+                  //     child: ElevatedButton(
+                  //       style: ElevatedButton.styleFrom(
+                  //         elevation: 0,
+                  //         splashFactory: InkRipple.splashFactory,
+                  //         padding: const EdgeInsets.symmetric(
+                  //             horizontal: 12, vertical: 6),
+                  //         backgroundColor: const Color(0xffD8ECFF),
+                  //         shape: RoundedRectangleBorder(
+                  //             borderRadius: BorderRadius.circular(8)),
+                  //       ),
+                  //       onPressed: () {
+                  //         HapticFeedback.selectionClick();
+                  //         taskBloc.clearCompletedTasks();
+                  //       },
+                  //       child: const Row(
+                  //         children: [
+                  //           Icon(
+                  //             Icons.remove_circle,
+                  //             size: 16,
+                  //             color: Color(0xff39A0FF),
+                  //           ),
+                  //           SizedBox(width: 4),
+                  //           Text(
+                  //             'Clear',
+                  //             style: TextStyle(
+                  //                 fontSize: 12,
+                  //                 height: 1,
+                  //                 color: Color(0xff39A0FF)),
+                  //           ),
+                  //         ],
+                  //       ),
+                  //     ),
+                  //   ),
                 ],
               ),
               const SizedBox(height: 12),
@@ -138,7 +210,7 @@ class CompletedTasks extends StatelessWidget {
                       padding: EdgeInsets.symmetric(vertical: 12),
                       child: Center(
                         child: Text(
-                          'No completed tasks',
+                          'Complete tasks',
                           style: TextStyle(color: Colors.grey),
                         ),
                       ),

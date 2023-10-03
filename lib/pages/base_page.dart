@@ -21,12 +21,16 @@ class BasePage extends StatelessWidget {
     ProjectBloc projectBloc = context.read<ProjectBloc>();
     NoteBloc noteBloc = context.read<NoteBloc>();
 
+    Color selectedColor = const Color(0xff242424);
+    Color defaultColor = const Color(0xffcccccc);
+
     return StreamBuilder<int>(
         stream: appBloc.bottomIndex,
         builder: (context, snapshot) {
           int bottomIndex = snapshot.data ?? 0;
 
           return Scaffold(
+            backgroundColor: const Color(0xffFCFDFF),
             appBar: AppBar(
               automaticallyImplyLeading: false,
               scrolledUnderElevation: 0,
@@ -79,71 +83,15 @@ class BasePage extends StatelessWidget {
                 IconButton(
                     onPressed: () {
                       HapticFeedback.selectionClick();
-                      if (bottomIndex == 0) {
-                        // settings page
-                      } else if (bottomIndex == 1) {
-                        FocusNode focusNode = FocusNode();
-                        taskBloc.addTask(TaskVM(
-                          id: DateTime.now().millisecondsSinceEpoch,
-                          completed: false,
-                          text: '',
-                          focusNode: focusNode,
-                        ));
-                        focusNode.requestFocus();
-                      } else if (bottomIndex == 2) {
-                        TextEditingController projectController =
-                            TextEditingController();
-
-                        showDialog(
-                            context: context,
-                            builder: (context) {
-                              return SimpleDialog(
-                                contentPadding: const EdgeInsets.all(24),
-                                children: [
-                                  const Text('Add Project'),
-                                  const SizedBox(height: 6),
-                                  TextField(
-                                    controller: projectController,
-                                    autofocus: true,
-                                    decoration: const InputDecoration(
-                                      hintText: 'Project Name',
-                                    ),
-                                  ),
-                                  const SizedBox(height: 12),
-                                  ElevatedButton(
-                                    onPressed: () {
-                                      projectBloc.addProject(ProjectVM(
-                                        id: DateTime.now()
-                                            .millisecondsSinceEpoch,
-                                        title: projectController.text,
-                                        tasks: [],
-                                      ));
-                                      Navigator.pop(context);
-                                    },
-                                    child: const Text('Add'),
-                                  ),
-                                ],
-                              );
-                            });
-                      } else if (bottomIndex == 3) {
-                        DateTime now = DateTime.now();
-                        FocusNode focusNode = FocusNode();
-                        noteBloc.addNote(NoteVM(
-                          id: now.millisecondsSinceEpoch,
-                          pinned: false,
-                          text: '',
-                          dateTime: now,
-                          focusNode: focusNode,
-                        ));
-                        focusNode.requestFocus();
-                      }
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => const SettingsPage()));
                     },
-                    icon: Icon(
-                      bottomIndex == 0
-                          ? Icons.settings_outlined
-                          : Icons.add_box,
-                      size: bottomIndex == 0 ? 24 : 32,
-                      color: bottomIndex == 0 ? null : Colors.blue,
+                    icon: Image.asset(
+                      'assets/icons/settings.png',
+                      width: 24,
+                      color: selectedColor,
                     ))
               ],
             ),
@@ -173,27 +121,88 @@ class BasePage extends StatelessWidget {
                 ),
               ],
             ),
-            bottomNavigationBar: BottomNavigationBar(
-              currentIndex: bottomIndex,
-              onTap: (int index) {
-                HapticFeedback.selectionClick();
-                appBloc.setBottomIndex(index);
-              },
-              selectedItemColor: Colors.blue,
-              unselectedItemColor: Colors.grey,
-              selectedFontSize: 12,
-              unselectedFontSize: 12,
-              showUnselectedLabels: true,
-              enableFeedback: true,
-              elevation: 10,
-              type: BottomNavigationBarType.fixed,
-              items: const [
-                BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
-                BottomNavigationBarItem(icon: Icon(Icons.task), label: 'Tasks'),
-                BottomNavigationBarItem(
-                    icon: Icon(Icons.rocket_launch), label: 'Projects'),
-                BottomNavigationBarItem(icon: Icon(Icons.note), label: 'Notes'),
-              ],
+            bottomNavigationBar: Container(
+              decoration: BoxDecoration(
+                borderRadius: const BorderRadius.only(
+                    topRight: Radius.circular(24),
+                    topLeft: Radius.circular(24)),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.grey.withOpacity(0.25),
+                    blurRadius: 8,
+                    spreadRadius: 0,
+                    offset: const Offset(0, -6),
+                  ),
+                ],
+              ),
+              child: Material(
+                elevation: 0,
+                color: const Color(0xffFCFDFF),
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(24)),
+                child: Padding(
+                  padding: const EdgeInsets.only(top: 4),
+                  child: BottomNavigationBar(
+                    backgroundColor: Colors.transparent,
+                    currentIndex: bottomIndex,
+                    onTap: (int index) {
+                      HapticFeedback.selectionClick();
+                      appBloc.setBottomIndex(index);
+                    },
+                    selectedItemColor: selectedColor,
+                    unselectedItemColor: defaultColor,
+                    selectedFontSize: 12,
+                    unselectedFontSize: 12,
+                    showUnselectedLabels: true,
+                    enableFeedback: true,
+                    elevation: 0,
+                    selectedLabelStyle: const TextStyle(
+                      fontSize: 10,
+                      fontWeight: FontWeight.w500,
+                    ),
+                    unselectedLabelStyle: const TextStyle(
+                      fontSize: 10,
+                      fontWeight: FontWeight.w500,
+                    ),
+                    type: BottomNavigationBarType.fixed,
+                    items: [
+                      BottomNavigationBarItem(
+                        icon: Image.asset(
+                          'assets/icons/home.png',
+                          width: 24,
+                          color:
+                              bottomIndex == 0 ? selectedColor : defaultColor,
+                        ),
+                        label: 'Home',
+                      ),
+                      BottomNavigationBarItem(
+                          icon: Image.asset(
+                            'assets/icons/tasks.png',
+                            width: 24,
+                            color:
+                                bottomIndex == 1 ? selectedColor : defaultColor,
+                          ),
+                          label: 'Tasks'),
+                      BottomNavigationBarItem(
+                          icon: Image.asset(
+                            'assets/icons/projects.png',
+                            width: 24,
+                            color:
+                                bottomIndex == 2 ? selectedColor : defaultColor,
+                          ),
+                          label: 'Projects'),
+                      BottomNavigationBarItem(
+                          icon: Image.asset(
+                            'assets/icons/notes.png',
+                            width: 24,
+                            color:
+                                bottomIndex == 3 ? selectedColor : defaultColor,
+                          ),
+                          label: 'Notes'),
+                    ],
+                  ),
+                ),
+              ),
             ),
           );
         });

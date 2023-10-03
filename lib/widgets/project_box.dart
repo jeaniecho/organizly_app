@@ -21,7 +21,8 @@ class ProjectBox extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AnimatedContainer(
-      duration: const Duration(milliseconds: 250),
+      duration: const Duration(milliseconds: 300),
+      curve: Curves.easeInOut,
       margin: const EdgeInsets.symmetric(vertical: 12, horizontal: 6),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(

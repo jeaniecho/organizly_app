@@ -14,6 +14,41 @@ class ProjectPage extends StatelessWidget {
   Widget build(BuildContext context) {
     ProjectBloc projectBloc = context.read<ProjectBloc>();
 
+    addProject() {
+      TextEditingController projectController = TextEditingController();
+
+      showDialog(
+          context: context,
+          builder: (context) {
+            return SimpleDialog(
+              contentPadding: const EdgeInsets.all(24),
+              children: [
+                const Text('Add Project'),
+                const SizedBox(height: 6),
+                TextField(
+                  controller: projectController,
+                  autofocus: true,
+                  decoration: const InputDecoration(
+                    hintText: 'Project Name',
+                  ),
+                ),
+                const SizedBox(height: 12),
+                ElevatedButton(
+                  onPressed: () {
+                    projectBloc.addProject(ProjectVM(
+                      id: DateTime.now().millisecondsSinceEpoch,
+                      title: projectController.text,
+                      tasks: [],
+                    ));
+                    Navigator.pop(context);
+                  },
+                  child: const Text('Add'),
+                ),
+              ],
+            );
+          });
+    }
+
     return StreamBuilder<List>(
         stream:
             Rx.combineLatestList([projectBloc.projects, projectBloc.pageIndex]),
@@ -27,12 +62,49 @@ class ProjectPage extends StatelessWidget {
           int pageIndex = snapshot.data![1] ?? 0;
 
           if (projects.isEmpty) {
-            return const Center(
-              child: Text(
-                'Add projects',
-                style: TextStyle(color: Colors.grey),
+            return Center(
+              child: SizedBox(
+                width: 140,
+                height: 40,
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    elevation: 0,
+                    splashFactory: InkRipple.splashFactory,
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                    backgroundColor: const Color(0xffD8ECFF),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8)),
+                  ),
+                  onPressed: () {
+                    addProject();
+                  },
+                  child: const Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(
+                        Icons.add_box,
+                        size: 18,
+                        color: Color(0xff39A0FF),
+                      ),
+                      SizedBox(width: 4),
+                      Text(
+                        'Add Project',
+                        style: TextStyle(
+                            fontSize: 14, height: 1, color: Color(0xff39A0FF)),
+                      ),
+                    ],
+                  ),
+                ),
               ),
             );
+
+            // return const Center(
+            //   child: Text(
+            //     'Add projects',
+            //     style: TextStyle(color: Colors.grey),
+            //   ),
+            // );
           }
 
           return SingleChildScrollView(
@@ -40,6 +112,49 @@ class ProjectPage extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                const SizedBox(height: 12),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      SizedBox(
+                        height: 32,
+                        child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            elevation: 0,
+                            splashFactory: InkRipple.splashFactory,
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 12, vertical: 6),
+                            backgroundColor: const Color(0xffD8ECFF),
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8)),
+                          ),
+                          onPressed: () {
+                            addProject();
+                          },
+                          child: const Row(
+                            children: [
+                              Icon(
+                                Icons.add_box,
+                                size: 16,
+                                color: Color(0xff39A0FF),
+                              ),
+                              SizedBox(width: 4),
+                              Text(
+                                'Add Project',
+                                style: TextStyle(
+                                    fontSize: 12,
+                                    height: 1,
+                                    color: Color(0xff39A0FF)),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
                 SizedBox(
                   height: 124,
                   child: PageView.builder(
@@ -126,6 +241,15 @@ class PendingProjectTasks extends StatelessWidget {
                   SizedBox(
                     height: 32,
                     child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        elevation: 0,
+                        splashFactory: InkRipple.splashFactory,
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 12, vertical: 6),
+                        backgroundColor: const Color(0xffD8ECFF),
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8)),
+                      ),
                       onPressed: () {
                         FocusNode focusNode = FocusNode();
                         projectBloc
@@ -139,7 +263,23 @@ class PendingProjectTasks extends StatelessWidget {
                                 ))
                             .then((value) => focusNode.requestFocus());
                       },
-                      child: const Text('Add'),
+                      child: const Row(
+                        children: [
+                          Icon(
+                            Icons.add_box,
+                            size: 16,
+                            color: Color(0xff39A0FF),
+                          ),
+                          SizedBox(width: 4),
+                          Text(
+                            'Add Task',
+                            style: TextStyle(
+                                fontSize: 12,
+                                height: 1,
+                                color: Color(0xff39A0FF)),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ],

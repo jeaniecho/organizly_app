@@ -21,15 +21,61 @@ class NotePage extends StatelessWidget {
           List<NoteVM> notes = snapshot.data!;
 
           if (notes.isEmpty) {
-            return const Padding(
-              padding: EdgeInsets.symmetric(vertical: 12),
-              child: Center(
-                child: Text(
-                  'No notes',
-                  style: TextStyle(color: Colors.grey),
+            return Center(
+              child: SizedBox(
+                width: 120,
+                height: 40,
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    elevation: 0,
+                    splashFactory: InkRipple.splashFactory,
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                    backgroundColor: const Color(0xffD8ECFF),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8)),
+                  ),
+                  onPressed: () {
+                    DateTime now = DateTime.now();
+                    FocusNode focusNode = FocusNode();
+                    noteBloc.addNote(NoteVM(
+                      id: now.millisecondsSinceEpoch,
+                      pinned: false,
+                      text: '',
+                      dateTime: now,
+                      focusNode: focusNode,
+                    ));
+                    focusNode.requestFocus();
+                  },
+                  child: const Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(
+                        Icons.add_box,
+                        size: 18,
+                        color: Color(0xff39A0FF),
+                      ),
+                      SizedBox(width: 4),
+                      Text(
+                        'Add Note',
+                        style: TextStyle(
+                            fontSize: 14, height: 1, color: Color(0xff39A0FF)),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             );
+
+            // return const Padding(
+            //   padding: EdgeInsets.symmetric(vertical: 12),
+            //   child: Center(
+            //     child: Text(
+            //       'No notes',
+            //       style: TextStyle(color: Colors.grey),
+            //     ),
+            //   ),
+            // );
           }
 
           List<NoteVM> pinnedNotes =
@@ -39,24 +85,82 @@ class NotePage extends StatelessWidget {
 
           notes = pinnedNotes + justNotes;
 
-          return ListView.separated(
-            shrinkWrap: true,
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
-            itemBuilder: (context, index) {
-              NoteVM note = notes[index];
+          return SingleChildScrollView(
+            padding: const EdgeInsets.symmetric(horizontal: 20)
+                .copyWith(bottom: 24, top: 12),
+            child: Column(
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    SizedBox(
+                      height: 32,
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          elevation: 0,
+                          splashFactory: InkRipple.splashFactory,
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 12, vertical: 6),
+                          backgroundColor: const Color(0xffD8ECFF),
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8)),
+                        ),
+                        onPressed: () {
+                          DateTime now = DateTime.now();
+                          FocusNode focusNode = FocusNode();
+                          noteBloc.addNote(NoteVM(
+                            id: now.millisecondsSinceEpoch,
+                            pinned: false,
+                            text: '',
+                            dateTime: now,
+                            focusNode: focusNode,
+                          ));
+                          focusNode.requestFocus();
+                        },
+                        child: const Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(
+                              Icons.add_box,
+                              size: 16,
+                              color: Color(0xff39A0FF),
+                            ),
+                            SizedBox(width: 4),
+                            Text(
+                              'Add Note',
+                              style: TextStyle(
+                                  fontSize: 12,
+                                  height: 1,
+                                  color: Color(0xff39A0FF)),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 12),
+                ListView.separated(
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  itemBuilder: (context, index) {
+                    NoteVM note = notes[index];
 
-              return NoteBox(
-                note: note,
-                boxWidth: 100,
-                pin: () => noteBloc.pinNote(note),
-                submit: (String text) => noteBloc.editNote(note, text),
-                remove: () => noteBloc.removeNote(note),
-              );
-            },
-            separatorBuilder: (context, index) {
-              return const SizedBox(height: 12);
-            },
-            itemCount: notes.length,
+                    return NoteBox(
+                      note: note,
+                      boxWidth: 100,
+                      pin: () => noteBloc.pinNote(note),
+                      submit: (String text) => noteBloc.editNote(note, text),
+                      remove: () => noteBloc.removeNote(note),
+                    );
+                  },
+                  separatorBuilder: (context, index) {
+                    return const SizedBox(height: 12);
+                  },
+                  itemCount: notes.length,
+                ),
+              ],
+            ),
           );
         });
   }
