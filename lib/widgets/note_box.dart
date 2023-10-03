@@ -85,7 +85,7 @@ class NoteBox extends StatelessWidget {
               onTapOutside: (event) {
                 if (focusNode.hasPrimaryFocus) {
                   submit(textController.text);
-                  FocusScope.of(context).unfocus();
+                  focusNode.unfocus();
                 }
               },
               decoration: const InputDecoration(
