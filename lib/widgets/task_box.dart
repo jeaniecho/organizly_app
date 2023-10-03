@@ -33,7 +33,7 @@ class TaskBox extends StatelessWidget {
       },
       child: Container(
         width: boxWidth,
-        padding: const EdgeInsets.all(12),
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(12),
@@ -73,34 +73,38 @@ class TaskBox extends StatelessWidget {
                   ),
                   const SizedBox(width: 8),
                   Expanded(
-                    child: TextField(
-                      focusNode: focusNode,
-                      controller: textController,
-                      enabled: !task.completed,
-                      style: TextStyle(
-                        color: task.completed ? completedColor : Colors.black,
-                        fontSize: 12,
-                        height: 1.5,
-                        leadingDistribution: TextLeadingDistribution.even,
-                        decoration:
-                            task.completed ? TextDecoration.lineThrough : null,
-                        decorationColor: completedColor,
-                      ),
-                      minLines: 1,
-                      maxLines: 5,
-                      keyboardType: TextInputType.text,
-                      onSubmitted: submit,
-                      onTapOutside: (event) {
-                        if (focusNode.hasPrimaryFocus) {
-                          submit(textController.text);
-                          focusNode.unfocus();
-                        }
-                      },
-                      decoration: const InputDecoration(
-                        border: InputBorder.none,
-                        isCollapsed: true,
-                        isDense: true,
-                        contentPadding: EdgeInsets.only(top: -4),
+                    child: Padding(
+                      padding: const EdgeInsets.only(bottom: 5),
+                      child: TextField(
+                        focusNode: focusNode,
+                        controller: textController,
+                        enabled: !task.completed,
+                        style: TextStyle(
+                          color: task.completed ? completedColor : Colors.black,
+                          fontSize: 12,
+                          height: 1.5,
+                          leadingDistribution: TextLeadingDistribution.even,
+                          decoration: task.completed
+                              ? TextDecoration.lineThrough
+                              : null,
+                          decorationColor: completedColor,
+                        ),
+                        minLines: 1,
+                        maxLines: 5,
+                        keyboardType: TextInputType.text,
+                        onSubmitted: submit,
+                        onTapOutside: (event) {
+                          if (focusNode.hasPrimaryFocus) {
+                            submit(textController.text);
+                            focusNode.unfocus();
+                          }
+                        },
+                        decoration: const InputDecoration(
+                          border: InputBorder.none,
+                          isCollapsed: true,
+                          isDense: true,
+                          // contentPadding: EdgeInsets.only(top: -4),
+                        ),
                       ),
                     ),
                   ),
