@@ -7,12 +7,14 @@ class TaskBox extends StatelessWidget {
   final Function() toggle;
   final Function(String text) submit;
   final Function() remove;
+  final bool? reordering;
   const TaskBox(
       {required this.task,
       required this.boxWidth,
       required this.submit,
       required this.toggle,
       required this.remove,
+      this.reordering,
       super.key});
 
   @override
@@ -39,7 +41,9 @@ class TaskBox extends StatelessWidget {
           borderRadius: BorderRadius.circular(12),
           boxShadow: [
             BoxShadow(
-              color: Colors.grey.withOpacity(0.25),
+              color: reordering == true
+                  ? const Color(0xff39A0FF).withOpacity(0.5)
+                  : Colors.grey.withOpacity(0.25),
               blurRadius: 8,
               spreadRadius: 2,
               offset: const Offset(0, 0),
@@ -108,6 +112,15 @@ class TaskBox extends StatelessWidget {
                       ),
                     ),
                   ),
+                  if (!task.completed)
+                    Padding(
+                      padding: const EdgeInsets.only(left: 4),
+                      child: Image.asset(
+                        'assets/icons/menu_filled.png',
+                        width: 18,
+                        color: Colors.grey,
+                      ),
+                    ),
                 ],
               ),
             ),

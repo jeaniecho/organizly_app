@@ -25,12 +25,27 @@ class ProjectPage extends StatelessWidget {
               elevation: 0,
               contentPadding: const EdgeInsets.all(24),
               children: [
-                const Text(
-                  'Add Project',
-                  style: TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w500,
-                      color: Color(0xff424242)),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    const Text(
+                      'Add Project',
+                      style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w500,
+                          color: Color(0xff424242)),
+                    ),
+                    GestureDetector(
+                      onTap: () {
+                        Navigator.pop(context);
+                      },
+                      child: const Icon(
+                        Icons.close,
+                        size: 20,
+                        color: Color(0xff424242),
+                      ),
+                    ),
+                  ],
                 ),
                 const SizedBox(height: 6),
                 TextField(

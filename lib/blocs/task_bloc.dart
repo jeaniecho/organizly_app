@@ -11,6 +11,10 @@ class TaskBloc {
   final BehaviorSubject<List<TaskVM>> _tasks = BehaviorSubject.seeded([]);
   Stream<List<TaskVM>> get tasks => _tasks.stream;
 
+  final BehaviorSubject<int?> _reordering = BehaviorSubject.seeded(null);
+  Stream<int?> get reordering => _reordering.stream;
+  Function get setReordering => _reordering.add;
+
   TaskBloc() {
     initDB().then((value) {
       taskDB = value;
@@ -155,6 +159,29 @@ class TaskBloc {
     for (TaskVM task in tasks) {
       deleteTask(task, updateStream: false);
     }
+    getTasks();
+  }
+
+  reorderTask(TaskVM a, TaskVM b, int oldIndex, int newIndex) async {
+    List<TaskVM> tasks = _tasks.value;
+    tasks[oldIndex] = b;
+    tasks[newIndex] = a;
+    _tasks.add(tasks);
+
+    await taskDB.update(
+      dbName,
+      a.copyWith(id: b.id).toMap(),
+      where: 'id = ?',
+      whereArgs: [b.id],
+    );
+
+    await taskDB.update(
+      dbName,
+      b.copyWith(id: a.id).toMap(),
+      where: 'id = ?',
+      whereArgs: [a.id],
+    );
+
     getTasks();
   }
 }

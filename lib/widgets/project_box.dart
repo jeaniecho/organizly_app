@@ -67,6 +67,30 @@ class ProjectBox extends StatelessWidget {
                             elevation: 0,
                             contentPadding: const EdgeInsets.all(24),
                             children: [
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    project.title,
+                                    style: const TextStyle(
+                                        color: Color(0xff424242),
+                                        fontWeight: FontWeight.w500,
+                                        fontSize: 16),
+                                  ),
+                                  GestureDetector(
+                                    onTap: () {
+                                      Navigator.pop(context);
+                                    },
+                                    child: const Icon(
+                                      Icons.close,
+                                      size: 20,
+                                      color: Color(0xff424242),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(height: 20),
                               ElevatedButton(
                                 onPressed: () {
                                   Navigator.pop(context);

@@ -17,7 +17,7 @@ class TaskPage extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           PendingTasks(),
-          SizedBox(height: 24),
+          SizedBox(height: 18),
           CompletedTasks(),
         ],
       ),
@@ -78,7 +78,7 @@ class PendingTasks extends StatelessWidget {
             ),
           ],
         ),
-        const SizedBox(height: 12),
+        const SizedBox(height: 6),
         StreamBuilder(
             stream: taskBloc.tasks,
             builder: (context, snapshot) {
@@ -102,22 +102,47 @@ class PendingTasks extends StatelessWidget {
                 );
               }
 
-              return ListView.separated(
+              return ReorderableListView.builder(
                 shrinkWrap: true,
                 physics: const NeverScrollableScrollPhysics(),
+                proxyDecorator: proxyDecorator,
+                onReorderStart: (index) {
+                  HapticFeedback.mediumImpact();
+                  taskBloc.setReordering(index);
+                },
+                onReorderEnd: (index) {
+                  HapticFeedback.lightImpact();
+                  taskBloc.setReordering(null);
+                },
+                onReorder: (oldIndex, newIndex) {
+                  if (newIndex > tasks.length) newIndex = tasks.length;
+                  if (oldIndex < newIndex) newIndex--;
+
+                  taskBloc.reorderTask(
+                      tasks[oldIndex], tasks[newIndex], oldIndex, newIndex);
+                },
                 itemBuilder: (context, index) {
                   TaskVM task = tasks[index];
 
-                  return TaskBox(
-                    task: task,
-                    boxWidth: 100,
-                    toggle: () => taskBloc.toggleTask(task),
-                    submit: (String text) => taskBloc.editTask(task, text),
-                    remove: () => taskBloc.removeTask(task),
+                  return Padding(
+                    key: Key('task_page${task.id}'),
+                    padding: const EdgeInsets.symmetric(vertical: 6),
+                    child: StreamBuilder<int?>(
+                        stream: taskBloc.reordering,
+                        builder: (context, snapshot) {
+                          bool isReordering = snapshot.data == index;
+
+                          return TaskBox(
+                            task: task,
+                            boxWidth: 100,
+                            toggle: () => taskBloc.toggleTask(task),
+                            submit: (String text) =>
+                                taskBloc.editTask(task, text),
+                            remove: () => taskBloc.removeTask(task),
+                            reordering: isReordering,
+                          );
+                        }),
                   );
-                },
-                separatorBuilder: (context, index) {
-                  return const SizedBox(height: 12);
                 },
                 itemCount: tasks.length,
               );
@@ -221,4 +246,18 @@ class CompletedTasks extends StatelessWidget {
           );
         });
   }
+}
+
+Widget proxyDecorator(Widget child, int index, Animation<double> animation) {
+  return AnimatedBuilder(
+    animation: animation,
+    builder: (BuildContext context, Widget? child) {
+      return Material(
+        elevation: 0,
+        color: Colors.transparent,
+        child: child,
+      );
+    },
+    child: child,
+  );
 }
