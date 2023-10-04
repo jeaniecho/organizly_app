@@ -164,7 +164,7 @@ class TaskBloc {
 
   reorderTask(TaskVM task, int oldIndex, int newIndex) async {
     List<TaskVM> tasks = _tasks.value;
-    int newId = tasks[newIndex].id + 1;
+    int newId = tasks[newIndex].id;
 
     tasks.removeAt(oldIndex);
     if (newIndex >= tasks.length) {
@@ -174,13 +174,32 @@ class TaskBloc {
     }
     _tasks.add(tasks);
 
-    await taskDB.update(
-      dbName,
-      task.copyWith(id: newId).toMap(),
-      where: 'id = ?',
-      whereArgs: [task.id],
-    );
+    int id_1;
+    int id_2;
+    if (oldIndex < newIndex) {
+      id_1 = newId - 1;
+      id_2 = newId + 1;
+    } else {
+      id_1 = newId + 1;
+      id_2 = newId - 1;
+    }
 
-    getTasks();
+    try {
+      await taskDB.update(
+        dbName,
+        tasks[newIndex].copyWith(id: id_1).toMap(),
+        where: 'id = ?',
+        whereArgs: [newId],
+      );
+
+      await taskDB.update(
+        dbName,
+        task.copyWith(id: id_2).toMap(),
+        where: 'id = ?',
+        whereArgs: [task.id],
+      );
+
+      getTasks();
+    } catch (e) {}
   }
 }

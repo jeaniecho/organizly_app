@@ -22,7 +22,8 @@ class TaskBox extends StatelessWidget {
     Color completedColor = const Color(0xFFCDCDCD);
 
     TextEditingController textController =
-        TextEditingController(text: task.text);
+        // TextEditingController(text: task.text);
+        TextEditingController(text: task.id.toString());
     textController.selection =
         TextSelection.collapsed(offset: textController.text.length);
 
