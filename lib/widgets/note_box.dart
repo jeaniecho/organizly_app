@@ -54,21 +54,26 @@ class NoteBox extends StatelessWidget {
                 if (!note.pinned)
                   GestureDetector(
                     onTap: remove,
-                    child: Icon(
-                      Icons.remove_circle_outline,
-                      size: 16,
+                    child: Image.asset(
+                      'assets/icons/delete.png',
+                      width: 16,
                       color: iconColor,
                     ),
                   ),
                 const SizedBox(width: 8),
                 GestureDetector(
-                  onTap: pin,
-                  child: Icon(
-                    note.pinned ? Icons.push_pin : Icons.push_pin_outlined,
-                    size: 16,
-                    color: note.pinned ? Colors.blue : iconColor,
-                  ),
-                ),
+                    onTap: pin,
+                    child: note.pinned
+                        ? Image.asset(
+                            'assets/icons/pin_filled.png',
+                            width: 16,
+                            color: const Color(0xff39A0FF),
+                          )
+                        : Image.asset(
+                            'assets/icons/pin.png',
+                            width: 16,
+                            color: iconColor,
+                          )),
               ],
             ),
             const SizedBox(height: 4),

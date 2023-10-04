@@ -39,7 +39,7 @@ class PendingTasks extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             const Text(
-              'Tasks',
+              'Todo',
               style: TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.w500,

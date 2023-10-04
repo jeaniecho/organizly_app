@@ -226,6 +226,8 @@ class PendingProjectTasks extends StatelessWidget {
         builder: (context, snapshot) {
           List<TaskVM> tasks = snapshot.data ?? [];
 
+          tasks = tasks.where((element) => !element.completed).toList();
+
           return Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [

@@ -207,7 +207,7 @@ class HomeTasks extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const Text(
-            'Tasks',
+            'Todo',
             style: TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.w500,

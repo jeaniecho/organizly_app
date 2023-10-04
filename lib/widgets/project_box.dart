@@ -109,10 +109,10 @@ class ProjectBox extends StatelessWidget {
                           );
                         });
                   },
-                  child: const Icon(
-                    Icons.more,
+                  child: Image.asset(
+                    'assets/icons/edit.png',
+                    width: 18,
                     color: Colors.white,
-                    size: 18,
                   ),
                 ),
             ],

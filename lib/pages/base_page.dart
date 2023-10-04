@@ -188,7 +188,7 @@ class BasePage extends StatelessWidget {
                             GestureDetector(
                               onTap: () {},
                               child: Text(
-                                'Open Source Licenses',
+                                'Share Organizly',
                                 style: TextStyle(
                                     fontSize: 14,
                                     fontWeight: FontWeight.w500,
@@ -415,14 +415,14 @@ void _sendEmail() async {
 
 Future<String> _getEmailBody() async {
   String appInfo = await PackageInfo.fromPlatform()
-      .then((value) => '${value.buildNumber} (${value.version})');
+      .then((value) => '${value.version} (${value.buildNumber})');
   Map<String, dynamic> deviceInfo = await _getDeviceInfo();
 
   String body = '';
 
   body += "\n\n\n\n---------------\n";
-  body += "앱 정보\n";
-  body += "버전: $appInfo\n";
+  body += "App Information\n";
+  body += "Version: $appInfo\n";
   deviceInfo.forEach((key, value) {
     body += "$key: $value\n";
   });
