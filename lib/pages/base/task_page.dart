@@ -118,8 +118,7 @@ class PendingTasks extends StatelessWidget {
                   if (newIndex > tasks.length) newIndex = tasks.length;
                   if (oldIndex < newIndex) newIndex--;
 
-                  taskBloc.reorderTask(
-                      tasks[oldIndex], tasks[newIndex], oldIndex, newIndex);
+                  taskBloc.reorderTask(tasks[oldIndex], oldIndex, newIndex);
                 },
                 itemBuilder: (context, index) {
                   TaskVM task = tasks[index];
