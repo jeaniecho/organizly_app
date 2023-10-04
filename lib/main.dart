@@ -30,6 +30,16 @@ class MyApp extends StatelessWidget {
         primaryColor: const Color(0xff39A0FF),
         focusColor: const Color(0xff39A0FF),
         highlightColor: Colors.transparent,
+        elevatedButtonTheme: ElevatedButtonThemeData(
+          style: ElevatedButton.styleFrom(
+            elevation: 0,
+            splashFactory: InkRipple.splashFactory,
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+            backgroundColor: const Color(0xffD8ECFF),
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+          ),
+        ),
         useMaterial3: true,
         fontFamily: 'NotoSansKR',
       ),

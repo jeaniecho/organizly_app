@@ -26,15 +26,6 @@ class NotePage extends StatelessWidget {
                 width: 120,
                 height: 40,
                 child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    elevation: 0,
-                    splashFactory: InkRipple.splashFactory,
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                    backgroundColor: const Color(0xffD8ECFF),
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8)),
-                  ),
                   onPressed: () {
                     DateTime now = DateTime.now();
                     FocusNode focusNode = FocusNode();
@@ -96,15 +87,6 @@ class NotePage extends StatelessWidget {
                     SizedBox(
                       height: 32,
                       child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          elevation: 0,
-                          splashFactory: InkRipple.splashFactory,
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 12, vertical: 6),
-                          backgroundColor: const Color(0xffD8ECFF),
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8)),
-                        ),
                         onPressed: () {
                           DateTime now = DateTime.now();
                           FocusNode focusNode = FocusNode();

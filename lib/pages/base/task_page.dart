@@ -48,15 +48,6 @@ class PendingTasks extends StatelessWidget {
             SizedBox(
               height: 32,
               child: ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  elevation: 0,
-                  splashFactory: InkRipple.splashFactory,
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                  backgroundColor: const Color(0xffD8ECFF),
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8)),
-                ),
                 onPressed: () {
                   HapticFeedback.selectionClick();
                   FocusNode focusNode = FocusNode();
@@ -170,15 +161,6 @@ class CompletedTasks extends StatelessWidget {
                   //   SizedBox(
                   //     height: 32,
                   //     child: ElevatedButton(
-                  //       style: ElevatedButton.styleFrom(
-                  //         elevation: 0,
-                  //         splashFactory: InkRipple.splashFactory,
-                  //         padding: const EdgeInsets.symmetric(
-                  //             horizontal: 12, vertical: 6),
-                  //         backgroundColor: const Color(0xffD8ECFF),
-                  //         shape: RoundedRectangleBorder(
-                  //             borderRadius: BorderRadius.circular(8)),
-                  //       ),
                   //       onPressed: () {
                   //         HapticFeedback.selectionClick();
                   //         taskBloc.clearCompletedTasks();

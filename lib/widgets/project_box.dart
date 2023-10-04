@@ -63,6 +63,8 @@ class ProjectBox extends StatelessWidget {
                         context: context,
                         builder: (context) {
                           return SimpleDialog(
+                            backgroundColor: const Color(0xffFCFDFF),
+                            elevation: 0,
                             contentPadding: const EdgeInsets.all(24),
                             children: [
                               ElevatedButton(
@@ -72,6 +74,9 @@ class ProjectBox extends StatelessWidget {
                                       context: context,
                                       builder: (context) {
                                         return SimpleDialog(
+                                          backgroundColor:
+                                              const Color(0xffFCFDFF),
+                                          elevation: 0,
                                           contentPadding:
                                               const EdgeInsets.all(24),
                                           children: [
@@ -81,6 +86,9 @@ class ProjectBox extends StatelessWidget {
                                               controller: nameController,
                                               decoration: const InputDecoration(
                                                 hintText: 'Project Name',
+                                                hintStyle: TextStyle(
+                                                  color: Color(0xffaeaeae),
+                                                ),
                                               ),
                                             ),
                                             const SizedBox(height: 12),
@@ -89,13 +97,22 @@ class ProjectBox extends StatelessWidget {
                                                 edit(nameController.text);
                                                 Navigator.pop(context);
                                               },
-                                              child: const Text('Done'),
+                                              child: const Text(
+                                                'Done',
+                                                style: TextStyle(
+                                                    fontSize: 14,
+                                                    height: 1,
+                                                    color: Color(0xff39A0FF)),
+                                              ),
                                             ),
                                           ],
                                         );
                                       });
                                 },
-                                child: const Text('Edit Project Name'),
+                                child: const Text(
+                                  'Edit Project Name',
+                                  style: TextStyle(color: Color(0xff39A0FF)),
+                                ),
                               ),
                               const SizedBox(height: 12),
                               ElevatedButton(
@@ -103,7 +120,12 @@ class ProjectBox extends StatelessWidget {
                                   remove();
                                   Navigator.pop(context);
                                 },
-                                child: const Text('Delete Project'),
+                                child: const Text(
+                                  'Delete Project',
+                                  style: TextStyle(
+                                    color: Color(0xff39A0FF),
+                                  ),
+                                ),
                               ),
                             ],
                           );

@@ -68,7 +68,7 @@ class BasePage extends StatelessWidget {
                     ),
                   ),
                   Container(
-                    height: 2,
+                    height: 1,
                     width: 200,
                     margin: const EdgeInsets.symmetric(vertical: 32),
                     color: const Color(0xffeaeaea),

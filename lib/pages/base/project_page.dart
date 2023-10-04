@@ -21,9 +21,17 @@ class ProjectPage extends StatelessWidget {
           context: context,
           builder: (context) {
             return SimpleDialog(
+              backgroundColor: const Color(0xffFCFDFF),
+              elevation: 0,
               contentPadding: const EdgeInsets.all(24),
               children: [
-                const Text('Add Project'),
+                const Text(
+                  'Add Project',
+                  style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w500,
+                      color: Color(0xff424242)),
+                ),
                 const SizedBox(height: 6),
                 TextField(
                   controller: projectController,
@@ -35,14 +43,20 @@ class ProjectPage extends StatelessWidget {
                 const SizedBox(height: 12),
                 ElevatedButton(
                   onPressed: () {
-                    projectBloc.addProject(ProjectVM(
-                      id: DateTime.now().millisecondsSinceEpoch,
-                      title: projectController.text,
-                      tasks: [],
-                    ));
-                    Navigator.pop(context);
+                    if (projectController.text.isNotEmpty) {
+                      projectBloc.addProject(ProjectVM(
+                        id: DateTime.now().millisecondsSinceEpoch,
+                        title: projectController.text,
+                        tasks: [],
+                      ));
+                      Navigator.pop(context);
+                    }
                   },
-                  child: const Text('Add'),
+                  child: const Text(
+                    'Add',
+                    style: TextStyle(
+                        fontSize: 14, height: 1, color: Color(0xff39A0FF)),
+                  ),
                 ),
               ],
             );
@@ -67,15 +81,6 @@ class ProjectPage extends StatelessWidget {
                 width: 140,
                 height: 40,
                 child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    elevation: 0,
-                    splashFactory: InkRipple.splashFactory,
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                    backgroundColor: const Color(0xffD8ECFF),
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8)),
-                  ),
                   onPressed: () {
                     addProject();
                   },
@@ -121,15 +126,6 @@ class ProjectPage extends StatelessWidget {
                       SizedBox(
                         height: 32,
                         child: ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            elevation: 0,
-                            splashFactory: InkRipple.splashFactory,
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 12, vertical: 6),
-                            backgroundColor: const Color(0xffD8ECFF),
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(8)),
-                          ),
                           onPressed: () {
                             addProject();
                           },
@@ -244,15 +240,6 @@ class PendingProjectTasks extends StatelessWidget {
                   SizedBox(
                     height: 32,
                     child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        elevation: 0,
-                        splashFactory: InkRipple.splashFactory,
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 12, vertical: 6),
-                        backgroundColor: const Color(0xffD8ECFF),
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8)),
-                      ),
                       onPressed: () {
                         FocusNode focusNode = FocusNode();
                         projectBloc
