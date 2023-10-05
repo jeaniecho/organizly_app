@@ -63,6 +63,7 @@ class ProjectBloc {
         tasks: (jsonDecode(data[i]['tasks']) as List)
             .map((e) => TaskVM(
                   id: e['id'],
+                  index: e['index'],
                   completed: e['completed'] == 0 ? false : true,
                   text: e['text'],
                 ))

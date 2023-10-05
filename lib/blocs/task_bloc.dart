@@ -10,6 +10,7 @@ class TaskBloc {
 
   final BehaviorSubject<List<TaskVM>> _tasks = BehaviorSubject.seeded([]);
   Stream<List<TaskVM>> get tasks => _tasks.stream;
+  int get tasksLength => _tasks.value.length;
 
   final BehaviorSubject<int?> _reordering = BehaviorSubject.seeded(null);
   Stream<int?> get reordering => _reordering.stream;
@@ -31,6 +32,7 @@ class TaskBloc {
         '''
         CREATE TABLE $dbName(
             id INTEGER PRIMARY KEY, 
+            index INTEGER,
             completed INTEGER, 
             text TEXT
           )
@@ -50,12 +52,13 @@ class TaskBloc {
     List<TaskVM> tasks = List.generate(data.length, (i) {
       return TaskVM(
         id: data[i]['id'],
+        index: data[i]['index'],
         completed: data[i]['completed'] == 0 ? false : true,
         text: data[i]['text'],
       );
     });
 
-    tasks.sort((a, b) => -a.id.compareTo(b.id));
+    tasks.sort((a, b) => -a.index.compareTo(b.index));
 
     if (updateStream) {
       _tasks.add(tasks);
@@ -94,6 +97,14 @@ class TaskBloc {
       where: 'id = ?',
       whereArgs: [task.id],
     );
+
+    if (updateStream) {
+      getTasks();
+    }
+  }
+
+  Future<void> deleteAllTasks({bool updateStream = true}) async {
+    await taskDB.delete(dbName);
 
     if (updateStream) {
       getTasks();
@@ -164,7 +175,6 @@ class TaskBloc {
 
   reorderTask(TaskVM task, int oldIndex, int newIndex) async {
     List<TaskVM> tasks = _tasks.value;
-    int newId = tasks[newIndex].id;
 
     tasks.removeAt(oldIndex);
     if (newIndex >= tasks.length) {
@@ -174,32 +184,41 @@ class TaskBloc {
     }
     _tasks.add(tasks);
 
-    int id_1;
-    int id_2;
-    if (oldIndex < newIndex) {
-      id_1 = newId - 1;
-      id_2 = newId + 1;
-    } else {
-      id_1 = newId + 1;
-      id_2 = newId - 1;
+    List<TaskVM> reversed = tasks.reversed.toList();
+    await deleteAllTasks(updateStream: false);
+
+    for (int i = 0; i < reversed.length; i++) {
+      await insertTask(reversed[i].copyWith(index: i), updateStream: false);
     }
 
-    try {
-      await taskDB.update(
-        dbName,
-        tasks[newIndex].copyWith(id: id_1).toMap(),
-        where: 'id = ?',
-        whereArgs: [newId],
-      );
+    getTasks();
 
-      await taskDB.update(
-        dbName,
-        task.copyWith(id: id_2).toMap(),
-        where: 'id = ?',
-        whereArgs: [task.id],
-      );
+    // int id_1;
+    // int id_2;
+    // if (oldIndex < newIndex) {
+    //   id_1 = newId - 1;
+    //   id_2 = newId + 1;
+    // } else {
+    //   id_1 = newId + 1;
+    //   id_2 = newId - 1;
+    // }
 
-      getTasks();
-    } catch (e) {}
+    // try {
+    //   await taskDB.update(
+    //     dbName,
+    //     tasks[newIndex].copyWith(id: id_1).toMap(),
+    //     where: 'id = ?',
+    //     whereArgs: [newId],
+    //   );
+
+    //   await taskDB.update(
+    //     dbName,
+    //     task.copyWith(id: id_2).toMap(),
+    //     where: 'id = ?',
+    //     whereArgs: [task.id],
+    //   );
+
+    //   getTasks();
+    // } catch (e) {}
   }
 }

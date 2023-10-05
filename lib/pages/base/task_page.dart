@@ -53,6 +53,7 @@ class PendingTasks extends StatelessWidget {
                   FocusNode focusNode = FocusNode();
                   taskBloc.addTask(TaskVM(
                     id: DateTime.now().millisecondsSinceEpoch,
+                    index: taskBloc.tasksLength,
                     completed: false,
                     text: '',
                     focusNode: focusNode,

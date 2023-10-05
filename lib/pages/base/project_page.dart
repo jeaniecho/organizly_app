@@ -262,6 +262,7 @@ class PendingProjectTasks extends StatelessWidget {
                                 project,
                                 TaskVM(
                                   id: DateTime.now().millisecondsSinceEpoch,
+                                  index: tasks.length,
                                   completed: false,
                                   text: '',
                                   focusNode: focusNode,

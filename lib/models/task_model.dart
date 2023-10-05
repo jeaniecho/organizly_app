@@ -1,21 +1,24 @@
 import 'package:flutter/material.dart';
 
 class TaskVM {
-  int id;
+  final int id;
+  int index;
   bool completed;
   String text;
   FocusNode? focusNode;
 
   TaskVM({
     required this.id,
+    required this.index,
     required this.completed,
     required this.text,
     this.focusNode,
   });
 
-  TaskVM copyWith({int? id, bool? completed, String? text}) {
+  TaskVM copyWith({int? index, bool? completed, String? text}) {
     return TaskVM(
-      id: id ?? this.id,
+      id: id,
+      index: index ?? this.index,
       completed: completed ?? this.completed,
       text: text ?? this.text,
     );
@@ -24,6 +27,7 @@ class TaskVM {
   Map<String, dynamic> toMap() {
     return {
       'id': id,
+      'index': index,
       'completed': completed ? 1 : 0,
       'text': text,
     };
