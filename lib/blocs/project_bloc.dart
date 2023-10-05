@@ -22,6 +22,10 @@ class ProjectBloc {
   Stream<int> get pageIndex => _pageIndex.stream;
   Function get setPageIndex => _pageIndex.add;
 
+  final BehaviorSubject<int?> _reordering = BehaviorSubject.seeded(null);
+  Stream<int?> get reordering => _reordering.stream;
+  Function get setReordering => _reordering.add;
+
   final PageController pageController = PageController(viewportFraction: 0.75);
 
   ProjectBloc() {

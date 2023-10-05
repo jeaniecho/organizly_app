@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:what_to_do/blocs/project_bloc.dart';
@@ -209,7 +210,7 @@ class ProjectPage extends StatelessWidget {
                         child: Column(
                           children: [
                             PendingProjectTasks(project: projects[pageIndex]),
-                            const SizedBox(height: 24),
+                            const SizedBox(height: 18),
                             CompletedProjectTasks(project: projects[pageIndex]),
                           ],
                         ),
@@ -291,7 +292,7 @@ class PendingProjectTasks extends StatelessWidget {
                   ),
                 ],
               ),
-              const SizedBox(height: 12),
+              const SizedBox(height: 6),
               tasks.isEmpty
                   ? Padding(
                       padding: const EdgeInsets.symmetric(vertical: 24),
@@ -308,6 +309,14 @@ class PendingProjectTasks extends StatelessWidget {
                       shrinkWrap: true,
                       physics: const NeverScrollableScrollPhysics(),
                       proxyDecorator: proxyDecorator,
+                      onReorderStart: (index) {
+                        HapticFeedback.mediumImpact();
+                        projectBloc.setReordering(index);
+                      },
+                      onReorderEnd: (index) {
+                        HapticFeedback.lightImpact();
+                        projectBloc.setReordering(null);
+                      },
                       onReorder: (oldIndex, newIndex) {
                         if (newIndex > tasks.length) newIndex = tasks.length;
                         if (oldIndex < newIndex) newIndex--;
@@ -318,14 +327,26 @@ class PendingProjectTasks extends StatelessWidget {
                       itemBuilder: (context, index) {
                         TaskVM task = tasks[index];
 
-                        return TaskBox(
+                        return Padding(
                           key: Key('project_page${task.id}'),
-                          task: task,
-                          boxWidth: 100,
-                          toggle: () => projectBloc.toggleTask(project, task),
-                          submit: (String text) =>
-                              projectBloc.editTask(project, task, text),
-                          remove: () => projectBloc.removeTask(project, task),
+                          padding: const EdgeInsets.symmetric(vertical: 6),
+                          child: StreamBuilder<int?>(
+                              stream: projectBloc.reordering,
+                              builder: (context, snapshot) {
+                                bool isReordering = snapshot.data == index;
+
+                                return TaskBox(
+                                  task: task,
+                                  boxWidth: 100,
+                                  toggle: () =>
+                                      projectBloc.toggleTask(project, task),
+                                  submit: (String text) =>
+                                      projectBloc.editTask(project, task, text),
+                                  remove: () =>
+                                      projectBloc.removeTask(project, task),
+                                  reordering: isReordering,
+                                );
+                              }),
                         );
                       },
                       itemCount: tasks.length,
