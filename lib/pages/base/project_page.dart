@@ -321,8 +321,11 @@ class PendingProjectTasks extends StatelessWidget {
                         if (newIndex > tasks.length) newIndex = tasks.length;
                         if (oldIndex < newIndex) newIndex--;
 
-                        projectBloc.reorderTask(
-                            project, tasks[oldIndex], oldIndex, newIndex);
+                        Future.delayed(const Duration(milliseconds: 100))
+                            .then((value) {
+                          projectBloc.reorderTask(
+                              project, tasks[oldIndex], oldIndex, newIndex);
+                        });
                       },
                       itemBuilder: (context, index) {
                         TaskVM task = tasks[index];

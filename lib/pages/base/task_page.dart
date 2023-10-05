@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
+import 'package:what_to_do/blocs/project_bloc.dart';
 import 'package:what_to_do/blocs/task_bloc.dart';
+import 'package:what_to_do/models/project_model.dart';
 import 'package:what_to_do/models/task_model.dart';
 import 'package:what_to_do/widgets/task_box.dart';
 
@@ -10,15 +12,27 @@ class TaskPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    ProjectBloc projectBloc = context.read<ProjectBloc>();
+
     return SingleChildScrollView(
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12)
           .copyWith(bottom: 24),
-      child: const Column(
+      child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          PendingTasks(),
-          SizedBox(height: 18),
-          CompletedTasks(),
+          const PendingTasks(),
+          // const SizedBox(height: 18),
+          // const CompletedTasks(),
+          StreamBuilder<List<ProjectVM>>(
+              stream: projectBloc.projects,
+              builder: (context, snapshot) {
+                List<ProjectVM> projects = snapshot.data ?? [];
+
+                return Column(
+                  children:
+                      projects.map((e) => ProjectTasks(project: e)).toList(),
+                );
+              }),
         ],
       ),
     );
@@ -87,9 +101,14 @@ class PendingTasks extends StatelessWidget {
                 return const Center(child: CircularProgressIndicator());
               }
 
-              List<TaskVM> tasks = snapshot.data!
-                  .where((element) => !element.completed)
-                  .toList();
+              List<TaskVM> tasks = snapshot.data!;
+
+              List<TaskVM> pendingTasks =
+                  tasks.where((element) => !element.completed).toList();
+              List<TaskVM> completedTasks =
+                  tasks.where((element) => element.completed).toList();
+
+              tasks = pendingTasks + completedTasks;
 
               if (tasks.isEmpty) {
                 return const Padding(
@@ -119,7 +138,10 @@ class PendingTasks extends StatelessWidget {
                   if (newIndex > tasks.length) newIndex = tasks.length;
                   if (oldIndex < newIndex) newIndex--;
 
-                  taskBloc.reorderTask(tasks[oldIndex], oldIndex, newIndex);
+                  Future.delayed(const Duration(milliseconds: 100))
+                      .then((value) {
+                    taskBloc.reorderTask(tasks[oldIndex], oldIndex, newIndex);
+                  });
                 },
                 itemBuilder: (context, index) {
                   TaskVM task = tasks[index];
@@ -146,7 +168,8 @@ class PendingTasks extends StatelessWidget {
                 },
                 itemCount: tasks.length,
               );
-            })
+            }),
+        const SizedBox(height: 18),
       ],
     );
   }
@@ -260,4 +283,101 @@ Widget proxyDecorator(Widget child, int index, Animation<double> animation) {
     },
     child: child,
   );
+}
+
+class ProjectTasks extends StatelessWidget {
+  final ProjectVM project;
+  const ProjectTasks({required this.project, super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    ProjectBloc projectBloc = context.read<ProjectBloc>();
+
+    List<TaskVM> tasks = project.tasks;
+
+    List<TaskVM> pendingTasks =
+        tasks.where((element) => !element.completed).toList();
+    List<TaskVM> completedTasks =
+        tasks.where((element) => element.completed).toList();
+
+    tasks = pendingTasks + completedTasks;
+
+    if (tasks.isEmpty) {
+      return const SizedBox.shrink();
+    }
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              project.title,
+              style: const TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+            SizedBox(
+              height: 32,
+              child: ElevatedButton(
+                onPressed: () {
+                  HapticFeedback.selectionClick();
+                  FocusNode focusNode = FocusNode();
+                  projectBloc.addTask(
+                      project,
+                      TaskVM(
+                        id: DateTime.now().millisecondsSinceEpoch,
+                        index: tasks.length,
+                        completed: false,
+                        text: '',
+                        focusNode: focusNode,
+                      ));
+                  focusNode.requestFocus();
+                },
+                child: const Row(
+                  children: [
+                    Icon(
+                      Icons.add_box,
+                      size: 16,
+                      color: Color(0xff39A0FF),
+                    ),
+                    SizedBox(width: 4),
+                    Text(
+                      'Add Task',
+                      style: TextStyle(
+                          fontSize: 12, height: 1, color: Color(0xff39A0FF)),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 12),
+        ListView.separated(
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          itemBuilder: (context, index) {
+            TaskVM task = tasks[index];
+
+            return TaskBox(
+              task: task,
+              boxWidth: 100,
+              toggle: () => projectBloc.toggleTask(project, task),
+              submit: (String text) =>
+                  projectBloc.editTask(project, task, text),
+              remove: () => projectBloc.removeTask(project, task),
+            );
+          },
+          separatorBuilder: (context, index) {
+            return const SizedBox(height: 12);
+          },
+          itemCount: tasks.length,
+        ),
+        const SizedBox(height: 24),
+      ],
+    );
+  }
 }

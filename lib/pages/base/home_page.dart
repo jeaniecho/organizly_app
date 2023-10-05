@@ -248,16 +248,10 @@ class HomeTasks extends StatelessWidget {
                   itemBuilder: ((context, index) {
                     TaskVM task = tasks[index];
 
-                    return GestureDetector(
-                      onTap: () {
-                        // appBloc.setBottomIndex(1);
-                        // taskBloc.toggleTask(task);
-                      },
-                      child: HomeTaskBox(
-                        task: task,
-                        boxWidth: 100,
-                        toggle: () => taskBloc.toggleTask(task),
-                      ),
+                    return HomeTaskBox(
+                      task: task,
+                      boxWidth: 100,
+                      toggle: () => taskBloc.toggleTask(task),
                     );
                   }),
                   separatorBuilder: ((context, index) {

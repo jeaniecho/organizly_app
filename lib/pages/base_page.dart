@@ -28,7 +28,8 @@ class BasePage extends StatelessWidget {
     Color defaultColor = const Color(0xffcccccc);
     Color primaryColor = const Color(0xff39A0FF);
 
-    final scaffoldKey = GlobalKey<ScaffoldState>();
+    final scaffoldKey =
+        GlobalKey<ScaffoldState>(debugLabel: 'base_scaffold_key');
 
     double themeSize = 32;
 
@@ -40,14 +41,6 @@ class BasePage extends StatelessWidget {
           return Scaffold(
             key: scaffoldKey,
             backgroundColor: const Color(0xffFCFDFF),
-            // floatingActionButton: FloatingActionButton(
-            //   backgroundColor: const Color(0xffD8ECFF),
-            //   foregroundColor: const Color(0xff39A0FF),
-            //   elevation: 5,
-            //   mini: true,
-            //   child: const Icon(Icons.add),
-            //   onPressed: () {},
-            // ),
             endDrawer: Drawer(
               backgroundColor: Colors.white,
               shape: RoundedRectangleBorder(
@@ -291,8 +284,11 @@ class BasePage extends StatelessWidget {
                   ],
                   child: const HomePage(),
                 ),
-                Provider(
-                  create: (context) => taskBloc,
+                MultiProvider(
+                  providers: [
+                    Provider(create: (context) => taskBloc),
+                    Provider(create: (context) => projectBloc),
+                  ],
                   child: const TaskPage(),
                 ),
                 Provider(
