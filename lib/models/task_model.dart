@@ -27,7 +27,7 @@ class TaskVM {
   Map<String, dynamic> toMap() {
     return {
       'id': id,
-      'index': index,
+      'task_index': index,
       'completed': completed ? 1 : 0,
       'text': text,
     };

@@ -27,18 +27,27 @@ class TaskBloc {
 
   Future<Database> initDB() async {
     String path = join(await getDatabasesPath(), '$dbName.db');
-    return await openDatabase(path, version: 1, onCreate: (db, version) async {
-      await db.execute(
-        '''
-        CREATE TABLE $dbName(
-            id INTEGER PRIMARY KEY, 
-            index INTEGER,
-            completed INTEGER, 
-            text TEXT
-          )
-        ''',
-      );
-    });
+    return await openDatabase(
+      path,
+      version: 4,
+      onCreate: (db, version) async {
+        await db.execute(
+          '''
+          CREATE TABLE $dbName(
+              id INTEGER PRIMARY KEY,
+              task_index INTEGER,
+              completed INTEGER,
+              text TEXT
+            )
+          ''',
+        );
+      },
+      onUpgrade: (db, oldVersion, newVersion) {
+        if (oldVersion < newVersion) {
+          db.execute('ALTER TABLE $dbName ADD COLUMN task_index INTEGER');
+        }
+      },
+    );
   }
 
   getMockTasks() {
@@ -52,7 +61,7 @@ class TaskBloc {
     List<TaskVM> tasks = List.generate(data.length, (i) {
       return TaskVM(
         id: data[i]['id'],
-        index: data[i]['index'],
+        index: data[i]['task_index'],
         completed: data[i]['completed'] == 0 ? false : true,
         text: data[i]['text'],
       );

@@ -4,6 +4,7 @@ import 'package:rxdart/rxdart.dart';
 import 'package:what_to_do/blocs/project_bloc.dart';
 import 'package:what_to_do/models/project_model.dart';
 import 'package:what_to_do/models/task_model.dart';
+import 'package:what_to_do/pages/pages.dart';
 import 'package:what_to_do/widgets/project_box.dart';
 import 'package:what_to_do/widgets/task_box.dart';
 
@@ -303,13 +304,22 @@ class PendingProjectTasks extends StatelessWidget {
                         ),
                       ),
                     )
-                  : ListView.separated(
+                  : ReorderableListView.builder(
                       shrinkWrap: true,
                       physics: const NeverScrollableScrollPhysics(),
+                      proxyDecorator: proxyDecorator,
+                      onReorder: (oldIndex, newIndex) {
+                        if (newIndex > tasks.length) newIndex = tasks.length;
+                        if (oldIndex < newIndex) newIndex--;
+
+                        projectBloc.reorderTask(
+                            project, tasks[oldIndex], oldIndex, newIndex);
+                      },
                       itemBuilder: (context, index) {
                         TaskVM task = tasks[index];
 
                         return TaskBox(
+                          key: Key('project_page${task.id}'),
                           task: task,
                           boxWidth: 100,
                           toggle: () => projectBloc.toggleTask(project, task),
@@ -317,9 +327,6 @@ class PendingProjectTasks extends StatelessWidget {
                               projectBloc.editTask(project, task, text),
                           remove: () => projectBloc.removeTask(project, task),
                         );
-                      },
-                      separatorBuilder: (context, index) {
-                        return const SizedBox(height: 12);
                       },
                       itemCount: tasks.length,
                     )

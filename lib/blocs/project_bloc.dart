@@ -57,17 +57,20 @@ class ProjectBloc {
     final List<Map<String, dynamic>> data = await projectDB.query(dbName);
 
     List<ProjectVM> projects = List.generate(data.length, (i) {
+      List<TaskVM> tasks = (jsonDecode(data[i]['tasks']) as List)
+          .map((e) => TaskVM(
+                id: e['id'],
+                index: e['task_index'],
+                completed: e['completed'] == 0 ? false : true,
+                text: e['text'],
+              ))
+          .toList();
+      tasks.sort((a, b) => -a.index.compareTo(b.index));
+
       return ProjectVM(
         id: data[i]['id'],
         title: data[i]['title'],
-        tasks: (jsonDecode(data[i]['tasks']) as List)
-            .map((e) => TaskVM(
-                  id: e['id'],
-                  index: e['index'],
-                  completed: e['completed'] == 0 ? false : true,
-                  text: e['text'],
-                ))
-            .toList(),
+        tasks: tasks,
       );
     });
 
@@ -234,5 +237,25 @@ class ProjectBloc {
     // _projects.add(projects);
 
     updateProject(project.copyWith(tasks: tasks));
+  }
+
+  reorderTask(
+      ProjectVM project, TaskVM task, int oldIndex, int newIndex) async {
+    List<TaskVM> tasks = project.tasks;
+
+    tasks.removeAt(oldIndex);
+    if (newIndex > tasks.length) {
+      tasks.add(task);
+    } else {
+      tasks.insert(newIndex, task);
+    }
+    _tasks.add(tasks);
+
+    List<TaskVM> reversed = tasks.reversed.toList();
+    for (int i = 0; i < reversed.length; i++) {
+      reversed[i] = reversed[i].copyWith(index: i);
+    }
+
+    updateProject(project.copyWith(tasks: reversed));
   }
 }
