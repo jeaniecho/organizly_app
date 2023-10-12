@@ -123,6 +123,7 @@ class PendingTasks extends StatelessWidget {
               }
 
               return ReorderableListView.builder(
+                key: const Key('task_reorder'),
                 shrinkWrap: true,
                 physics: const NeverScrollableScrollPhysics(),
                 proxyDecorator: proxyDecorator,
@@ -138,10 +139,7 @@ class PendingTasks extends StatelessWidget {
                   if (newIndex > tasks.length) newIndex = tasks.length;
                   if (oldIndex < newIndex) newIndex--;
 
-                  Future.delayed(const Duration(milliseconds: 100))
-                      .then((value) {
-                    taskBloc.reorderTask(tasks[oldIndex], oldIndex, newIndex);
-                  });
+                  taskBloc.reorderTask(tasks[oldIndex], oldIndex, newIndex);
                 },
                 itemBuilder: (context, index) {
                   TaskVM task = tasks[index];
