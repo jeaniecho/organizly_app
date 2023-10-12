@@ -16,6 +16,8 @@ class OGThemes {
     cardColor: Colors.white,
     disabledColor: const Color(0xFFCDCDCD),
     colorScheme: OGColors.lightColorScheme,
+    textSelectionTheme:
+        const TextSelectionThemeData(cursorColor: Color(0xff39A0FF)),
     elevatedButtonTheme: ElevatedButtonThemeData(
       style: ElevatedButton.styleFrom(
         elevation: 0,

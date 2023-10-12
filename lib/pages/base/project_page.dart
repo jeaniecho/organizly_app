@@ -103,19 +103,21 @@ class ProjectPage extends StatelessWidget {
                   onPressed: () {
                     addProject();
                   },
-                  child: const Row(
+                  child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Icon(
                         Icons.add_box,
                         size: 18,
-                        color: Color(0xff39A0FF),
+                        color: Theme.of(context).colorScheme.tertiary,
                       ),
-                      SizedBox(width: 4),
+                      const SizedBox(width: 4),
                       Text(
                         'Add Project',
                         style: TextStyle(
-                            fontSize: 14, height: 1, color: Color(0xff39A0FF)),
+                            fontSize: 14,
+                            height: 1,
+                            color: Theme.of(context).colorScheme.tertiary),
                       ),
                     ],
                   ),

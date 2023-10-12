@@ -27,6 +27,7 @@ class MyApp extends StatelessWidget {
 
           return MaterialApp(
             title: 'Organizly',
+            debugShowCheckedModeBanner: false,
             theme: OGThemes.lightTheme,
             darkTheme: OGThemes.darkTheme,
             themeMode: darkMode ? ThemeMode.dark : ThemeMode.light,
