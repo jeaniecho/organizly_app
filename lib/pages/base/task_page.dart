@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
+import 'package:rxdart/rxdart.dart';
 import 'package:what_to_do/blocs/project_bloc.dart';
 import 'package:what_to_do/blocs/task_bloc.dart';
 import 'package:what_to_do/models/project_model.dart';
@@ -147,10 +148,12 @@ class PendingTasks extends StatelessWidget {
                   return Padding(
                     key: Key('task_page${task.id}'),
                     padding: const EdgeInsets.symmetric(vertical: 6),
-                    child: StreamBuilder<int?>(
-                        stream: taskBloc.reordering,
+                    child: StreamBuilder<List>(
+                        stream: Rx.combineLatestList(
+                            [taskBloc.reorderingProject, taskBloc.reordering]),
                         builder: (context, snapshot) {
-                          bool isReordering = snapshot.data == index;
+                          bool isReordering = snapshot.data?[0] == null &&
+                              snapshot.data?[1] == index;
 
                           return TaskBox(
                             task: task,
@@ -290,6 +293,7 @@ class ProjectTasks extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     ProjectBloc projectBloc = context.read<ProjectBloc>();
+    TaskBloc taskBloc = context.read<TaskBloc>();
 
     List<TaskVM> tasks = project.tasks;
 
@@ -353,28 +357,56 @@ class ProjectTasks extends StatelessWidget {
             ),
           ],
         ),
-        const SizedBox(height: 12),
-        ListView.separated(
+        const SizedBox(height: 6),
+        ReorderableListView.builder(
           shrinkWrap: true,
           physics: const NeverScrollableScrollPhysics(),
+          proxyDecorator: proxyDecorator,
+          onReorderStart: (index) {
+            HapticFeedback.mediumImpact();
+            taskBloc.setReordering(index);
+            taskBloc.setReorderingProject(project.id);
+          },
+          onReorderEnd: (index) {
+            HapticFeedback.lightImpact();
+            taskBloc.setReordering(null);
+            taskBloc.setReorderingProject(null);
+          },
+          onReorder: (oldIndex, newIndex) {
+            if (newIndex > tasks.length) newIndex = tasks.length;
+            if (oldIndex < newIndex) newIndex--;
+
+            projectBloc.reorderTask(
+                project, tasks[oldIndex], oldIndex, newIndex);
+          },
           itemBuilder: (context, index) {
             TaskVM task = tasks[index];
 
-            return TaskBox(
-              task: task,
-              boxWidth: 100,
-              toggle: () => projectBloc.toggleTask(project, task),
-              submit: (String text) =>
-                  projectBloc.editTask(project, task, text),
-              remove: () => projectBloc.removeTask(project, task),
+            return Padding(
+              key: Key('task_page_${project.id}_${task.id}'),
+              padding: const EdgeInsets.symmetric(vertical: 6),
+              child: StreamBuilder<List>(
+                  stream: Rx.combineLatestList(
+                      [taskBloc.reorderingProject, taskBloc.reordering]),
+                  builder: (context, snapshot) {
+                    bool isReordering = snapshot.data?[0] == project.id &&
+                        snapshot.data?[1] == index;
+
+                    return TaskBox(
+                      task: task,
+                      boxWidth: 100,
+                      toggle: () => projectBloc.toggleTask(project, task),
+                      submit: (String text) =>
+                          projectBloc.editTask(project, task, text),
+                      remove: () => projectBloc.removeTask(project, task),
+                      reordering: isReordering,
+                    );
+                  }),
             );
-          },
-          separatorBuilder: (context, index) {
-            return const SizedBox(height: 12);
           },
           itemCount: tasks.length,
         ),
-        const SizedBox(height: 24),
+        const SizedBox(height: 18),
       ],
     );
   }

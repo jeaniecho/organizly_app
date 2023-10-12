@@ -16,6 +16,10 @@ class TaskBloc {
   Stream<int?> get reordering => _reordering.stream;
   Function get setReordering => _reordering.add;
 
+  final BehaviorSubject<int?> _reorderingProject = BehaviorSubject.seeded(null);
+  Stream<int?> get reorderingProject => _reorderingProject.stream;
+  Function get setReorderingProject => _reorderingProject.add;
+
   TaskBloc() {
     initDB().then((value) {
       taskDB = value;
