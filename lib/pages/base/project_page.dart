@@ -23,19 +23,19 @@ class ProjectPage extends StatelessWidget {
           context: context,
           builder: (context) {
             return SimpleDialog(
-              backgroundColor: const Color(0xffFCFDFF),
+              backgroundColor: Theme.of(context).cardColor,
               elevation: 0,
               contentPadding: const EdgeInsets.all(24),
               children: [
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    const Text(
+                    Text(
                       'Add Project',
                       style: TextStyle(
                           fontSize: 14,
                           fontWeight: FontWeight.w500,
-                          color: Color(0xff424242)),
+                          color: Theme.of(context).colorScheme.onPrimary),
                     ),
                     GestureDetector(
                       onTap: () {
@@ -69,10 +69,12 @@ class ProjectPage extends StatelessWidget {
                       Navigator.pop(context);
                     }
                   },
-                  child: const Text(
+                  child: Text(
                     'Add',
                     style: TextStyle(
-                        fontSize: 14, height: 1, color: Color(0xff39A0FF)),
+                        fontSize: 14,
+                        height: 1,
+                        color: Theme.of(context).colorScheme.tertiary),
                   ),
                 ),
               ],
@@ -139,20 +141,21 @@ class ProjectPage extends StatelessWidget {
                           onPressed: () {
                             addProject();
                           },
-                          child: const Row(
+                          child: Row(
                             children: [
                               Icon(
                                 Icons.add_box,
                                 size: 16,
-                                color: Color(0xff39A0FF),
+                                color: Theme.of(context).colorScheme.tertiary,
                               ),
-                              SizedBox(width: 4),
+                              const SizedBox(width: 4),
                               Text(
                                 'Add Project',
                                 style: TextStyle(
                                     fontSize: 12,
                                     height: 1,
-                                    color: Color(0xff39A0FF)),
+                                    color:
+                                        Theme.of(context).colorScheme.tertiary),
                               ),
                             ],
                           ),
@@ -264,20 +267,20 @@ class PendingProjectTasks extends StatelessWidget {
                                 ))
                             .then((value) => focusNode.requestFocus());
                       },
-                      child: const Row(
+                      child: Row(
                         children: [
                           Icon(
                             Icons.add_box,
                             size: 16,
-                            color: Color(0xff39A0FF),
+                            color: Theme.of(context).colorScheme.tertiary,
                           ),
-                          SizedBox(width: 4),
+                          const SizedBox(width: 4),
                           Text(
                             'Add Task',
                             style: TextStyle(
                                 fontSize: 12,
                                 height: 1,
-                                color: Color(0xff39A0FF)),
+                                color: Theme.of(context).colorScheme.tertiary),
                           ),
                         ],
                       ),

@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:path/path.dart';
 import 'package:provider/provider.dart';
-import 'package:sqflite/sqflite.dart';
+import 'package:rxdart/rxdart.dart';
 import 'package:what_to_do/blocs/app_bloc.dart';
 import 'package:what_to_do/blocs/note_bloc.dart';
 import 'package:what_to_do/blocs/project_bloc.dart';
 import 'package:what_to_do/blocs/task_bloc.dart';
 import 'package:what_to_do/pages/pages.dart';
+import 'package:what_to_do/styles/themes.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -18,37 +18,25 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Organizly',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xff39A0FF)),
-        appBarTheme: const AppBarTheme(
-          backgroundColor: Color(0xffFCFDFF),
-        ),
-        scaffoldBackgroundColor: const Color(0xffFCFDFF),
-        splashColor: Colors.transparent,
-        primaryColor: const Color(0xff39A0FF),
-        focusColor: const Color(0xff39A0FF),
-        highlightColor: Colors.transparent,
-        elevatedButtonTheme: ElevatedButtonThemeData(
-          style: ElevatedButton.styleFrom(
-            elevation: 0,
-            splashFactory: InkRipple.splashFactory,
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-            backgroundColor: const Color(0xffD8ECFF),
-            shape:
-                RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-          ),
-        ),
-        useMaterial3: true,
-        fontFamily: 'NotoSansKR',
-      ),
-      home: MultiProvider(providers: [
-        Provider(create: (context) => AppBloc()),
-        Provider(create: (context) => TaskBloc()),
-        Provider(create: (context) => ProjectBloc()),
-        Provider(create: (context) => NoteBloc()),
-      ], child: const BasePage()),
-    );
+    AppBloc appBloc = AppBloc();
+
+    return StreamBuilder<List>(
+        stream: Rx.combineLatestList([appBloc.darkMode]),
+        builder: (context, snapshot) {
+          bool darkMode = snapshot.data?[0] == true;
+
+          return MaterialApp(
+            title: 'Organizly',
+            theme: OGThemes.lightTheme,
+            darkTheme: OGThemes.darkTheme,
+            themeMode: darkMode ? ThemeMode.dark : ThemeMode.light,
+            home: MultiProvider(providers: [
+              Provider(create: (context) => appBloc),
+              Provider(create: (context) => TaskBloc()),
+              Provider(create: (context) => ProjectBloc()),
+              Provider(create: (context) => NoteBloc()),
+            ], child: const BasePage()),
+          );
+        });
   }
 }

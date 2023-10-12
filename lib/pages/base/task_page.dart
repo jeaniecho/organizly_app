@@ -75,18 +75,20 @@ class PendingTasks extends StatelessWidget {
                   ));
                   focusNode.requestFocus();
                 },
-                child: const Row(
+                child: Row(
                   children: [
                     Icon(
                       Icons.add_box,
                       size: 16,
-                      color: Color(0xff39A0FF),
+                      color: Theme.of(context).colorScheme.tertiary,
                     ),
-                    SizedBox(width: 4),
+                    const SizedBox(width: 4),
                     Text(
                       'Add Task',
                       style: TextStyle(
-                          fontSize: 12, height: 1, color: Color(0xff39A0FF)),
+                          fontSize: 12,
+                          height: 1,
+                          color: Theme.of(context).colorScheme.tertiary),
                     ),
                   ],
                 ),
@@ -338,18 +340,20 @@ class ProjectTasks extends StatelessWidget {
                       ));
                   focusNode.requestFocus();
                 },
-                child: const Row(
+                child: Row(
                   children: [
                     Icon(
                       Icons.add_box,
                       size: 16,
-                      color: Color(0xff39A0FF),
+                      color: Theme.of(context).colorScheme.tertiary,
                     ),
-                    SizedBox(width: 4),
+                    const SizedBox(width: 4),
                     Text(
                       'Add Task',
                       style: TextStyle(
-                          fontSize: 12, height: 1, color: Color(0xff39A0FF)),
+                          fontSize: 12,
+                          height: 1,
+                          color: Theme.of(context).colorScheme.tertiary),
                     ),
                   ],
                 ),

@@ -24,9 +24,12 @@ class BasePage extends StatelessWidget {
     ProjectBloc projectBloc = context.read<ProjectBloc>();
     NoteBloc noteBloc = context.read<NoteBloc>();
 
-    Color selectedColor = const Color(0xff242424);
-    Color defaultColor = const Color(0xffcccccc);
-    Color primaryColor = const Color(0xff39A0FF);
+    // Color selectedColor = const Color(0xff242424);
+    // Color defaultColor = const Color(0xffcccccc);
+    // Color primaryColor = const Color(0xff39A0FF);
+    Color selectedColor = Theme.of(context).colorScheme.onSecondary;
+    Color defaultColor = Theme.of(context).disabledColor;
+    Color primaryColor = Theme.of(context).primaryColor;
 
     final scaffoldKey =
         GlobalKey<ScaffoldState>(debugLabel: 'base_scaffold_key');
@@ -40,9 +43,9 @@ class BasePage extends StatelessWidget {
 
           return Scaffold(
             key: scaffoldKey,
-            backgroundColor: const Color(0xffFCFDFF),
+            // backgroundColor: const Color(0xffFCFDFF),
             endDrawer: Drawer(
-              backgroundColor: Colors.white,
+              backgroundColor: Theme.of(context).cardColor,
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(24)),
               child: Column(
@@ -75,88 +78,116 @@ class BasePage extends StatelessWidget {
                         color: selectedColor),
                   ),
                   const SizedBox(height: 12),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Container(
-                        width: 48,
-                        height: 48,
-                        decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            color: primaryColor.withOpacity(0.1)),
-                        child: const Icon(
-                          Icons.sunny,
-                          color: Colors.amber,
-                        ),
-                      ),
-                      const SizedBox(width: 20),
-                      Container(
-                        width: 48,
-                        height: 48,
-                        decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            color: primaryColor.withOpacity(0)),
-                        child: Icon(
-                          Icons.nightlight,
-                          color: Colors.grey[350],
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 40),
-                  Text(
-                    'Theme',
-                    style: TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w500,
-                        color: selectedColor),
-                  ),
-                  const SizedBox(height: 16),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Container(
-                        width: themeSize,
-                        height: themeSize,
-                        margin: const EdgeInsets.symmetric(horizontal: 6),
-                        decoration: BoxDecoration(
-                            shape: BoxShape.circle, color: primaryColor),
-                        child: const Icon(
-                          Icons.check_rounded,
-                          color: Colors.white,
-                          size: 20,
-                        ),
-                      ),
-                      Container(
-                        width: themeSize,
-                        height: themeSize,
-                        margin: const EdgeInsets.symmetric(horizontal: 6),
-                        decoration: const BoxDecoration(
-                            shape: BoxShape.circle, color: Colors.lime),
-                      ),
-                      Container(
-                        width: themeSize,
-                        height: themeSize,
-                        margin: const EdgeInsets.symmetric(horizontal: 6),
-                        decoration: const BoxDecoration(
-                            shape: BoxShape.circle, color: Colors.amber),
-                      ),
-                      Container(
-                        width: themeSize,
-                        height: themeSize,
-                        margin: const EdgeInsets.symmetric(horizontal: 6),
-                        decoration: BoxDecoration(
-                            shape: BoxShape.circle, color: Colors.red[300]),
-                      ),
-                      Container(
-                        width: themeSize,
-                        height: themeSize,
-                        margin: const EdgeInsets.symmetric(horizontal: 6),
-                        decoration: const BoxDecoration(
-                            shape: BoxShape.circle, color: Colors.black54),
-                      ),
-                    ],
-                  ),
+                  StreamBuilder<bool>(
+                      stream: appBloc.darkMode,
+                      builder: (context, snapshot) {
+                        bool darkMode = snapshot.data == true;
+
+                        return Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            GestureDetector(
+                              onTap: () {
+                                Navigator.pop(context);
+                                Future.delayed(
+                                    const Duration(milliseconds: 250), () {
+                                  appBloc.setDarkMode(false);
+                                });
+                              },
+                              child: AnimatedContainer(
+                                duration: const Duration(milliseconds: 250),
+                                width: 48,
+                                height: 48,
+                                decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    color: primaryColor
+                                        .withOpacity(darkMode ? 0 : 0.1)),
+                                child: const Icon(
+                                  Icons.sunny,
+                                  color: Colors.amber,
+                                ),
+                              ),
+                            ),
+                            const SizedBox(width: 20),
+                            GestureDetector(
+                              onTap: () {
+                                Navigator.pop(context);
+                                Future.delayed(
+                                    const Duration(milliseconds: 250), () {
+                                  appBloc.setDarkMode(true);
+                                });
+                              },
+                              child: AnimatedContainer(
+                                duration: const Duration(milliseconds: 250),
+                                width: 48,
+                                height: 48,
+                                decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    color: primaryColor
+                                        .withOpacity(darkMode ? 0.1 : 0)),
+                                child: Icon(
+                                  Icons.nightlight,
+                                  color: Colors.grey[350],
+                                ),
+                              ),
+                            ),
+                          ],
+                        );
+                      }),
+                  // const SizedBox(height: 40),
+                  // Text(
+                  //   'Theme',
+                  //   style: TextStyle(
+                  //       fontSize: 14,
+                  //       fontWeight: FontWeight.w500,
+                  //       color: selectedColor),
+                  // ),
+                  // const SizedBox(height: 16),
+                  // Row(
+                  //   mainAxisAlignment: MainAxisAlignment.center,
+                  //   children: [
+                  //     Container(
+                  //       width: themeSize,
+                  //       height: themeSize,
+                  //       margin: const EdgeInsets.symmetric(horizontal: 6),
+                  //       decoration: BoxDecoration(
+                  //           shape: BoxShape.circle, color: primaryColor),
+                  //       child: const Icon(
+                  //         Icons.check_rounded,
+                  //         color: Colors.white,
+                  //         size: 20,
+                  //       ),
+                  //     ),
+                  //     Container(
+                  //       width: themeSize,
+                  //       height: themeSize,
+                  //       margin: const EdgeInsets.symmetric(horizontal: 6),
+                  //       decoration: const BoxDecoration(
+                  //           shape: BoxShape.circle, color: Colors.lime),
+                  //     ),
+                  //     Container(
+                  //       width: themeSize,
+                  //       height: themeSize,
+                  //       margin: const EdgeInsets.symmetric(horizontal: 6),
+                  //       decoration: const BoxDecoration(
+                  //           shape: BoxShape.circle, color: Colors.amber),
+                  //     ),
+                  //     Container(
+                  //       width: themeSize,
+                  //       height: themeSize,
+                  //       margin: const EdgeInsets.symmetric(horizontal: 6),
+                  //       decoration: BoxDecoration(
+                  //           shape: BoxShape.circle, color: Colors.red[300]),
+                  //     ),
+                  //     Container(
+                  //       width: themeSize,
+                  //       height: themeSize,
+                  //       margin: const EdgeInsets.symmetric(horizontal: 6),
+                  //       decoration: const BoxDecoration(
+                  //           shape: BoxShape.circle, color: Colors.black54),
+                  //     ),
+                  //   ],
+                  // ),
                   const Spacer(),
                   Align(
                       alignment: Alignment.bottomRight,
@@ -177,17 +208,17 @@ class BasePage extends StatelessWidget {
                                     color: selectedColor),
                               ),
                             ),
-                            const SizedBox(height: 12),
-                            GestureDetector(
-                              onTap: () {},
-                              child: Text(
-                                'Share Organizly',
-                                style: TextStyle(
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w500,
-                                    color: selectedColor),
-                              ),
-                            ),
+                            // const SizedBox(height: 12),
+                            // GestureDetector(
+                            //   onTap: () {},
+                            //   child: Text(
+                            //     'Share Organizly',
+                            //     style: TextStyle(
+                            //         fontSize: 14,
+                            //         fontWeight: FontWeight.w500,
+                            //         color: selectedColor),
+                            //   ),
+                            // ),
                             const SizedBox(height: 32),
                             FutureBuilder<PackageInfo>(
                                 future: PackageInfo.fromPlatform(),
@@ -195,7 +226,10 @@ class BasePage extends StatelessWidget {
                                   if (snapshot.hasData) {
                                     PackageInfo packageInfo = snapshot.data!;
 
-                                    return Text('v${packageInfo.version}');
+                                    return Text(
+                                        'v${packageInfo.version} (${packageInfo.buildNumber})',
+                                        style: const TextStyle(
+                                            color: Colors.grey));
                                   } else {
                                     return const SizedBox.shrink();
                                   }
@@ -225,7 +259,6 @@ class BasePage extends StatelessWidget {
                       Text(
                         DateFormat('MMMM d, E').format(DateTime.now()),
                         style: const TextStyle(
-                          color: Colors.black,
                           fontSize: 16,
                           fontWeight: FontWeight.w400,
                         ),
@@ -243,8 +276,8 @@ class BasePage extends StatelessWidget {
                               pendingCount == 0 && tasks.isNotEmpty
                                   ? 'All tasks completed'
                                   : '$pendingCount task${pendingCount == 1 ? '' : 's'} pending',
-                              style: const TextStyle(
-                                color: Colors.blue,
+                              style: TextStyle(
+                                color: Theme.of(context).colorScheme.tertiary,
                                 fontSize: 12,
                                 fontWeight: FontWeight.w500,
                               ),
@@ -317,7 +350,7 @@ class BasePage extends StatelessWidget {
               ),
               child: Material(
                 elevation: 0,
-                color: const Color(0xffFCFDFF),
+                color: Theme.of(context).cardColor,
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(24)),
                 child: Padding(

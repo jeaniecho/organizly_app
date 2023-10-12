@@ -26,7 +26,7 @@ class ProjectBox extends StatelessWidget {
       margin: const EdgeInsets.symmetric(vertical: 12, horizontal: 6),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: isSelected ? Colors.blue : Colors.white,
+        color: isSelected ? Colors.blue : Theme.of(context).cardColor,
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
@@ -47,7 +47,9 @@ class ProjectBox extends StatelessWidget {
                 project.title,
                 style: TextStyle(
                   fontSize: 16,
-                  color: isSelected ? Colors.white : Colors.black,
+                  color: isSelected
+                      ? Colors.white
+                      : Theme.of(context).colorScheme.onSecondary,
                   fontWeight: FontWeight.w500,
                 ),
               ),
@@ -73,8 +75,10 @@ class ProjectBox extends StatelessWidget {
                                 children: [
                                   Text(
                                     project.title,
-                                    style: const TextStyle(
-                                        color: Color(0xff424242),
+                                    style: TextStyle(
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .onSecondary,
                                         fontWeight: FontWeight.w500,
                                         fontSize: 16),
                                   ),
@@ -168,7 +172,9 @@ class ProjectBox extends StatelessWidget {
             '$pendingTasks tasks pending',
             style: TextStyle(
               fontSize: 10,
-              color: isSelected ? Colors.white : Colors.black,
+              color: isSelected
+                  ? Colors.white
+                  : Theme.of(context).colorScheme.onPrimary,
             ),
           ),
           const Spacer(),
@@ -178,7 +184,9 @@ class ProjectBox extends StatelessWidget {
               '${project.tasks.isEmpty ? 0 : ((completedTasks / project.tasks.length) * 100).round()}%',
               style: TextStyle(
                 fontSize: 10,
-                color: isSelected ? Colors.white : Colors.blue,
+                color: isSelected
+                    ? Colors.white
+                    : Theme.of(context).colorScheme.tertiary,
                 fontWeight: FontWeight.w500,
               ),
             ),

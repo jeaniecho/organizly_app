@@ -1,4 +1,4 @@
-package com.jeaniecho.todo
+package dev.jeanie.organizly
 
 import io.flutter.embedding.android.FlutterActivity
 

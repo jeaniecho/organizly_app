@@ -18,7 +18,7 @@ class NoteBox extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Color iconColor = const Color(0xFF424242);
+    Color iconColor = Theme.of(context).colorScheme.onSecondary;
 
     TextEditingController textController =
         TextEditingController(text: note.text);
@@ -31,7 +31,7 @@ class NoteBox extends StatelessWidget {
         width: boxWidth,
         padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: Theme.of(context).cardColor,
           borderRadius: BorderRadius.circular(12),
           boxShadow: [
             BoxShadow(
@@ -117,7 +117,7 @@ class HomeNoteBox extends StatelessWidget {
       margin: const EdgeInsets.symmetric(vertical: 12),
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Theme.of(context).cardColor,
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(

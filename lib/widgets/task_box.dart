@@ -19,8 +19,6 @@ class TaskBox extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Color completedColor = const Color(0xFFCDCDCD);
-
     TextEditingController textController =
         TextEditingController(text: task.text);
     textController.selection =
@@ -37,7 +35,7 @@ class TaskBox extends StatelessWidget {
         width: boxWidth,
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: Theme.of(context).cardColor,
           borderRadius: BorderRadius.circular(12),
           boxShadow: [
             BoxShadow(
@@ -62,15 +60,18 @@ class TaskBox extends StatelessWidget {
                       width: 16,
                       height: 16,
                       decoration: BoxDecoration(
-                        color: task.completed ? completedColor : Colors.white,
-                        border: Border.all(color: completedColor, width: 1),
+                        color: task.completed
+                            ? Theme.of(context).disabledColor
+                            : Theme.of(context).colorScheme.primary,
+                        border: Border.all(
+                            color: Theme.of(context).disabledColor, width: 1),
                         borderRadius: BorderRadius.circular(4),
                       ),
-                      child: const Center(
+                      child: Center(
                         child: Icon(
                           Icons.check,
                           size: 14,
-                          color: Colors.white,
+                          color: Theme.of(context).colorScheme.primary,
                         ),
                       ),
                     ),
@@ -84,14 +85,16 @@ class TaskBox extends StatelessWidget {
                         controller: textController,
                         enabled: !task.completed,
                         style: TextStyle(
-                          color: task.completed ? completedColor : Colors.black,
+                          color: task.completed
+                              ? Theme.of(context).disabledColor
+                              : Theme.of(context).colorScheme.onPrimary,
                           fontSize: 12,
                           height: 1.5,
                           leadingDistribution: TextLeadingDistribution.even,
                           decoration: task.completed
                               ? TextDecoration.lineThrough
                               : null,
-                          decorationColor: completedColor,
+                          decorationColor: Theme.of(context).disabledColor,
                         ),
                         minLines: 1,
                         maxLines: 5,
@@ -152,13 +155,11 @@ class HomeTaskBox extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Color completedColor = const Color(0xFFCDCDCD);
-
     return Container(
       width: boxWidth,
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Theme.of(context).cardColor,
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
@@ -178,15 +179,18 @@ class HomeTaskBox extends StatelessWidget {
               width: 16,
               height: 16,
               decoration: BoxDecoration(
-                color: task.completed ? completedColor : Colors.white,
-                border: Border.all(color: completedColor, width: 1),
+                color: task.completed
+                    ? Theme.of(context).disabledColor
+                    : Theme.of(context).colorScheme.primary,
+                border: Border.all(
+                    color: Theme.of(context).disabledColor, width: 1),
                 borderRadius: BorderRadius.circular(4),
               ),
-              child: const Center(
+              child: Center(
                 child: Icon(
                   Icons.check,
                   size: 14,
-                  color: Colors.white,
+                  color: Theme.of(context).colorScheme.primary,
                 ),
               ),
             ),
@@ -196,12 +200,14 @@ class HomeTaskBox extends StatelessWidget {
             child: Text(
               task.text,
               style: TextStyle(
-                color: task.completed ? completedColor : Colors.black,
+                color: task.completed
+                    ? Theme.of(context).disabledColor
+                    : Theme.of(context).colorScheme.onPrimary,
                 fontSize: 12,
                 height: 1.5,
                 leadingDistribution: TextLeadingDistribution.even,
                 decoration: task.completed ? TextDecoration.lineThrough : null,
-                decorationColor: completedColor,
+                decorationColor: Theme.of(context).disabledColor,
               ),
             ),
           ),
