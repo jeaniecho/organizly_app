@@ -148,7 +148,7 @@ class PendingTasks extends StatelessWidget {
                   TaskVM task = tasks[index];
 
                   return Padding(
-                    key: Key('task_page${task.id}'),
+                    key: Key('task_page${task.id}_$index'),
                     padding: const EdgeInsets.symmetric(vertical: 6),
                     child: StreamBuilder<List>(
                         stream: Rx.combineLatestList(
@@ -387,7 +387,7 @@ class ProjectTasks extends StatelessWidget {
             TaskVM task = tasks[index];
 
             return Padding(
-              key: Key('task_page_${project.id}_${task.id}'),
+              key: Key('task_page_${project.id}_${task.id}_$index'),
               padding: const EdgeInsets.symmetric(vertical: 6),
               child: StreamBuilder<List>(
                   stream: Rx.combineLatestList(

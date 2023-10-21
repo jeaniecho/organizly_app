@@ -327,7 +327,8 @@ class PendingProjectTasks extends StatelessWidget {
                         TaskVM task = tasks[index];
 
                         return Padding(
-                          key: Key('project_page_${project.id}_${task.id}'),
+                          key: Key(
+                              'project_page_${project.id}_${task.id}_$index'),
                           padding: const EdgeInsets.symmetric(vertical: 6),
                           child: StreamBuilder<int?>(
                               stream: projectBloc.reordering,
