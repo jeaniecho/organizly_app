@@ -1,3 +1,4 @@
+import 'package:flutter/services.dart';
 import 'package:path/path.dart';
 import 'package:rxdart/subjects.dart';
 import 'package:sqflite/sqflite.dart';
@@ -138,6 +139,7 @@ class TaskBloc {
     // tasks.add(task.copyWith(completed: !task.completed));
     // _tasks.add(tasks);
 
+    HapticFeedback.selectionClick();
     updateTask(task.copyWith(completed: !task.completed));
   }
 

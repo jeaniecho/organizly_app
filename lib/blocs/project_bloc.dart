@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:path/path.dart';
 import 'package:rxdart/subjects.dart';
 import 'package:sqflite/sqflite.dart';
@@ -202,6 +203,7 @@ class ProjectBloc {
 
     // _projects.add(projects);
 
+    HapticFeedback.selectionClick();
     updateProject(project.copyWith(tasks: tasks));
   }
 
