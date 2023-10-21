@@ -60,6 +60,7 @@ class PendingTasks extends StatelessWidget {
                 children: [
                   GestureDetector(
                     onTap: () {
+                      HapticFeedback.selectionClick();
                       taskBloc.setFoldTodo(!foldTodo);
                     },
                     child: Row(
@@ -354,6 +355,7 @@ class ProjectTasks extends StatelessWidget {
                 children: [
                   GestureDetector(
                     onTap: () {
+                      HapticFeedback.selectionClick();
                       taskBloc.setFoldProjects(project.id);
                     },
                     child: Row(
@@ -374,7 +376,7 @@ class ProjectTasks extends StatelessWidget {
                       ],
                     ),
                   ),
-                  isFold
+                  true
                       ? const SizedBox(height: 32)
                       : SizedBox(
                           height: 32,
