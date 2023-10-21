@@ -47,134 +47,164 @@ class PendingTasks extends StatelessWidget {
   Widget build(BuildContext context) {
     TaskBloc taskBloc = context.read<TaskBloc>();
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            const Text(
-              'Todo',
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-            SizedBox(
-              height: 32,
-              child: ElevatedButton(
-                onPressed: () {
-                  HapticFeedback.selectionClick();
-                  FocusNode focusNode = FocusNode();
-                  taskBloc.addTask(TaskVM(
-                    id: DateTime.now().millisecondsSinceEpoch,
-                    index: taskBloc.tasksLength,
-                    completed: false,
-                    text: '',
-                    focusNode: focusNode,
-                  ));
-                  focusNode.requestFocus();
-                },
-                child: Row(
-                  children: [
-                    Icon(
-                      Icons.add_box,
-                      size: 16,
-                      color: Theme.of(context).colorScheme.tertiary,
-                    ),
-                    const SizedBox(width: 4),
-                    Text(
-                      'Add Task',
-                      style: TextStyle(
-                          fontSize: 12,
-                          height: 1,
-                          color: Theme.of(context).colorScheme.tertiary),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ],
-        ),
-        const SizedBox(height: 6),
-        StreamBuilder(
-            stream: taskBloc.tasks,
-            builder: (context, snapshot) {
-              if (!snapshot.hasData) {
-                return const Center(child: CircularProgressIndicator());
-              }
+    return StreamBuilder<bool>(
+        stream: taskBloc.foldTodo,
+        builder: (context, snapshot) {
+          bool foldTodo = snapshot.data ?? false;
 
-              List<TaskVM> tasks = snapshot.data!;
-
-              List<TaskVM> pendingTasks =
-                  tasks.where((element) => !element.completed).toList();
-              List<TaskVM> completedTasks =
-                  tasks.where((element) => element.completed).toList();
-
-              tasks = pendingTasks + completedTasks;
-
-              if (tasks.isEmpty) {
-                return const Padding(
-                  padding: EdgeInsets.symmetric(vertical: 12),
-                  child: Center(
-                    child: Text(
-                      'No tasks',
-                      style: TextStyle(color: Colors.grey),
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  GestureDetector(
+                    onTap: () {
+                      taskBloc.setFoldTodo(!foldTodo);
+                    },
+                    child: Row(
+                      children: [
+                        Image.asset(
+                          'assets/icons/${foldTodo ? 'fold' : 'unfold'}.png',
+                          width: 16,
+                        ),
+                        const SizedBox(width: 6),
+                        const Text(
+                          'Todo',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w500,
+                            height: 1.25,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
-                );
-              }
+                  foldTodo
+                      ? const SizedBox(height: 32)
+                      : SizedBox(
+                          height: 32,
+                          child: ElevatedButton(
+                            onPressed: () {
+                              HapticFeedback.selectionClick();
+                              FocusNode focusNode = FocusNode();
+                              taskBloc.addTask(TaskVM(
+                                id: DateTime.now().millisecondsSinceEpoch,
+                                index: taskBloc.tasksLength,
+                                completed: false,
+                                text: '',
+                                focusNode: focusNode,
+                              ));
+                              focusNode.requestFocus();
+                            },
+                            child: Row(
+                              children: [
+                                Icon(
+                                  Icons.add_box,
+                                  size: 16,
+                                  color: Theme.of(context).colorScheme.tertiary,
+                                ),
+                                const SizedBox(width: 4),
+                                Text(
+                                  'Add Task',
+                                  style: TextStyle(
+                                      fontSize: 12,
+                                      height: 1,
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .tertiary),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                ],
+              ),
+              const SizedBox(height: 6),
+              if (!foldTodo)
+                StreamBuilder(
+                    stream: taskBloc.tasks,
+                    builder: (context, snapshot) {
+                      if (!snapshot.hasData) {
+                        return const Center(child: CircularProgressIndicator());
+                      }
 
-              return ReorderableListView.builder(
-                key: const Key('task_reorder'),
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                proxyDecorator: proxyDecorator,
-                onReorderStart: (index) {
-                  HapticFeedback.mediumImpact();
-                  taskBloc.setReordering(index);
-                },
-                onReorderEnd: (index) {
-                  HapticFeedback.lightImpact();
-                  taskBloc.setReordering(null);
-                },
-                onReorder: (oldIndex, newIndex) {
-                  if (newIndex > tasks.length) newIndex = tasks.length;
-                  if (oldIndex < newIndex) newIndex--;
+                      List<TaskVM> tasks = snapshot.data!;
 
-                  taskBloc.reorderTask(tasks[oldIndex], oldIndex, newIndex);
-                },
-                itemBuilder: (context, index) {
-                  TaskVM task = tasks[index];
+                      List<TaskVM> pendingTasks =
+                          tasks.where((element) => !element.completed).toList();
+                      List<TaskVM> completedTasks =
+                          tasks.where((element) => element.completed).toList();
 
-                  return Padding(
-                    key: Key('task_page${task.id}_$index'),
-                    padding: const EdgeInsets.symmetric(vertical: 6),
-                    child: StreamBuilder<List>(
-                        stream: Rx.combineLatestList(
-                            [taskBloc.reorderingProject, taskBloc.reordering]),
-                        builder: (context, snapshot) {
-                          bool isReordering = snapshot.data?[0] == null &&
-                              snapshot.data?[1] == index;
+                      tasks = pendingTasks + completedTasks;
 
-                          return TaskBox(
-                            task: task,
-                            boxWidth: 100,
-                            toggle: () => taskBloc.toggleTask(task),
-                            submit: (String text) =>
-                                taskBloc.editTask(task, text),
-                            remove: () => taskBloc.removeTask(task),
-                            reordering: isReordering,
+                      if (tasks.isEmpty) {
+                        return const Padding(
+                          padding: EdgeInsets.symmetric(vertical: 12),
+                          child: Center(
+                            child: Text(
+                              'No tasks',
+                              style: TextStyle(color: Colors.grey),
+                            ),
+                          ),
+                        );
+                      }
+
+                      return ReorderableListView.builder(
+                        key: const Key('task_reorder'),
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
+                        proxyDecorator: proxyDecorator,
+                        onReorderStart: (index) {
+                          HapticFeedback.mediumImpact();
+                          taskBloc.setReordering(index);
+                        },
+                        onReorderEnd: (index) {
+                          HapticFeedback.lightImpact();
+                          taskBloc.setReordering(null);
+                        },
+                        onReorder: (oldIndex, newIndex) {
+                          if (newIndex > tasks.length) newIndex = tasks.length;
+                          if (oldIndex < newIndex) newIndex--;
+
+                          taskBloc.reorderTask(
+                              tasks[oldIndex], oldIndex, newIndex);
+                        },
+                        itemBuilder: (context, index) {
+                          TaskVM task = tasks[index];
+
+                          return Padding(
+                            key: Key('task_page${task.id}_$index'),
+                            padding: const EdgeInsets.symmetric(vertical: 6),
+                            child: StreamBuilder<List>(
+                                stream: Rx.combineLatestList([
+                                  taskBloc.reorderingProject,
+                                  taskBloc.reordering
+                                ]),
+                                builder: (context, snapshot) {
+                                  bool isReordering =
+                                      snapshot.data?[0] == null &&
+                                          snapshot.data?[1] == index;
+
+                                  return TaskBox(
+                                    task: task,
+                                    boxWidth: 100,
+                                    toggle: () => taskBloc.toggleTask(task),
+                                    submit: (String text) =>
+                                        taskBloc.editTask(task, text),
+                                    remove: () => taskBloc.removeTask(task),
+                                    reordering: isReordering,
+                                  );
+                                }),
                           );
-                        }),
-                  );
-                },
-                itemCount: tasks.length,
-              );
-            }),
-        const SizedBox(height: 18),
-      ],
-    );
+                        },
+                        itemCount: tasks.length,
+                      );
+                    }),
+              const SizedBox(height: 18),
+            ],
+          );
+        });
   }
 }
 
@@ -310,108 +340,140 @@ class ProjectTasks extends StatelessWidget {
       return const SizedBox.shrink();
     }
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(
-              project.title,
-              style: const TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-            SizedBox(
-              height: 32,
-              child: ElevatedButton(
-                onPressed: () {
-                  HapticFeedback.selectionClick();
-                  FocusNode focusNode = FocusNode();
-                  projectBloc.addTask(
-                      project,
-                      TaskVM(
-                        id: DateTime.now().millisecondsSinceEpoch,
-                        index: tasks.length,
-                        completed: false,
-                        text: '',
-                        focusNode: focusNode,
-                      ));
-                  focusNode.requestFocus();
-                },
-                child: Row(
-                  children: [
-                    Icon(
-                      Icons.add_box,
-                      size: 16,
-                      color: Theme.of(context).colorScheme.tertiary,
+    return StreamBuilder<List<int>>(
+        stream: taskBloc.foldProjects,
+        builder: (context, snapshot) {
+          List<int> foldProjects = snapshot.data ?? [];
+          bool isFold = foldProjects.contains(project.id);
+
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  GestureDetector(
+                    onTap: () {
+                      taskBloc.setFoldProjects(project.id);
+                    },
+                    child: Row(
+                      children: [
+                        Image.asset(
+                          'assets/icons/${isFold ? 'fold' : 'unfold'}.png',
+                          width: 16,
+                        ),
+                        const SizedBox(width: 6),
+                        Text(
+                          project.title,
+                          style: const TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w500,
+                            height: 1.25,
+                          ),
+                        ),
+                      ],
                     ),
-                    const SizedBox(width: 4),
-                    Text(
-                      'Add Task',
-                      style: TextStyle(
-                          fontSize: 12,
-                          height: 1,
-                          color: Theme.of(context).colorScheme.tertiary),
-                    ),
-                  ],
-                ),
+                  ),
+                  isFold
+                      ? const SizedBox(height: 32)
+                      : SizedBox(
+                          height: 32,
+                          child: ElevatedButton(
+                            onPressed: () {
+                              HapticFeedback.selectionClick();
+                              FocusNode focusNode = FocusNode();
+                              projectBloc.addTask(
+                                  project,
+                                  TaskVM(
+                                    id: DateTime.now().millisecondsSinceEpoch,
+                                    index: tasks.length,
+                                    completed: false,
+                                    text: '',
+                                    focusNode: focusNode,
+                                  ));
+                              focusNode.requestFocus();
+                            },
+                            child: Row(
+                              children: [
+                                Icon(
+                                  Icons.add_box,
+                                  size: 16,
+                                  color: Theme.of(context).colorScheme.tertiary,
+                                ),
+                                const SizedBox(width: 4),
+                                Text(
+                                  'Add Task',
+                                  style: TextStyle(
+                                      fontSize: 12,
+                                      height: 1,
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .tertiary),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                ],
               ),
-            ),
-          ],
-        ),
-        const SizedBox(height: 6),
-        ReorderableListView.builder(
-          shrinkWrap: true,
-          physics: const NeverScrollableScrollPhysics(),
-          proxyDecorator: proxyDecorator,
-          onReorderStart: (index) {
-            HapticFeedback.mediumImpact();
-            taskBloc.setReordering(index);
-            taskBloc.setReorderingProject(project.id);
-          },
-          onReorderEnd: (index) {
-            HapticFeedback.lightImpact();
-            taskBloc.setReordering(null);
-            taskBloc.setReorderingProject(null);
-          },
-          onReorder: (oldIndex, newIndex) {
-            if (newIndex > tasks.length) newIndex = tasks.length;
-            if (oldIndex < newIndex) newIndex--;
+              const SizedBox(height: 6),
+              if (!isFold)
+                ReorderableListView.builder(
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  proxyDecorator: proxyDecorator,
+                  onReorderStart: (index) {
+                    HapticFeedback.mediumImpact();
+                    taskBloc.setReordering(index);
+                    taskBloc.setReorderingProject(project.id);
+                  },
+                  onReorderEnd: (index) {
+                    HapticFeedback.lightImpact();
+                    taskBloc.setReordering(null);
+                    taskBloc.setReorderingProject(null);
+                  },
+                  onReorder: (oldIndex, newIndex) {
+                    if (newIndex > tasks.length) newIndex = tasks.length;
+                    if (oldIndex < newIndex) newIndex--;
 
-            projectBloc.reorderTask(
-                project, tasks[oldIndex], oldIndex, newIndex);
-          },
-          itemBuilder: (context, index) {
-            TaskVM task = tasks[index];
+                    projectBloc.reorderTask(
+                        project, tasks[oldIndex], oldIndex, newIndex);
+                  },
+                  itemBuilder: (context, index) {
+                    TaskVM task = tasks[index];
 
-            return Padding(
-              key: Key('task_page_${project.id}_${task.id}_$index'),
-              padding: const EdgeInsets.symmetric(vertical: 6),
-              child: StreamBuilder<List>(
-                  stream: Rx.combineLatestList(
-                      [taskBloc.reorderingProject, taskBloc.reordering]),
-                  builder: (context, snapshot) {
-                    bool isReordering = snapshot.data?[0] == project.id &&
-                        snapshot.data?[1] == index;
+                    return Padding(
+                      key: Key('task_page_${project.id}_${task.id}_$index'),
+                      padding: const EdgeInsets.symmetric(vertical: 6),
+                      child: StreamBuilder<List>(
+                          stream: Rx.combineLatestList([
+                            taskBloc.reorderingProject,
+                            taskBloc.reordering
+                          ]),
+                          builder: (context, snapshot) {
+                            bool isReordering =
+                                snapshot.data?[0] == project.id &&
+                                    snapshot.data?[1] == index;
 
-                    return TaskBox(
-                      task: task,
-                      boxWidth: 100,
-                      toggle: () => projectBloc.toggleTask(project, task),
-                      submit: (String text) =>
-                          projectBloc.editTask(project, task, text),
-                      remove: () => projectBloc.removeTask(project, task),
-                      reordering: isReordering,
+                            return TaskBox(
+                              task: task,
+                              boxWidth: 100,
+                              toggle: () =>
+                                  projectBloc.toggleTask(project, task),
+                              submit: (String text) =>
+                                  projectBloc.editTask(project, task, text),
+                              remove: () =>
+                                  projectBloc.removeTask(project, task),
+                              reordering: isReordering,
+                            );
+                          }),
                     );
-                  }),
-            );
-          },
-          itemCount: tasks.length,
-        ),
-        const SizedBox(height: 18),
-      ],
-    );
+                  },
+                  itemCount: tasks.length,
+                ),
+              const SizedBox(height: 18),
+            ],
+          );
+        });
   }
 }

@@ -20,6 +20,13 @@ class TaskBloc {
   Stream<int?> get reorderingProject => _reorderingProject.stream;
   Function get setReorderingProject => _reorderingProject.add;
 
+  final BehaviorSubject<bool> _foldTodo = BehaviorSubject.seeded(false);
+  Stream<bool> get foldTodo => _foldTodo.stream;
+  Function get setFoldTodo => _foldTodo.add;
+
+  final BehaviorSubject<List<int>> _foldProjects = BehaviorSubject.seeded([]);
+  Stream<List<int>> get foldProjects => _foldProjects.stream;
+
   TaskBloc() {
     initDB().then((value) {
       taskDB = value;
@@ -233,5 +240,17 @@ class TaskBloc {
 
     //   getTasks();
     // } catch (e) {}
+  }
+
+  setFoldProjects(int id) {
+    List<int> fp = _foldProjects.value;
+
+    if (fp.contains(id)) {
+      fp.remove(id);
+    } else {
+      fp.add(id);
+    }
+
+    _foldProjects.add(fp);
   }
 }
