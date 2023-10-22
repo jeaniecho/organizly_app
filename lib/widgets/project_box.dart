@@ -169,7 +169,7 @@ class ProjectBox extends StatelessWidget {
           ),
           const SizedBox(height: 2),
           Text(
-            '$pendingTasks tasks pending',
+            '$pendingTasks task${pendingTasks > 1 ? 's' : ''} pending',
             style: TextStyle(
               fontSize: 10,
               color: isSelected

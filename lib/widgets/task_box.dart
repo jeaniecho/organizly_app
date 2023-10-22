@@ -56,7 +56,8 @@ class TaskBox extends StatelessWidget {
                 children: [
                   GestureDetector(
                     onTap: toggle,
-                    child: Container(
+                    child: AnimatedContainer(
+                      duration: const Duration(milliseconds: 250),
                       width: 16,
                       height: 16,
                       decoration: BoxDecoration(
@@ -175,7 +176,8 @@ class HomeTaskBox extends StatelessWidget {
         children: [
           GestureDetector(
             onTap: toggle,
-            child: Container(
+            child: AnimatedContainer(
+              duration: const Duration(milliseconds: 250),
               width: 16,
               height: 16,
               decoration: BoxDecoration(
