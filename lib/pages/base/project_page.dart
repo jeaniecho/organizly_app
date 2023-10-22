@@ -171,7 +171,7 @@ class ProjectPage extends StatelessWidget {
                   child: PageView.builder(
                     controller: projectBloc.pageController,
                     onPageChanged: (value) {
-                      projectBloc.movePage(value);
+                      projectBloc.movePage(value, false);
                     },
                     itemBuilder: (context, index) {
                       ProjectVM project = projects[index];

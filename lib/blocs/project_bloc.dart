@@ -27,6 +27,8 @@ class ProjectBloc {
   Stream<int?> get reordering => _reordering.stream;
   Function get setReordering => _reordering.add;
 
+  final BehaviorSubject<bool> _jumping = BehaviorSubject.seeded(false);
+
   final PageController pageController = PageController(viewportFraction: 0.75);
 
   ProjectBloc() {
@@ -129,11 +131,18 @@ class ProjectBloc {
   }
   // db end
 
-  movePage(int index) {
-    _pageIndex.add(index);
-    _tasks.add(_projects.value[_pageIndex.value].tasks);
-    pageController.animateToPage(index,
-        duration: const Duration(milliseconds: 250), curve: Curves.easeInOut);
+  movePage(int index, bool jump) {
+    if (!_jumping.value) {
+      if (jump) _jumping.add(true);
+
+      _pageIndex.add(index);
+      _tasks.add(_projects.value[_pageIndex.value].tasks);
+      pageController
+          .animateToPage(index,
+              duration: const Duration(milliseconds: 250),
+              curve: Curves.easeInOut)
+          .then((value) => _jumping.add(false));
+    }
   }
 
   addProject(ProjectVM project) {
@@ -145,7 +154,7 @@ class ProjectBloc {
       List<ProjectVM> projects = _projects.value;
 
       if (projects.length > 1) {
-        movePage(projects.length - 1);
+        movePage(projects.length - 1, true);
       }
     });
   }
@@ -170,7 +179,7 @@ class ProjectBloc {
       List<ProjectVM> projects = _projects.value;
 
       if (_pageIndex.value >= projects.length - 1 && projects.length > 1) {
-        movePage(projects.length - 2);
+        movePage(projects.length - 2, true);
       }
 
       getProjects();
