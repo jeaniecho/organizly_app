@@ -132,12 +132,12 @@ class PendingTasks extends StatelessWidget {
 
                       List<TaskVM> tasks = snapshot.data!;
 
-                      List<TaskVM> pendingTasks =
-                          tasks.where((element) => !element.completed).toList();
-                      List<TaskVM> completedTasks =
-                          tasks.where((element) => element.completed).toList();
+                      // List<TaskVM> pendingTasks =
+                      //     tasks.where((element) => !element.completed).toList();
+                      // List<TaskVM> completedTasks =
+                      //     tasks.where((element) => element.completed).toList();
 
-                      tasks = pendingTasks + completedTasks;
+                      // tasks = pendingTasks + completedTasks;
 
                       if (tasks.isEmpty) {
                         return const Padding(
@@ -330,12 +330,12 @@ class ProjectTasks extends StatelessWidget {
 
     List<TaskVM> tasks = project.tasks;
 
-    List<TaskVM> pendingTasks =
-        tasks.where((element) => !element.completed).toList();
-    List<TaskVM> completedTasks =
-        tasks.where((element) => element.completed).toList();
+    // List<TaskVM> pendingTasks =
+    //     tasks.where((element) => !element.completed).toList();
+    // List<TaskVM> completedTasks =
+    //     tasks.where((element) => element.completed).toList();
 
-    tasks = pendingTasks + completedTasks;
+    // tasks = pendingTasks + completedTasks;
 
     if (tasks.isEmpty) {
       return const SizedBox.shrink();

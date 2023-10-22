@@ -116,15 +116,15 @@ class TaskBox extends StatelessWidget {
                       ),
                     ),
                   ),
-                  if (!task.completed)
-                    Padding(
-                      padding: const EdgeInsets.only(left: 4),
-                      child: Image.asset(
-                        'assets/icons/menu_filled.png',
-                        width: 18,
-                        color: Colors.grey,
-                      ),
+                  // if (!task.completed)
+                  Padding(
+                    padding: const EdgeInsets.only(left: 4),
+                    child: Image.asset(
+                      'assets/icons/menu_filled.png',
+                      width: 18,
+                      color: Colors.grey,
                     ),
+                  ),
                 ],
               ),
             ),

@@ -235,12 +235,12 @@ class HomeTasks extends StatelessWidget {
                   );
                 }
 
-                List<TaskVM> pendingTasks =
-                    tasks.where((element) => !element.completed).toList();
-                List<TaskVM> completedTasks =
-                    tasks.where((element) => element.completed).toList();
+                // List<TaskVM> pendingTasks =
+                //     tasks.where((element) => !element.completed).toList();
+                // List<TaskVM> completedTasks =
+                //     tasks.where((element) => element.completed).toList();
 
-                tasks = pendingTasks + completedTasks;
+                // tasks = pendingTasks + completedTasks;
 
                 return ListView.separated(
                   shrinkWrap: true,

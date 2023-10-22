@@ -208,8 +208,8 @@ class ProjectPage extends StatelessWidget {
                         child: Column(
                           children: [
                             PendingProjectTasks(project: projects[pageIndex]),
-                            const SizedBox(height: 18),
-                            CompletedProjectTasks(project: projects[pageIndex]),
+                            // const SizedBox(height: 18),
+                            // CompletedProjectTasks(project: projects[pageIndex]),
                           ],
                         ),
                       );
@@ -237,7 +237,7 @@ class PendingProjectTasks extends StatelessWidget {
         builder: (context, snapshot) {
           List<TaskVM> tasks = snapshot.data ?? [];
 
-          tasks = tasks.where((element) => !element.completed).toList();
+          // tasks = tasks.where((element) => !element.completed).toList();
 
           return Column(
             crossAxisAlignment: CrossAxisAlignment.start,
