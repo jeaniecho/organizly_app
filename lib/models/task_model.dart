@@ -5,6 +5,7 @@ class TaskVM {
   int index;
   bool completed;
   String text;
+  DateTime? date;
   FocusNode? focusNode;
 
   TaskVM({
@@ -12,15 +13,17 @@ class TaskVM {
     required this.index,
     required this.completed,
     required this.text,
+    this.date,
     this.focusNode,
   });
 
-  TaskVM copyWith({int? index, bool? completed, String? text}) {
+  TaskVM copyWith({int? index, bool? completed, String? text, DateTime? date}) {
     return TaskVM(
       id: id,
       index: index ?? this.index,
       completed: completed ?? this.completed,
       text: text ?? this.text,
+      date: date ?? this.date,
     );
   }
 
@@ -30,6 +33,7 @@ class TaskVM {
       'task_index': index,
       'completed': completed ? 1 : 0,
       'text': text,
+      if (date != null) 'date': date!.millisecondsSinceEpoch,
     };
   }
 }

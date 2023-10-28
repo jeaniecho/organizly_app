@@ -72,11 +72,11 @@ class TaskBloc {
 
     List<TaskVM> tasks = List.generate(data.length, (i) {
       return TaskVM(
-        id: data[i]['id'],
-        index: data[i]['task_index'],
-        completed: data[i]['completed'] == 0 ? false : true,
-        text: data[i]['text'],
-      );
+          id: data[i]['id'],
+          index: data[i]['task_index'],
+          completed: data[i]['completed'] == 0 ? false : true,
+          text: data[i]['text'],
+          date: DateTime.fromMillisecondsSinceEpoch(data[i]['date']));
     });
 
     tasks.sort((a, b) => -a.index.compareTo(b.index));

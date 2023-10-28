@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:what_to_do/models/task_model.dart';
 
 class TaskBox extends StatelessWidget {
@@ -19,6 +20,68 @@ class TaskBox extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    editTask() {
+      showDialog(
+          context: context,
+          builder: (context) {
+            TextEditingController taskController =
+                TextEditingController(text: task.text);
+
+            return SimpleDialog(
+              backgroundColor: Theme.of(context).cardColor,
+              elevation: 0,
+              contentPadding: const EdgeInsets.all(24),
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      'Edit Task',
+                      style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w500,
+                          color: Theme.of(context).colorScheme.onPrimary),
+                    ),
+                    GestureDetector(
+                      onTap: () {
+                        Navigator.pop(context);
+                      },
+                      child: const Icon(
+                        Icons.close,
+                        size: 20,
+                        color: Color(0xff424242),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 6),
+                TextField(
+                  controller: taskController,
+                  autofocus: true,
+                  style: const TextStyle(height: 1),
+                  decoration: const InputDecoration(
+                    hintText: 'Task',
+                  ),
+                ),
+                const SizedBox(height: 12),
+                ElevatedButton(
+                  onPressed: () {
+                    edit(taskController.text);
+                    Navigator.pop(context);
+                  },
+                  child: Text(
+                    'Done',
+                    style: TextStyle(
+                        fontSize: 14,
+                        height: 1,
+                        color: Theme.of(context).colorScheme.tertiary),
+                  ),
+                ),
+              ],
+            );
+          });
+    }
+
     return Dismissible(
       key: Key('task${task.id}'),
       onDismissed: (direction) {
@@ -41,141 +104,79 @@ class TaskBox extends StatelessWidget {
             ),
           ],
         ),
-        child: Row(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Expanded(
-              child: Row(
-                // crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  GestureDetector(
-                    onTap: toggle,
-                    child: AnimatedContainer(
-                      duration: const Duration(milliseconds: 250),
-                      width: 16,
-                      height: 16,
-                      decoration: BoxDecoration(
-                        color: task.completed
-                            ? Theme.of(context).disabledColor
-                            : Theme.of(context).colorScheme.primary,
-                        border: Border.all(
-                            color: Theme.of(context).disabledColor, width: 1),
-                        borderRadius: BorderRadius.circular(4),
-                      ),
-                      child: Center(
-                        child: Icon(
-                          Icons.check,
-                          size: 14,
-                          color: Theme.of(context).colorScheme.primary,
-                        ),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: 8),
-                  Expanded(
-                    child: Text(
-                      task.text,
-                      style: TextStyle(
-                        color: task.completed
-                            ? Theme.of(context).disabledColor
-                            : Theme.of(context).colorScheme.onPrimary,
-                        fontSize: 12,
-                        height: 1.5,
-                        leadingDistribution: TextLeadingDistribution.even,
-                        decoration:
-                            task.completed ? TextDecoration.lineThrough : null,
-                        decorationColor: Theme.of(context).disabledColor,
-                      ),
-                    ),
-                  ),
-                  // if (!task.completed)
-                  Padding(
-                    padding: const EdgeInsets.only(left: 4),
-                    child: GestureDetector(
-                      onTap: () {
-                        showDialog(
-                            context: context,
-                            builder: (context) {
-                              TextEditingController taskController =
-                                  TextEditingController(text: task.text);
-
-                              return SimpleDialog(
-                                backgroundColor: Theme.of(context).cardColor,
-                                elevation: 0,
-                                contentPadding: const EdgeInsets.all(24),
-                                children: [
-                                  Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Text(
-                                        'Edit Task',
-                                        style: TextStyle(
-                                            fontSize: 14,
-                                            fontWeight: FontWeight.w500,
-                                            color: Theme.of(context)
-                                                .colorScheme
-                                                .onPrimary),
-                                      ),
-                                      GestureDetector(
-                                        onTap: () {
-                                          Navigator.pop(context);
-                                        },
-                                        child: const Icon(
-                                          Icons.close,
-                                          size: 20,
-                                          color: Color(0xff424242),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                  const SizedBox(height: 6),
-                                  TextField(
-                                    controller: taskController,
-                                    autofocus: true,
-                                    style: const TextStyle(height: 1),
-                                    decoration: const InputDecoration(
-                                      hintText: 'Task',
-                                    ),
-                                  ),
-                                  const SizedBox(height: 12),
-                                  ElevatedButton(
-                                    onPressed: () {
-                                      edit(taskController.text);
-                                      Navigator.pop(context);
-                                    },
-                                    child: Text(
-                                      'Done',
-                                      style: TextStyle(
-                                          fontSize: 14,
-                                          height: 1,
-                                          color: Theme.of(context)
-                                              .colorScheme
-                                              .tertiary),
-                                    ),
-                                  ),
-                                ],
-                              );
-                            });
-                      },
-                      child: Image.asset(
-                        'assets/icons/menu_filled.png',
-                        width: 18,
-                        color: Colors.grey,
-                      ),
-                    ),
-                  ),
-                ],
+            if (task.date != null)
+              Padding(
+                padding: const EdgeInsets.only(bottom: 6),
+                child: Text(
+                  DateFormat('MMMM d, E').format(task.date!),
+                  style: TextStyle(
+                      fontSize: 10,
+                      color: task.completed
+                          ? Theme.of(context).disabledColor
+                          : Theme.of(context).colorScheme.onSecondary),
+                ),
               ),
+            Row(
+              // crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                GestureDetector(
+                  onTap: toggle,
+                  child: AnimatedContainer(
+                    duration: const Duration(milliseconds: 250),
+                    width: 16,
+                    height: 16,
+                    decoration: BoxDecoration(
+                      color: task.completed
+                          ? Theme.of(context).disabledColor
+                          : Theme.of(context).colorScheme.primary,
+                      border: Border.all(
+                          color: Theme.of(context).disabledColor, width: 1),
+                      borderRadius: BorderRadius.circular(4),
+                    ),
+                    child: Center(
+                      child: Icon(
+                        Icons.check,
+                        size: 14,
+                        color: Theme.of(context).colorScheme.primary,
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Text(
+                    task.text,
+                    style: TextStyle(
+                      color: task.completed
+                          ? Theme.of(context).disabledColor
+                          : Theme.of(context).colorScheme.onPrimary,
+                      fontSize: 12,
+                      height: 1.5,
+                      leadingDistribution: TextLeadingDistribution.even,
+                      decoration:
+                          task.completed ? TextDecoration.lineThrough : null,
+                      decorationColor: Theme.of(context).disabledColor,
+                    ),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(left: 4),
+                  child: GestureDetector(
+                    onTap: () {
+                      editTask();
+                    },
+                    child: Image.asset(
+                      'assets/icons/menu_filled.png',
+                      width: 18,
+                      color: Colors.grey,
+                    ),
+                  ),
+                ),
+              ],
             ),
-            // const SizedBox(width: 2),
-            // GestureDetector(
-            //   onTap: remove,
-            //   child: const Icon(
-            //     Icons.close,
-            //     size: 16,
-            //     color: Colors.grey,
-            //   ),
-            // )
           ],
         ),
       ),

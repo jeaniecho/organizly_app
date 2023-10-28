@@ -47,6 +47,85 @@ class PendingTasks extends StatelessWidget {
   Widget build(BuildContext context) {
     TaskBloc taskBloc = context.read<TaskBloc>();
 
+    addTask() {
+      showDialog(
+          context: context,
+          builder: (context) {
+            TextEditingController taskController = TextEditingController();
+
+            return SimpleDialog(
+              backgroundColor: Theme.of(context).cardColor,
+              elevation: 0,
+              contentPadding: const EdgeInsets.all(24),
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      'Add Task',
+                      style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w500,
+                          color: Theme.of(context).colorScheme.onPrimary),
+                    ),
+                    GestureDetector(
+                      onTap: () {
+                        Navigator.pop(context);
+                      },
+                      child: const Icon(
+                        Icons.close,
+                        size: 20,
+                        color: Color(0xff424242),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 6),
+                TextField(
+                  controller: taskController,
+                  autofocus: true,
+                  decoration: const InputDecoration(
+                    hintText: 'Task',
+                  ),
+                  style: const TextStyle(height: 1),
+                ),
+                const SizedBox(height: 12),
+                GestureDetector(
+                    onTap: () {
+                      showDatePicker(
+                        context: context,
+                        initialDate: DateTime.now(),
+                        firstDate: DateTime.now(),
+                        lastDate: DateTime.now(),
+                      );
+                    },
+                    child: const Text('No date')),
+                const SizedBox(height: 12),
+                ElevatedButton(
+                  onPressed: () {
+                    if (taskController.text.isNotEmpty) {
+                      taskBloc.addTask(TaskVM(
+                        id: DateTime.now().millisecondsSinceEpoch,
+                        index: taskBloc.tasksLength,
+                        completed: false,
+                        text: taskController.text,
+                      ));
+                      Navigator.pop(context);
+                    }
+                  },
+                  child: Text(
+                    'Add',
+                    style: TextStyle(
+                        fontSize: 14,
+                        height: 1,
+                        color: Theme.of(context).colorScheme.tertiary),
+                  ),
+                ),
+              ],
+            );
+          });
+    }
+
     return StreamBuilder<bool>(
         stream: taskBloc.foldTodo,
         builder: (context, snapshot) {
@@ -88,6 +167,8 @@ class PendingTasks extends StatelessWidget {
                           child: ElevatedButton(
                             onPressed: () {
                               HapticFeedback.selectionClick();
+                              addTask();
+
                               // FocusNode focusNode = FocusNode();
                               // taskBloc.addTask(TaskVM(
                               //   id: DateTime.now().millisecondsSinceEpoch,
@@ -97,79 +178,6 @@ class PendingTasks extends StatelessWidget {
                               //   focusNode: focusNode,
                               // ));
                               // focusNode.requestFocus();
-                              showDialog(
-                                  context: context,
-                                  builder: (context) {
-                                    TextEditingController taskController =
-                                        TextEditingController();
-
-                                    return SimpleDialog(
-                                      backgroundColor:
-                                          Theme.of(context).cardColor,
-                                      elevation: 0,
-                                      contentPadding: const EdgeInsets.all(24),
-                                      children: [
-                                        Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceBetween,
-                                          children: [
-                                            Text(
-                                              'Add Task',
-                                              style: TextStyle(
-                                                  fontSize: 14,
-                                                  fontWeight: FontWeight.w500,
-                                                  color: Theme.of(context)
-                                                      .colorScheme
-                                                      .onPrimary),
-                                            ),
-                                            GestureDetector(
-                                              onTap: () {
-                                                Navigator.pop(context);
-                                              },
-                                              child: const Icon(
-                                                Icons.close,
-                                                size: 20,
-                                                color: Color(0xff424242),
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                        const SizedBox(height: 6),
-                                        TextField(
-                                          controller: taskController,
-                                          autofocus: true,
-                                          decoration: const InputDecoration(
-                                            hintText: 'Task',
-                                          ),
-                                        ),
-                                        const SizedBox(height: 12),
-                                        ElevatedButton(
-                                          onPressed: () {
-                                            if (taskController
-                                                .text.isNotEmpty) {
-                                              taskBloc.addTask(TaskVM(
-                                                id: DateTime.now()
-                                                    .millisecondsSinceEpoch,
-                                                index: taskBloc.tasksLength,
-                                                completed: false,
-                                                text: taskController.text,
-                                              ));
-                                              Navigator.pop(context);
-                                            }
-                                          },
-                                          child: Text(
-                                            'Add',
-                                            style: TextStyle(
-                                                fontSize: 14,
-                                                height: 1,
-                                                color: Theme.of(context)
-                                                    .colorScheme
-                                                    .tertiary),
-                                          ),
-                                        ),
-                                      ],
-                                    );
-                                  });
                             },
                             child: Row(
                               children: [
