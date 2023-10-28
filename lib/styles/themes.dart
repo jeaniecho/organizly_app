@@ -34,9 +34,9 @@ class OGThemes {
   static final darkTheme = ThemeData(
     brightness: Brightness.dark,
     appBarTheme: const AppBarTheme(
-      backgroundColor: Color(0xff424242),
+      backgroundColor: Color(0xff2D2D2D),
     ),
-    scaffoldBackgroundColor: const Color(0xff424242),
+    scaffoldBackgroundColor: const Color(0xff2D2D2D),
     splashColor: Colors.transparent,
     primaryColor: const Color(0xff39A0FF),
     focusColor: const Color(0xff39A0FF),
