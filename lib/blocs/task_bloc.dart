@@ -205,7 +205,8 @@ class TaskBloc {
     await deleteAllTasks(updateStream: false);
 
     for (int i = 0; i < reversed.length; i++) {
-      await insertTask(reversed[i].copyWith(index: i), updateStream: false);
+      await insertTask(reversed[i].copyWith(index: i, date: reversed[i].date),
+          updateStream: false);
     }
 
     getTasks();

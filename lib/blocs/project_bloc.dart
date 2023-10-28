@@ -31,6 +31,11 @@ class ProjectBloc {
 
   final PageController pageController = PageController(viewportFraction: 0.75);
 
+  final BehaviorSubject<DateTime?> _pickedDate = BehaviorSubject.seeded(null);
+  Stream<DateTime?> get pickedDate => _pickedDate.stream;
+  Function get setPickedDate => _pickedDate.add;
+  DateTime? get pickedDateValue => _pickedDate.value;
+
   ProjectBloc() {
     initDB().then((value) {
       projectDB = value;
@@ -66,11 +71,13 @@ class ProjectBloc {
     List<ProjectVM> projects = List.generate(data.length, (i) {
       List<TaskVM> tasks = (jsonDecode(data[i]['tasks']) as List)
           .map((e) => TaskVM(
-                id: e['id'],
-                index: e['task_index'],
-                completed: e['completed'] == 0 ? false : true,
-                text: e['text'],
-              ))
+              id: e['id'],
+              index: e['task_index'],
+              completed: e['completed'] == 0 ? false : true,
+              text: e['text'],
+              date: e['date'] == null || e['date'] == 0
+                  ? null
+                  : DateTime.fromMillisecondsSinceEpoch(e['date'])))
           .toList();
       tasks.sort((a, b) => -a.index.compareTo(b.index));
 
@@ -187,18 +194,11 @@ class ProjectBloc {
   }
 
   addTask(ProjectVM project, TaskVM task) async {
-    // List<ProjectVM> projects = _projects.value;
+    // List<TaskVM> tasks = _tasks.value;
+    // tasks.insert(0, task);
+    // _tasks.add(tasks);
 
-    // int index = projects.indexWhere((element) => element.id == project.id);
-    // projects[index] = project.copyWith(tasks: [task, ...project.tasks]);
-
-    // _projects.add(projects);
-
-    List<TaskVM> tasks = _tasks.value;
-    tasks.insert(0, task);
-    _tasks.add(tasks);
-
-    // await updateProject(project.copyWith(tasks: [task, ...project.tasks]));
+    updateProject(project.copyWith(tasks: [task, ...project.tasks]));
   }
 
   toggleTask(ProjectVM project, TaskVM task) {
@@ -268,7 +268,7 @@ class ProjectBloc {
 
     List<TaskVM> reversed = tasks.reversed.toList();
     for (int i = 0; i < reversed.length; i++) {
-      reversed[i] = reversed[i].copyWith(index: i);
+      reversed[i] = reversed[i].copyWith(index: i, date: reversed[i].date);
     }
 
     updateProject(project.copyWith(tasks: reversed));
