@@ -340,7 +340,7 @@ class PendingProjectTasks extends StatelessWidget {
                                   boxWidth: 100,
                                   toggle: () =>
                                       projectBloc.toggleTask(project, task),
-                                  submit: (String text) =>
+                                  edit: (String text) =>
                                       projectBloc.editTask(project, task, text),
                                   remove: () =>
                                       projectBloc.removeTask(project, task),
@@ -399,7 +399,7 @@ class CompletedProjectTasks extends StatelessWidget {
                     task: task,
                     boxWidth: 100,
                     toggle: () => projectBloc.toggleTask(project, task),
-                    submit: (String text) =>
+                    edit: (String text) =>
                         projectBloc.editTask(project, task, text),
                     remove: () => projectBloc.removeTask(project, task),
                   );

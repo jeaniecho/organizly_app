@@ -5,13 +5,13 @@ class TaskBox extends StatelessWidget {
   final TaskVM task;
   final double boxWidth;
   final Function() toggle;
-  final Function(String text) submit;
+  final Function(String text) edit;
   final Function() remove;
   final bool? reordering;
   const TaskBox(
       {required this.task,
       required this.boxWidth,
-      required this.submit,
+      required this.edit,
       required this.toggle,
       required this.remove,
       this.reordering,
@@ -19,13 +19,6 @@ class TaskBox extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    TextEditingController textController =
-        TextEditingController(text: task.text);
-    textController.selection =
-        TextSelection.collapsed(offset: textController.text.length);
-
-    FocusNode focusNode = task.focusNode ?? FocusNode();
-
     return Dismissible(
       key: Key('task${task.id}'),
       onDismissed: (direction) {
@@ -33,7 +26,7 @@ class TaskBox extends StatelessWidget {
       },
       child: Container(
         width: boxWidth,
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+        padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
           color: Theme.of(context).cardColor,
           borderRadius: BorderRadius.circular(12),
@@ -79,50 +72,96 @@ class TaskBox extends StatelessWidget {
                   ),
                   const SizedBox(width: 8),
                   Expanded(
-                    child: Padding(
-                      padding: const EdgeInsets.only(bottom: 5),
-                      child: TextField(
-                        focusNode: focusNode,
-                        controller: textController,
-                        enabled: !task.completed,
-                        style: TextStyle(
-                          color: task.completed
-                              ? Theme.of(context).disabledColor
-                              : Theme.of(context).colorScheme.onPrimary,
-                          fontSize: 12,
-                          height: 1.5,
-                          leadingDistribution: TextLeadingDistribution.even,
-                          decoration: task.completed
-                              ? TextDecoration.lineThrough
-                              : null,
-                          decorationColor: Theme.of(context).disabledColor,
-                        ),
-                        minLines: 1,
-                        maxLines: 5,
-                        keyboardType: TextInputType.text,
-                        onSubmitted: submit,
-                        onTapOutside: (event) {
-                          if (focusNode.hasPrimaryFocus) {
-                            submit(textController.text);
-                            focusNode.unfocus();
-                          }
-                        },
-                        decoration: const InputDecoration(
-                          border: InputBorder.none,
-                          isCollapsed: true,
-                          isDense: true,
-                          // contentPadding: EdgeInsets.only(top: -4),
-                        ),
+                    child: Text(
+                      task.text,
+                      style: TextStyle(
+                        color: task.completed
+                            ? Theme.of(context).disabledColor
+                            : Theme.of(context).colorScheme.onPrimary,
+                        fontSize: 12,
+                        height: 1.5,
+                        leadingDistribution: TextLeadingDistribution.even,
+                        decoration:
+                            task.completed ? TextDecoration.lineThrough : null,
+                        decorationColor: Theme.of(context).disabledColor,
                       ),
                     ),
                   ),
                   // if (!task.completed)
                   Padding(
                     padding: const EdgeInsets.only(left: 4),
-                    child: Image.asset(
-                      'assets/icons/menu_filled.png',
-                      width: 18,
-                      color: Colors.grey,
+                    child: GestureDetector(
+                      onTap: () {
+                        showDialog(
+                            context: context,
+                            builder: (context) {
+                              TextEditingController taskController =
+                                  TextEditingController(text: task.text);
+
+                              return SimpleDialog(
+                                backgroundColor: Theme.of(context).cardColor,
+                                elevation: 0,
+                                contentPadding: const EdgeInsets.all(24),
+                                children: [
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Text(
+                                        'Edit Task',
+                                        style: TextStyle(
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.w500,
+                                            color: Theme.of(context)
+                                                .colorScheme
+                                                .onPrimary),
+                                      ),
+                                      GestureDetector(
+                                        onTap: () {
+                                          Navigator.pop(context);
+                                        },
+                                        child: const Icon(
+                                          Icons.close,
+                                          size: 20,
+                                          color: Color(0xff424242),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  const SizedBox(height: 6),
+                                  TextField(
+                                    controller: taskController,
+                                    autofocus: true,
+                                    style: const TextStyle(height: 1),
+                                    decoration: const InputDecoration(
+                                      hintText: 'Task',
+                                    ),
+                                  ),
+                                  const SizedBox(height: 12),
+                                  ElevatedButton(
+                                    onPressed: () {
+                                      edit(taskController.text);
+                                      Navigator.pop(context);
+                                    },
+                                    child: Text(
+                                      'Done',
+                                      style: TextStyle(
+                                          fontSize: 14,
+                                          height: 1,
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .tertiary),
+                                    ),
+                                  ),
+                                ],
+                              );
+                            });
+                      },
+                      child: Image.asset(
+                        'assets/icons/menu_filled.png',
+                        width: 18,
+                        color: Colors.grey,
+                      ),
                     ),
                   ),
                 ],
