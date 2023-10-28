@@ -43,14 +43,18 @@ class ProjectBox extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(
-                project.title,
-                style: TextStyle(
-                  fontSize: 16,
-                  color: isSelected
-                      ? Colors.white
-                      : Theme.of(context).colorScheme.onSecondary,
-                  fontWeight: FontWeight.w500,
+              Expanded(
+                child: Text(
+                  project.title,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: isSelected
+                        ? Colors.white
+                        : Theme.of(context).colorScheme.onSecondary,
+                    fontWeight: FontWeight.w500,
+                  ),
                 ),
               ),
               if (isSelected)
