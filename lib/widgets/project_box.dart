@@ -69,34 +69,34 @@ class ProjectBox extends StatelessWidget {
                         context: context,
                         builder: (context) {
                           return SimpleDialog(
-                            backgroundColor: const Color(0xffFCFDFF),
                             elevation: 0,
                             contentPadding: const EdgeInsets.all(24),
                             children: [
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Text(
-                                    project.title,
-                                    style: TextStyle(
-                                        color: Theme.of(context)
-                                            .colorScheme
-                                            .onSecondary,
-                                        fontWeight: FontWeight.w500,
-                                        fontSize: 16),
+                              Align(
+                                alignment: Alignment.centerRight,
+                                child: GestureDetector(
+                                  onTap: () {
+                                    Navigator.pop(context);
+                                  },
+                                  child: const Icon(
+                                    Icons.close,
+                                    size: 20,
+                                    color: Color(0xff424242),
                                   ),
-                                  GestureDetector(
-                                    onTap: () {
-                                      Navigator.pop(context);
-                                    },
-                                    child: const Icon(
-                                      Icons.close,
-                                      size: 20,
-                                      color: Color(0xff424242),
-                                    ),
-                                  ),
-                                ],
+                                ),
+                              ),
+                              const SizedBox(height: 8),
+                              Expanded(
+                                child: Text(
+                                  project.title,
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .onSecondary,
+                                      fontWeight: FontWeight.w500,
+                                      fontSize: 16),
+                                ),
                               ),
                               const SizedBox(height: 20),
                               ElevatedButton(
@@ -106,8 +106,6 @@ class ProjectBox extends StatelessWidget {
                                       context: context,
                                       builder: (context) {
                                         return SimpleDialog(
-                                          backgroundColor:
-                                              const Color(0xffFCFDFF),
                                           elevation: 0,
                                           contentPadding:
                                               const EdgeInsets.all(24),
@@ -116,6 +114,7 @@ class ProjectBox extends StatelessWidget {
                                             TextField(
                                               autofocus: true,
                                               controller: nameController,
+                                              style: const TextStyle(height: 1),
                                               decoration: const InputDecoration(
                                                 hintText: 'Project Name',
                                                 hintStyle: TextStyle(
@@ -141,9 +140,12 @@ class ProjectBox extends StatelessWidget {
                                         );
                                       });
                                 },
-                                child: const Text(
+                                child: Text(
                                   'Edit Project Name',
-                                  style: TextStyle(color: Color(0xff39A0FF)),
+                                  style: TextStyle(
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .tertiary),
                                 ),
                               ),
                               const SizedBox(height: 12),
@@ -152,10 +154,11 @@ class ProjectBox extends StatelessWidget {
                                   remove();
                                   Navigator.pop(context);
                                 },
-                                child: const Text(
+                                child: Text(
                                   'Delete Project',
                                   style: TextStyle(
-                                    color: Color(0xff39A0FF),
+                                    color:
+                                        Theme.of(context).colorScheme.tertiary,
                                   ),
                                 ),
                               ),
