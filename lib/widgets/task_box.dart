@@ -104,78 +104,86 @@ class TaskBox extends StatelessWidget {
             ),
           ],
         ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+        child: Row(
           children: [
-            if (task.date != null)
-              Padding(
-                padding: const EdgeInsets.only(bottom: 6),
-                child: Text(
-                  DateFormat('MMMM d, E').format(task.date!),
-                  style: TextStyle(
-                      fontSize: 10,
-                      color: task.completed
-                          ? Theme.of(context).disabledColor
-                          : Theme.of(context).colorScheme.onSecondary),
-                ),
-              ),
-            Row(
-              // crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                GestureDetector(
-                  onTap: toggle,
-                  child: AnimatedContainer(
-                    duration: const Duration(milliseconds: 250),
-                    width: 16,
-                    height: 16,
-                    decoration: BoxDecoration(
-                      color: task.completed
-                          ? Theme.of(context).disabledColor
-                          : Theme.of(context).colorScheme.primary,
-                      border: Border.all(
-                          color: Theme.of(context).disabledColor, width: 1),
-                      borderRadius: BorderRadius.circular(4),
-                    ),
-                    child: Center(
-                      child: Icon(
-                        Icons.check,
-                        size: 14,
-                        color: Theme.of(context).colorScheme.primary,
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  if (task.date != null)
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 6),
+                      child: Text(
+                        DateFormat('MMMM d, E').format(task.date!),
+                        style: TextStyle(
+                            fontSize: 10,
+                            color: task.completed
+                                ? Theme.of(context).disabledColor
+                                : Theme.of(context).colorScheme.onSecondary),
                       ),
                     ),
+                  Row(
+                    // crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      GestureDetector(
+                        onTap: toggle,
+                        child: AnimatedContainer(
+                          duration: const Duration(milliseconds: 250),
+                          width: 16,
+                          height: 16,
+                          decoration: BoxDecoration(
+                            color: task.completed
+                                ? Theme.of(context).disabledColor
+                                : Theme.of(context).colorScheme.primary,
+                            border: Border.all(
+                                color: Theme.of(context).disabledColor,
+                                width: 1),
+                            borderRadius: BorderRadius.circular(4),
+                          ),
+                          child: Center(
+                            child: Icon(
+                              Icons.check,
+                              size: 14,
+                              color: Theme.of(context).colorScheme.primary,
+                            ),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: Text(
+                          task.text,
+                          style: TextStyle(
+                            color: task.completed
+                                ? Theme.of(context).disabledColor
+                                : Theme.of(context).colorScheme.onPrimary,
+                            fontSize: 12,
+                            height: 1.5,
+                            leadingDistribution: TextLeadingDistribution.even,
+                            decoration: task.completed
+                                ? TextDecoration.lineThrough
+                                : null,
+                            decorationColor: Theme.of(context).disabledColor,
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
+                ],
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(left: 4),
+              child: GestureDetector(
+                onTap: () {
+                  editTask();
+                },
+                child: Image.asset(
+                  'assets/icons/menu_filled.png',
+                  width: 18,
+                  color: Colors.grey,
                 ),
-                const SizedBox(width: 8),
-                Expanded(
-                  child: Text(
-                    task.text,
-                    style: TextStyle(
-                      color: task.completed
-                          ? Theme.of(context).disabledColor
-                          : Theme.of(context).colorScheme.onPrimary,
-                      fontSize: 12,
-                      height: 1.5,
-                      leadingDistribution: TextLeadingDistribution.even,
-                      decoration:
-                          task.completed ? TextDecoration.lineThrough : null,
-                      decorationColor: Theme.of(context).disabledColor,
-                    ),
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(left: 4),
-                  child: GestureDetector(
-                    onTap: () {
-                      editTask();
-                    },
-                    child: Image.asset(
-                      'assets/icons/menu_filled.png',
-                      width: 18,
-                      color: Colors.grey,
-                    ),
-                  ),
-                ),
-              ],
+              ),
             ),
           ],
         ),

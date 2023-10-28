@@ -28,6 +28,11 @@ class TaskBloc {
   final BehaviorSubject<List<int>> _foldProjects = BehaviorSubject.seeded([]);
   Stream<List<int>> get foldProjects => _foldProjects.stream;
 
+  final BehaviorSubject<DateTime?> _pickedDate = BehaviorSubject.seeded(null);
+  Stream<DateTime?> get pickedDate => _pickedDate.stream;
+  Function get setPickedDate => _pickedDate.add;
+  DateTime? get pickedDateValue => _pickedDate.value;
+
   TaskBloc() {
     initDB().then((value) {
       taskDB = value;
@@ -41,7 +46,7 @@ class TaskBloc {
     String path = join(await getDatabasesPath(), '$dbName.db');
     return await openDatabase(
       path,
-      version: 4,
+      version: 6,
       onCreate: (db, version) async {
         await db.execute(
           '''
@@ -49,14 +54,15 @@ class TaskBloc {
               id INTEGER PRIMARY KEY,
               task_index INTEGER,
               completed INTEGER,
-              text TEXT
+              text TEXT,
+              date INTEGER
             )
           ''',
         );
       },
       onUpgrade: (db, oldVersion, newVersion) {
         if (oldVersion < newVersion) {
-          db.execute('ALTER TABLE $dbName ADD COLUMN task_index INTEGER');
+          db.execute('ALTER TABLE $dbName ADD COLUMN date INTEGER');
         }
       },
     );
@@ -76,7 +82,9 @@ class TaskBloc {
           index: data[i]['task_index'],
           completed: data[i]['completed'] == 0 ? false : true,
           text: data[i]['text'],
-          date: DateTime.fromMillisecondsSinceEpoch(data[i]['date']));
+          date: data[i]['date'] == null
+              ? null
+              : DateTime.fromMillisecondsSinceEpoch(data[i]['date']));
     });
 
     tasks.sort((a, b) => -a.index.compareTo(b.index));
@@ -144,26 +152,13 @@ class TaskBloc {
   }
 
   addTask(TaskVM task) {
-    List<TaskVM> tasks = _tasks.value;
-    tasks.insert(0, task);
-    _tasks.add(tasks);
+    // List<TaskVM> tasks = _tasks.value;
+    // tasks.insert(0, task);
+    // _tasks.add(tasks);
+    insertTask(task, updateStream: true);
   }
 
   editTask(TaskVM task, String text) async {
-    // try {
-    //   List<TaskVM> tasks = _tasks.value;
-    //   if (text.isEmpty) {
-    //     tasks.removeWhere((element) => element.id == task.id);
-    //   } else {
-    //     int index = tasks.indexWhere((element) => element.id == task.id);
-    //     tasks[index] = task.copyWith(text: text);
-    //   }
-
-    //   _tasks.add(tasks);
-    // } catch (e) {
-    //   print('error in editTask: $text');
-    // }
-
     List<TaskVM> tasks = await getTasks(updateStream: false);
     if (tasks.where((element) => element.id == task.id).isEmpty &&
         text.isNotEmpty) {

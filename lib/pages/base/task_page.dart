@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:what_to_do/blocs/project_bloc.dart';
 import 'package:what_to_do/blocs/task_bloc.dart';
 import 'package:what_to_do/models/project_model.dart';
 import 'package:what_to_do/models/task_model.dart';
+import 'package:what_to_do/styles/colors.dart';
 import 'package:what_to_do/widgets/task_box.dart';
 
 class TaskPage extends StatelessWidget {
@@ -48,6 +50,8 @@ class PendingTasks extends StatelessWidget {
     TaskBloc taskBloc = context.read<TaskBloc>();
 
     addTask() {
+      taskBloc.setPickedDate(null);
+
       showDialog(
           context: context,
           builder: (context) {
@@ -91,16 +95,78 @@ class PendingTasks extends StatelessWidget {
                 ),
                 const SizedBox(height: 12),
                 GestureDetector(
-                    onTap: () {
+                    onTap: () async {
                       showDatePicker(
                         context: context,
                         initialDate: DateTime.now(),
-                        firstDate: DateTime.now(),
-                        lastDate: DateTime.now(),
-                      );
+                        firstDate: DateTime(2000),
+                        lastDate: DateTime(2200),
+                        builder: (context, child) {
+                          return Theme(
+                            data: Theme.of(context).copyWith(
+                              colorScheme: Theme.of(context).colorScheme,
+                              textButtonTheme: TextButtonThemeData(
+                                style: TextButton.styleFrom(
+                                  foregroundColor: Theme.of(context)
+                                      .colorScheme
+                                      .onPrimary, // button text color
+                                ),
+                              ),
+                            ),
+                            child: child!,
+                          );
+                        },
+                      ).then((value) => taskBloc.setPickedDate(value));
                     },
-                    child: const Text('No date')),
-                const SizedBox(height: 12),
+                    child: StreamBuilder<DateTime?>(
+                        stream: taskBloc.pickedDate,
+                        builder: (context, snapshot) {
+                          DateTime? pickedDate = snapshot.data;
+
+                          return Row(
+                            children: [
+                              Image.asset('assets/icons/projects.png',
+                                  width: 16,
+                                  color:
+                                      Theme.of(context).colorScheme.onPrimary),
+                              const SizedBox(width: 6),
+                              Text(
+                                pickedDate == null
+                                    ? 'Add date'
+                                    : DateFormat('MMMM d, E')
+                                        .format(pickedDate),
+                                style: TextStyle(
+                                  height: 1,
+                                  color:
+                                      Theme.of(context).colorScheme.onPrimary,
+                                ),
+                              ),
+                              if (pickedDate != null)
+                                Padding(
+                                  padding: const EdgeInsets.only(left: 6),
+                                  child: GestureDetector(
+                                    onTap: () {
+                                      taskBloc.setPickedDate(null);
+                                    },
+                                    child: Container(
+                                      width: 16,
+                                      height: 16,
+                                      decoration: const BoxDecoration(
+                                        color: OGColors.gray030,
+                                        shape: BoxShape.circle,
+                                      ),
+                                      child: const Icon(
+                                        Icons.close,
+                                        size: 12,
+                                        color: OGColors.white,
+                                      ),
+                                    ),
+                                  ),
+                                )
+                            ],
+                          );
+                        })),
+                const SizedBox(height: 20),
                 ElevatedButton(
                   onPressed: () {
                     if (taskController.text.isNotEmpty) {
@@ -109,6 +175,7 @@ class PendingTasks extends StatelessWidget {
                         index: taskBloc.tasksLength,
                         completed: false,
                         text: taskController.text,
+                        date: taskBloc.pickedDateValue,
                       ));
                       Navigator.pop(context);
                     }
