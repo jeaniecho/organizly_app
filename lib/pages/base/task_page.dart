@@ -93,7 +93,7 @@ class PendingTasks extends StatelessWidget {
                   ),
                   style: const TextStyle(height: 1),
                 ),
-                const SizedBox(height: 12),
+                const SizedBox(height: 20),
                 GestureDetector(
                     onTap: () async {
                       showDatePicker(
@@ -476,6 +476,152 @@ class ProjectTasks extends StatelessWidget {
     ProjectBloc projectBloc = context.read<ProjectBloc>();
     TaskBloc taskBloc = context.read<TaskBloc>();
 
+    addProjectTask() {
+      projectBloc.setPickedDate(null);
+
+      showDialog(
+          context: context,
+          builder: (context) {
+            TextEditingController taskController = TextEditingController();
+
+            return SimpleDialog(
+              backgroundColor: Theme.of(context).cardColor,
+              elevation: 0,
+              contentPadding: const EdgeInsets.all(24),
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      'Add Task',
+                      style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w500,
+                          color: Theme.of(context).colorScheme.onPrimary),
+                    ),
+                    GestureDetector(
+                      onTap: () {
+                        Navigator.pop(context);
+                      },
+                      child: const Icon(
+                        Icons.close,
+                        size: 20,
+                        color: Color(0xff424242),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 6),
+                TextField(
+                  controller: taskController,
+                  autofocus: true,
+                  decoration: const InputDecoration(
+                    hintText: 'Task',
+                  ),
+                  style: const TextStyle(height: 1),
+                ),
+                const SizedBox(height: 20),
+                GestureDetector(
+                    onTap: () async {
+                      showDatePicker(
+                        context: context,
+                        initialDate: DateTime.now(),
+                        firstDate: DateTime(2000),
+                        lastDate: DateTime(2200),
+                        builder: (context, child) {
+                          return Theme(
+                            data: Theme.of(context).copyWith(
+                              colorScheme: Theme.of(context).colorScheme,
+                              textButtonTheme: TextButtonThemeData(
+                                style: TextButton.styleFrom(
+                                  foregroundColor: Theme.of(context)
+                                      .colorScheme
+                                      .onPrimary, // button text color
+                                ),
+                              ),
+                            ),
+                            child: child!,
+                          );
+                        },
+                      ).then((value) => projectBloc.setPickedDate(value));
+                    },
+                    child: StreamBuilder<DateTime?>(
+                        stream: projectBloc.pickedDate,
+                        builder: (context, snapshot) {
+                          DateTime? pickedDate = snapshot.data;
+
+                          return Row(
+                            children: [
+                              Image.asset('assets/icons/projects.png',
+                                  width: 16,
+                                  color:
+                                      Theme.of(context).colorScheme.onPrimary),
+                              const SizedBox(width: 6),
+                              Text(
+                                pickedDate == null
+                                    ? 'Add date'
+                                    : DateFormat('MMMM d, E')
+                                        .format(pickedDate),
+                                style: TextStyle(
+                                  height: 1,
+                                  color:
+                                      Theme.of(context).colorScheme.onPrimary,
+                                ),
+                              ),
+                              if (pickedDate != null)
+                                Padding(
+                                  padding: const EdgeInsets.only(left: 6),
+                                  child: GestureDetector(
+                                    onTap: () {
+                                      projectBloc.setPickedDate(null);
+                                    },
+                                    child: Container(
+                                      width: 16,
+                                      height: 16,
+                                      decoration: const BoxDecoration(
+                                        color: OGColors.gray030,
+                                        shape: BoxShape.circle,
+                                      ),
+                                      child: const Icon(
+                                        Icons.close,
+                                        size: 12,
+                                        color: OGColors.white,
+                                      ),
+                                    ),
+                                  ),
+                                )
+                            ],
+                          );
+                        })),
+                const SizedBox(height: 20),
+                ElevatedButton(
+                  onPressed: () {
+                    if (taskController.text.isNotEmpty) {
+                      projectBloc.addTask(
+                          project,
+                          TaskVM(
+                            id: DateTime.now().millisecondsSinceEpoch,
+                            index: project.tasks.length,
+                            completed: false,
+                            text: taskController.text,
+                            date: projectBloc.pickedDateValue,
+                          ));
+                      Navigator.pop(context);
+                    }
+                  },
+                  child: Text(
+                    'Add',
+                    style: TextStyle(
+                        fontSize: 14,
+                        height: 1,
+                        color: Theme.of(context).colorScheme.tertiary),
+                  ),
+                ),
+              ],
+            );
+          });
+    }
+
     List<TaskVM> tasks = project.tasks;
 
     // List<TaskVM> pendingTasks =
@@ -501,69 +647,62 @@ class ProjectTasks extends StatelessWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  GestureDetector(
-                    onTap: () {
-                      HapticFeedback.selectionClick();
-                      taskBloc.setFoldProjects(project.id);
-                    },
-                    child: Row(
-                      children: [
-                        Image.asset(
-                          'assets/icons/${isFold ? 'fold' : 'unfold'}.png',
-                          width: 16,
-                        ),
-                        const SizedBox(width: 6),
-                        Text(
-                          project.title,
-                          style: const TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w500,
-                            height: 1.25,
+                  Expanded(
+                    child: GestureDetector(
+                      onTap: () {
+                        HapticFeedback.selectionClick();
+                        taskBloc.setFoldProjects(project.id);
+                      },
+                      child: Row(
+                        children: [
+                          Image.asset(
+                            'assets/icons/${isFold ? 'fold' : 'unfold'}.png',
+                            width: 16,
                           ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  true
-                      ? const SizedBox(height: 32)
-                      : SizedBox(
-                          height: 32,
-                          child: ElevatedButton(
-                            onPressed: () {
-                              HapticFeedback.selectionClick();
-                              FocusNode focusNode = FocusNode();
-                              projectBloc.addTask(
-                                  project,
-                                  TaskVM(
-                                    id: DateTime.now().millisecondsSinceEpoch,
-                                    index: tasks.length,
-                                    completed: false,
-                                    text: '',
-                                    focusNode: focusNode,
-                                  ));
-                              focusNode.requestFocus();
-                            },
-                            child: Row(
-                              children: [
-                                Icon(
-                                  Icons.add_box,
-                                  size: 16,
-                                  color: Theme.of(context).colorScheme.tertiary,
-                                ),
-                                const SizedBox(width: 4),
-                                Text(
-                                  'Add Task',
-                                  style: TextStyle(
-                                      fontSize: 12,
-                                      height: 1,
-                                      color: Theme.of(context)
-                                          .colorScheme
-                                          .tertiary),
-                                ),
-                              ],
+                          const SizedBox(width: 6),
+                          Expanded(
+                            child: Text(
+                              project.title,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: const TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w500,
+                                height: 1.25,
+                              ),
                             ),
                           ),
-                        ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  Container(
+                    padding: const EdgeInsets.only(left: 4),
+                    height: 32,
+                    child: ElevatedButton(
+                      onPressed: () {
+                        HapticFeedback.selectionClick();
+                        addProjectTask();
+                      },
+                      child: Row(
+                        children: [
+                          Icon(
+                            Icons.add_box,
+                            size: 16,
+                            color: Theme.of(context).colorScheme.tertiary,
+                          ),
+                          const SizedBox(width: 4),
+                          Text(
+                            'Add Task',
+                            style: TextStyle(
+                                fontSize: 12,
+                                height: 1,
+                                color: Theme.of(context).colorScheme.tertiary),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
                 ],
               ),
               const SizedBox(height: 6),

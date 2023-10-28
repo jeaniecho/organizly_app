@@ -68,7 +68,7 @@ class TaskBox extends StatelessWidget {
                     hintText: 'Task',
                   ),
                 ),
-                const SizedBox(height: 12),
+                const SizedBox(height: 24),
                 GestureDetector(
                     onTap: () async {
                       showDatePicker(
@@ -188,7 +188,7 @@ class TaskBox extends StatelessWidget {
                 children: [
                   if (task.date != null)
                     Padding(
-                      padding: const EdgeInsets.only(bottom: 6),
+                      padding: const EdgeInsets.only(left: 2, bottom: 6),
                       child: Text(
                         DateFormat('MMMM d, E').format(task.date!),
                         style: TextStyle(
@@ -245,6 +245,18 @@ class TaskBox extends StatelessWidget {
                       ),
                     ],
                   ),
+                  // if (task.date != null)
+                  //   Padding(
+                  //     padding: const EdgeInsets.only(top: 6, left: 2),
+                  //     child: Text(
+                  //       DateFormat('MMMM d, E').format(task.date!),
+                  //       style: TextStyle(
+                  //           fontSize: 10,
+                  //           color: task.completed
+                  //               ? Theme.of(context).disabledColor
+                  //               : Theme.of(context).colorScheme.onSecondary),
+                  //     ),
+                  //   ),
                 ],
               ),
             ),

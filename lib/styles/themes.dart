@@ -27,6 +27,10 @@ class OGThemes {
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
       ),
     ),
+    inputDecorationTheme: const InputDecorationTheme(
+      focusedBorder: UnderlineInputBorder(
+          borderSide: BorderSide(color: Color(0xff39A0FF), width: 2)),
+    ),
     useMaterial3: true,
     fontFamily: 'NotoSansKR',
   );

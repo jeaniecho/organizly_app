@@ -86,7 +86,8 @@ class ProjectBox extends StatelessWidget {
                                 ),
                               ),
                               const SizedBox(height: 8),
-                              Expanded(
+                              SizedBox(
+                                width: 300,
                                 child: Text(
                                   project.title,
                                   textAlign: TextAlign.center,
