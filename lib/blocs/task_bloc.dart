@@ -82,7 +82,7 @@ class TaskBloc {
           index: data[i]['task_index'],
           completed: data[i]['completed'] == 0 ? false : true,
           text: data[i]['text'],
-          date: data[i]['date'] == null
+          date: data[i]['date'] == null || data[i]['date'] == 0
               ? null
               : DateTime.fromMillisecondsSinceEpoch(data[i]['date']));
     });
@@ -158,16 +158,16 @@ class TaskBloc {
     insertTask(task, updateStream: true);
   }
 
-  editTask(TaskVM task, String text) async {
+  editTask(TaskVM task, String text, DateTime? date) async {
     List<TaskVM> tasks = await getTasks(updateStream: false);
     if (tasks.where((element) => element.id == task.id).isEmpty &&
         text.isNotEmpty) {
-      insertTask(task.copyWith(text: text));
+      insertTask(task.copyWith(text: text, date: date));
     } else {
       if (text.isEmpty) {
         deleteTask(task);
       } else {
-        updateTask(task.copyWith(text: text));
+        updateTask(task.copyWith(text: text, date: date));
       }
     }
   }

@@ -23,7 +23,7 @@ class TaskVM {
       index: index ?? this.index,
       completed: completed ?? this.completed,
       text: text ?? this.text,
-      date: date ?? this.date,
+      date: date,
     );
   }
 
@@ -33,7 +33,7 @@ class TaskVM {
       'task_index': index,
       'completed': completed ? 1 : 0,
       'text': text,
-      if (date != null) 'date': date!.millisecondsSinceEpoch,
+      'date': date == null ? 0 : date!.millisecondsSinceEpoch,
     };
   }
 }

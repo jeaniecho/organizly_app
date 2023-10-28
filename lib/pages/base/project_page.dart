@@ -340,8 +340,9 @@ class PendingProjectTasks extends StatelessWidget {
                                   boxWidth: 100,
                                   toggle: () =>
                                       projectBloc.toggleTask(project, task),
-                                  edit: (String text) =>
-                                      projectBloc.editTask(project, task, text),
+                                  edit: (String text, DateTime? date) =>
+                                      projectBloc.editTask(
+                                          project, task, text, date),
                                   remove: () =>
                                       projectBloc.removeTask(project, task),
                                   reordering: isReordering,
@@ -399,8 +400,8 @@ class CompletedProjectTasks extends StatelessWidget {
                     task: task,
                     boxWidth: 100,
                     toggle: () => projectBloc.toggleTask(project, task),
-                    edit: (String text) =>
-                        projectBloc.editTask(project, task, text),
+                    edit: (String text, DateTime? date) =>
+                        projectBloc.editTask(project, task, text, date),
                     remove: () => projectBloc.removeTask(project, task),
                   );
                 }),

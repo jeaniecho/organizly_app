@@ -216,7 +216,7 @@ class ProjectBloc {
     updateProject(project.copyWith(tasks: tasks));
   }
 
-  editTask(ProjectVM project, TaskVM task, String text) {
+  editTask(ProjectVM project, TaskVM task, String text, DateTime? date) {
     // List<ProjectVM> projects = _projects.value;
 
     // int index = projects.indexWhere((element) => element.id == project.id);
@@ -230,7 +230,7 @@ class ProjectBloc {
         tasks.removeWhere((element) => element.id == task.id);
       } else {
         int index = tasks.indexWhere((element) => element.id == task.id);
-        tasks[index] = task.copyWith(text: text);
+        tasks[index] = task.copyWith(text: text, date: date);
       }
     }
 

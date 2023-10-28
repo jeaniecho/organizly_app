@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:rxdart/rxdart.dart';
 import 'package:what_to_do/models/task_model.dart';
+import 'package:what_to_do/styles/colors.dart';
 
 class TaskBox extends StatelessWidget {
   final TaskVM task;
   final double boxWidth;
   final Function() toggle;
-  final Function(String text) edit;
+  final Function(String text, DateTime? date) edit;
   final Function() remove;
   final bool? reordering;
   const TaskBox(
@@ -24,6 +26,9 @@ class TaskBox extends StatelessWidget {
       showDialog(
           context: context,
           builder: (context) {
+            BehaviorSubject<DateTime?> pickedDate =
+                BehaviorSubject.seeded(task.date);
+
             TextEditingController taskController =
                 TextEditingController(text: task.text);
 
@@ -64,9 +69,80 @@ class TaskBox extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 12),
+                GestureDetector(
+                    onTap: () async {
+                      showDatePicker(
+                        context: context,
+                        initialDate: pickedDate.value ?? DateTime.now(),
+                        firstDate: DateTime(2000),
+                        lastDate: DateTime(2200),
+                        builder: (context, child) {
+                          return Theme(
+                            data: Theme.of(context).copyWith(
+                              colorScheme: Theme.of(context).colorScheme,
+                              textButtonTheme: TextButtonThemeData(
+                                style: TextButton.styleFrom(
+                                  foregroundColor: Theme.of(context)
+                                      .colorScheme
+                                      .onPrimary, // button text color
+                                ),
+                              ),
+                            ),
+                            child: child!,
+                          );
+                        },
+                      ).then((value) => pickedDate.add(value));
+                    },
+                    child: StreamBuilder<DateTime?>(
+                        stream: pickedDate.stream,
+                        builder: (context, snapshot) {
+                          return Row(
+                            children: [
+                              Image.asset('assets/icons/projects.png',
+                                  width: 16,
+                                  color:
+                                      Theme.of(context).colorScheme.onPrimary),
+                              const SizedBox(width: 6),
+                              Text(
+                                pickedDate.value == null
+                                    ? 'Add date'
+                                    : DateFormat('MMMM d, E')
+                                        .format(pickedDate.value!),
+                                style: TextStyle(
+                                  height: 1,
+                                  color:
+                                      Theme.of(context).colorScheme.onPrimary,
+                                ),
+                              ),
+                              if (pickedDate.value != null)
+                                Padding(
+                                  padding: const EdgeInsets.only(left: 6),
+                                  child: GestureDetector(
+                                    onTap: () {
+                                      pickedDate.add(null);
+                                    },
+                                    child: Container(
+                                      width: 16,
+                                      height: 16,
+                                      decoration: const BoxDecoration(
+                                        color: OGColors.gray030,
+                                        shape: BoxShape.circle,
+                                      ),
+                                      child: const Icon(
+                                        Icons.close,
+                                        size: 12,
+                                        color: OGColors.white,
+                                      ),
+                                    ),
+                                  ),
+                                )
+                            ],
+                          );
+                        })),
+                const SizedBox(height: 20),
                 ElevatedButton(
                   onPressed: () {
-                    edit(taskController.text);
+                    edit(taskController.text, pickedDate.value);
                     Navigator.pop(context);
                   },
                   child: Text(
