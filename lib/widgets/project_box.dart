@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:info_popup/info_popup.dart';
 import 'package:intl/intl.dart';
 import 'package:what_to_do/models/project_model.dart';
+import 'package:what_to_do/styles/colors.dart';
 
 class ProjectBox extends StatelessWidget {
   final ProjectVM project;
@@ -265,6 +266,14 @@ class ProjectBox extends StatelessWidget {
                   InfoPopupWidget(
                     contentTitle:
                         'Complete ${(project.tasks.length / (project.date!.difference(DateTime.now()).inDays)).ceil()} tasks today',
+                    contentTheme: const InfoPopupContentTheme(
+                        infoContainerBackgroundColor: OGColors.gray080,
+                        infoTextStyle: TextStyle(color: OGColors.white),
+                        contentPadding:
+                            EdgeInsets.symmetric(horizontal: 12, vertical: 8)),
+                    arrowTheme:
+                        const InfoPopupArrowTheme(color: OGColors.gray080),
+                    contentOffset: const Offset(48, 0),
                     child: Image.asset(
                       'assets/icons/projects.png',
                       width: 14,
