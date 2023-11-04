@@ -336,9 +336,8 @@ class BasePage extends StatelessWidget {
             ),
             bottomNavigationBar: Container(
               decoration: BoxDecoration(
-                borderRadius: const BorderRadius.only(
-                    topRight: Radius.circular(24),
-                    topLeft: Radius.circular(24)),
+                borderRadius: const BorderRadius.vertical(
+                    top: Radius.circular(24), bottom: Radius.zero),
                 boxShadow: [
                   BoxShadow(
                     color: Colors.grey.withOpacity(0.25),
@@ -351,8 +350,10 @@ class BasePage extends StatelessWidget {
               child: Material(
                 elevation: 0,
                 color: Theme.of(context).cardColor,
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(24)),
+                shape: const RoundedRectangleBorder(
+                  borderRadius: BorderRadius.vertical(
+                      top: Radius.circular(24), bottom: Radius.zero),
+                ),
                 child: Padding(
                   padding: const EdgeInsets.only(top: 4),
                   child: BottomNavigationBar(
