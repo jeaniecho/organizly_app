@@ -46,8 +46,9 @@ class BasePage extends StatelessWidget {
             // backgroundColor: const Color(0xffFCFDFF),
             endDrawer: Drawer(
               backgroundColor: Theme.of(context).cardColor,
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(24)),
+              shape: const RoundedRectangleBorder(
+                  borderRadius:
+                      BorderRadius.horizontal(left: Radius.circular(24))),
               child: Column(
                 children: [
                   const SizedBox(height: 80),
