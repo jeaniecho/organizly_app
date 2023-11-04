@@ -148,7 +148,7 @@ class HomeProjects extends StatelessWidget {
               }
 
               return SizedBox(
-                height: 124,
+                height: 140,
                 child: ListView.builder(
                   shrinkWrap: true,
                   scrollDirection: Axis.horizontal,

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:intl/intl.dart';
 import 'package:what_to_do/models/project_model.dart';
 
 class ProjectBox extends StatelessWidget {
@@ -175,7 +176,7 @@ class ProjectBox extends StatelessWidget {
                 ),
             ],
           ),
-          const SizedBox(height: 2),
+          const SizedBox(height: 4),
           Text(
             '$pendingTasks task${pendingTasks > 1 ? 's' : ''} pending',
             style: TextStyle(
@@ -185,6 +186,29 @@ class ProjectBox extends StatelessWidget {
                   : Theme.of(context).colorScheme.onPrimary,
             ),
           ),
+          if (project.date != null)
+            Padding(
+              padding: const EdgeInsets.only(top: 6),
+              child: Row(
+                children: [
+                  Image.asset(
+                    'assets/icons/projects.png',
+                    width: 14,
+                    color: Colors.white,
+                  ),
+                  const SizedBox(width: 4),
+                  Text(
+                    DateFormat('yyyy.MM.dd').format(project.date!),
+                    style: TextStyle(
+                      fontSize: 10,
+                      color: isSelected
+                          ? Colors.white
+                          : Theme.of(context).colorScheme.onPrimary,
+                    ),
+                  ),
+                ],
+              ),
+            ),
           const Spacer(),
           Align(
             alignment: Alignment.centerRight,

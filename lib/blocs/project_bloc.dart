@@ -47,17 +47,27 @@ class ProjectBloc {
 
   Future<Database> initDB() async {
     String path = join(await getDatabasesPath(), '$dbName.db');
-    return await openDatabase(path, version: 1, onCreate: (db, version) async {
-      await db.execute(
-        '''
+    return await openDatabase(
+      path,
+      version: 2,
+      onCreate: (db, version) async {
+        await db.execute(
+          '''
         CREATE TABLE $dbName(
             id INTEGER PRIMARY KEY, 
             title TEXT,
-            tasks TEXT
+            tasks TEXT,
+            date INTEGER
           )
         ''',
-      );
-    });
+        );
+      },
+      onUpgrade: (db, oldVersion, newVersion) {
+        if (oldVersion < newVersion) {
+          db.execute('ALTER TABLE $dbName ADD COLUMN date INTEGER');
+        }
+      },
+    );
   }
 
   getMockProjects() {
@@ -82,10 +92,12 @@ class ProjectBloc {
       tasks.sort((a, b) => -a.index.compareTo(b.index));
 
       return ProjectVM(
-        id: data[i]['id'],
-        title: data[i]['title'],
-        tasks: tasks,
-      );
+          id: data[i]['id'],
+          title: data[i]['title'],
+          tasks: tasks,
+          date: data[i]['date'] == null || data[i]['date'] == 0
+              ? null
+              : DateTime.fromMillisecondsSinceEpoch(data[i]['date']));
     });
 
     if (updateStream) {
@@ -174,7 +186,7 @@ class ProjectBloc {
 
     // _projects.add(projects);
 
-    updateProject(project.copyWith(title: title));
+    updateProject(project.copyWith(title: title, date: project.date));
   }
 
   removeProject(ProjectVM project) {
@@ -198,7 +210,8 @@ class ProjectBloc {
     // tasks.insert(0, task);
     // _tasks.add(tasks);
 
-    updateProject(project.copyWith(tasks: [task, ...project.tasks]));
+    updateProject(
+        project.copyWith(tasks: [task, ...project.tasks], date: project.date));
   }
 
   toggleTask(ProjectVM project, TaskVM task) {
@@ -207,7 +220,7 @@ class ProjectBloc {
     // int index = projects.indexWhere((element) => element.id == project.id);
     List<TaskVM> tasks = project.tasks;
     tasks.removeWhere((element) => element.id == task.id);
-    tasks.add(task.copyWith(completed: !task.completed));
+    tasks.add(task.copyWith(completed: !task.completed, date: project.date));
     // projects[index] = project.copyWith(tasks: tasks);
 
     // _projects.add(projects);
@@ -224,7 +237,8 @@ class ProjectBloc {
 
     if (tasks.where((element) => element.id == task.id).isEmpty &&
         text.isNotEmpty) {
-      updateProject(project.copyWith(tasks: [task, ...project.tasks]));
+      updateProject(project
+          .copyWith(tasks: [task, ...project.tasks], date: project.date));
     } else {
       if (text.isEmpty) {
         tasks.removeWhere((element) => element.id == task.id);
@@ -251,7 +265,7 @@ class ProjectBloc {
 
     // _projects.add(projects);
 
-    updateProject(project.copyWith(tasks: tasks));
+    updateProject(project.copyWith(tasks: tasks, date: project.date));
   }
 
   reorderTask(
@@ -271,6 +285,6 @@ class ProjectBloc {
       reversed[i] = reversed[i].copyWith(index: i, date: reversed[i].date);
     }
 
-    updateProject(project.copyWith(tasks: reversed));
+    updateProject(project.copyWith(tasks: reversed, date: project.date));
   }
 }

@@ -21,6 +21,8 @@ class ProjectPage extends StatelessWidget {
     addProject() {
       TextEditingController projectController = TextEditingController();
 
+      projectBloc.setPickedDate(null);
+
       showDialog(
           context: context,
           builder: (context) {
@@ -60,7 +62,80 @@ class ProjectPage extends StatelessWidget {
                     hintText: 'Project Name',
                   ),
                 ),
-                const SizedBox(height: 12),
+                const SizedBox(height: 20),
+                GestureDetector(
+                    onTap: () async {
+                      showDatePicker(
+                        context: context,
+                        initialDate: DateTime.now(),
+                        firstDate: DateTime(2000),
+                        lastDate: DateTime(2200),
+                        builder: (context, child) {
+                          return Theme(
+                            data: Theme.of(context).copyWith(
+                              colorScheme: Theme.of(context).colorScheme,
+                              textButtonTheme: TextButtonThemeData(
+                                style: TextButton.styleFrom(
+                                  foregroundColor: Theme.of(context)
+                                      .colorScheme
+                                      .onPrimary, // button text color
+                                ),
+                              ),
+                            ),
+                            child: child!,
+                          );
+                        },
+                      ).then((value) => projectBloc.setPickedDate(value));
+                    },
+                    child: StreamBuilder<DateTime?>(
+                        stream: projectBloc.pickedDate,
+                        builder: (context, snapshot) {
+                          DateTime? pickedDate = snapshot.data;
+
+                          return Row(
+                            children: [
+                              Image.asset('assets/icons/projects.png',
+                                  width: 16,
+                                  color:
+                                      Theme.of(context).colorScheme.onPrimary),
+                              const SizedBox(width: 6),
+                              Text(
+                                pickedDate == null
+                                    ? 'Add date'
+                                    : DateFormat('MMMM d, E')
+                                        .format(pickedDate),
+                                style: TextStyle(
+                                  height: 1,
+                                  color:
+                                      Theme.of(context).colorScheme.onPrimary,
+                                ),
+                              ),
+                              if (pickedDate != null)
+                                Padding(
+                                  padding: const EdgeInsets.only(left: 6),
+                                  child: GestureDetector(
+                                    onTap: () {
+                                      projectBloc.setPickedDate(null);
+                                    },
+                                    child: Container(
+                                      width: 16,
+                                      height: 16,
+                                      decoration: const BoxDecoration(
+                                        color: OGColors.gray030,
+                                        shape: BoxShape.circle,
+                                      ),
+                                      child: const Icon(
+                                        Icons.close,
+                                        size: 12,
+                                        color: OGColors.white,
+                                      ),
+                                    ),
+                                  ),
+                                )
+                            ],
+                          );
+                        })),
+                const SizedBox(height: 20),
                 ElevatedButton(
                   onPressed: () {
                     if (projectController.text.isNotEmpty) {
@@ -68,6 +143,7 @@ class ProjectPage extends StatelessWidget {
                         id: DateTime.now().millisecondsSinceEpoch,
                         title: projectController.text,
                         tasks: [],
+                        date: projectBloc.pickedDateValue,
                       ));
                       Navigator.pop(context);
                     }
@@ -170,7 +246,7 @@ class ProjectPage extends StatelessWidget {
                   ),
                 ),
                 SizedBox(
-                  height: 124,
+                  height: 140,
                   child: PageView.builder(
                     controller: projectBloc.pageController,
                     onPageChanged: (value) {

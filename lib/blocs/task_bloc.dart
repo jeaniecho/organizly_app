@@ -148,7 +148,7 @@ class TaskBloc {
     // _tasks.add(tasks);
 
     HapticFeedback.selectionClick();
-    updateTask(task.copyWith(completed: !task.completed));
+    updateTask(task.copyWith(completed: !task.completed, date: task.date));
   }
 
   addTask(TaskVM task) {
