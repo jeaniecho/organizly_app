@@ -189,6 +189,10 @@ class ProjectBloc {
     updateProject(project.copyWith(title: title, date: project.date));
   }
 
+  editProjectDate(ProjectVM project, DateTime? date) {
+    updateProject(project.copyWith(date: date));
+  }
+
   removeProject(ProjectVM project) {
     // List<ProjectVM> projects = _projects.value;
     // projects.removeWhere((element) => element.id == project.id);

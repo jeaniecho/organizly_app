@@ -9,6 +9,7 @@ class ProjectBox extends StatelessWidget {
   final int pendingTasks;
   final int completedTasks;
   final Function(String title) edit;
+  final Function(DateTime? date) editDate;
   final Function() remove;
   const ProjectBox(
       {required this.project,
@@ -16,6 +17,7 @@ class ProjectBox extends StatelessWidget {
       required this.pendingTasks,
       required this.completedTasks,
       required this.edit,
+      required this.editDate,
       required this.remove,
       super.key});
 
@@ -149,6 +151,74 @@ class ProjectBox extends StatelessWidget {
                                           .colorScheme
                                           .tertiary),
                                 ),
+                              ),
+                              const SizedBox(height: 12),
+                              Row(
+                                children: [
+                                  Expanded(
+                                    child: ElevatedButton(
+                                      onPressed: () {
+                                        Navigator.pop(context);
+                                        showDatePicker(
+                                          context: context,
+                                          initialDate: DateTime.now(),
+                                          firstDate: DateTime(2000),
+                                          lastDate: DateTime(2200),
+                                          builder: (context, child) {
+                                            return Theme(
+                                              data: Theme.of(context).copyWith(
+                                                colorScheme: Theme.of(context)
+                                                    .colorScheme,
+                                                textButtonTheme:
+                                                    TextButtonThemeData(
+                                                  style: TextButton.styleFrom(
+                                                    foregroundColor: Theme.of(
+                                                            context)
+                                                        .colorScheme
+                                                        .onPrimary, // button text color
+                                                  ),
+                                                ),
+                                              ),
+                                              child: child!,
+                                            );
+                                          },
+                                        ).then((value) {
+                                          if (value != null) {
+                                            editDate(value);
+                                          }
+                                        });
+                                      },
+                                      child: Text(
+                                        project.date == null
+                                            ? 'Add Date'
+                                            : 'Edit Date',
+                                        style: TextStyle(
+                                            color: Theme.of(context)
+                                                .colorScheme
+                                                .tertiary),
+                                      ),
+                                    ),
+                                  ),
+                                  if (project.date != null)
+                                    Expanded(
+                                      child: Padding(
+                                        padding: const EdgeInsets.only(left: 8),
+                                        child: ElevatedButton(
+                                          onPressed: () {
+                                            Navigator.pop(context);
+                                            editDate(null);
+                                          },
+                                          child: Text(
+                                            'Delete Date',
+                                            style: TextStyle(
+                                                color: Theme.of(context)
+                                                    .colorScheme
+                                                    .tertiary),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                ],
                               ),
                               const SizedBox(height: 12),
                               ElevatedButton(

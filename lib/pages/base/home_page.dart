@@ -178,6 +178,8 @@ class HomeProjects extends StatelessWidget {
                           completedTasks: completedTasks.length,
                           edit: (title) =>
                               projectBloc.editProject(project, title),
+                          editDate: (date) =>
+                              projectBloc.editProjectDate(project, date),
                           remove: () => projectBloc.removeProject(project),
                         ),
                       ),
