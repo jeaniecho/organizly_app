@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:info_popup/info_popup.dart';
 import 'package:intl/intl.dart';
 import 'package:what_to_do/models/project_model.dart';
 
@@ -261,10 +262,16 @@ class ProjectBox extends StatelessWidget {
               padding: const EdgeInsets.only(top: 6),
               child: Row(
                 children: [
-                  Image.asset(
-                    'assets/icons/projects.png',
-                    width: 14,
-                    color: Colors.white,
+                  InfoPopupWidget(
+                    contentTitle:
+                        'Complete ${(project.tasks.length / (project.date!.difference(DateTime.now()).inDays)).ceil()} tasks today',
+                    child: Image.asset(
+                      'assets/icons/projects.png',
+                      width: 14,
+                      color: isSelected
+                          ? Colors.white
+                          : Theme.of(context).colorScheme.onPrimary,
+                    ),
                   ),
                   const SizedBox(width: 4),
                   Text(
