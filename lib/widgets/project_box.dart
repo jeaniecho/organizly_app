@@ -25,6 +25,10 @@ class ProjectBox extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    int dateDiff = project.date?.difference(DateTime.now()).inDays ?? 0;
+    int recTask =
+        dateDiff <= 0 ? pendingTasks : (pendingTasks / dateDiff).ceil();
+
     return AnimatedContainer(
       duration: const Duration(milliseconds: 300),
       curve: Curves.easeInOut,
@@ -265,7 +269,7 @@ class ProjectBox extends StatelessWidget {
                 children: [
                   InfoPopupWidget(
                     contentTitle:
-                        'Complete ${(project.tasks.length / (project.date!.difference(DateTime.now()).inDays)).ceil()} tasks today',
+                        'Complete $recTask task${recTask > 1 ? 's' : ''} today',
                     contentTheme: const InfoPopupContentTheme(
                         infoContainerBackgroundColor: OGColors.gray080,
                         infoTextStyle: TextStyle(color: OGColors.white),
