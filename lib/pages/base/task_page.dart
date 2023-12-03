@@ -337,7 +337,6 @@ class PendingTasks extends StatelessWidget {
 
                                   return TaskBox(
                                     task: task,
-                                    boxWidth: 100,
                                     toggle: () => taskBloc.toggleTask(task),
                                     edit: (String text, DateTime? date) =>
                                         taskBloc.editTask(task, text, date),
@@ -435,7 +434,6 @@ class CompletedTasks extends StatelessWidget {
 
                         return TaskBox(
                           task: task,
-                          boxWidth: 100,
                           toggle: () => taskBloc.toggleTask(task),
                           edit: (String text, DateTime? date) =>
                               taskBloc.editTask(task, text, date),
@@ -746,7 +744,6 @@ class ProjectTasks extends StatelessWidget {
 
                             return TaskBox(
                               task: task,
-                              boxWidth: 100,
                               toggle: () =>
                                   projectBloc.toggleTask(project, task),
                               edit: (String text, DateTime? date) => projectBloc

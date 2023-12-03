@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:intl/intl.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:what_to_do/models/task_model.dart';
@@ -6,14 +7,12 @@ import 'package:what_to_do/styles/colors.dart';
 
 class TaskBox extends StatelessWidget {
   final TaskVM task;
-  final double boxWidth;
   final Function() toggle;
   final Function(String text, DateTime? date) edit;
   final Function() remove;
   final bool? reordering;
   const TaskBox(
       {required this.task,
-      required this.boxWidth,
       required this.edit,
       required this.toggle,
       required this.remove,
@@ -158,124 +157,149 @@ class TaskBox extends StatelessWidget {
           });
     }
 
-    return Dismissible(
+    return Slidable(
       key: Key('task${task.id}'),
-      onDismissed: (direction) {
-        remove();
-      },
-      child: Container(
-        width: boxWidth,
-        padding: const EdgeInsets.all(12),
-        decoration: BoxDecoration(
-          color: Theme.of(context).cardColor,
-          borderRadius: BorderRadius.circular(12),
-          boxShadow: [
-            BoxShadow(
-              color: reordering == true
-                  ? const Color(0xff39A0FF).withOpacity(0.5)
-                  : Colors.grey.withOpacity(0.25),
-              blurRadius: 8,
-              spreadRadius: 2,
-              offset: const Offset(0, 0),
-            ),
-          ],
-        ),
-        child: Row(
-          children: [
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  if (task.date != null)
-                    Padding(
-                      padding: const EdgeInsets.only(left: 2, bottom: 6),
-                      child: Text(
-                        DateFormat('MMMM d, E').format(task.date!),
-                        style: TextStyle(
-                            fontSize: 10,
-                            color: task.completed
-                                ? Theme.of(context).disabledColor
-                                : Theme.of(context).colorScheme.onSecondary),
+      endActionPane: ActionPane(
+        motion: const BehindMotion(),
+        dragDismissible: false,
+        extentRatio: 0.3,
+        children: [
+          SlidableAction(
+            autoClose: true,
+            backgroundColor: Colors.transparent,
+            foregroundColor: Theme.of(context).primaryColor,
+            icon: Icons.edit,
+            onPressed: (context) {
+              editTask();
+            },
+          ),
+          SlidableAction(
+            autoClose: true,
+            backgroundColor: Colors.transparent,
+            foregroundColor: Theme.of(context).primaryColor,
+            icon: Icons.delete,
+            onPressed: (context) {
+              remove();
+            },
+          ),
+        ],
+      ),
+      child: LayoutBuilder(builder: (context, constraints) {
+        return Container(
+          width: constraints.maxWidth,
+          padding: const EdgeInsets.all(12),
+          decoration: BoxDecoration(
+            color: Theme.of(context).cardColor,
+            borderRadius: BorderRadius.circular(12),
+            boxShadow: [
+              BoxShadow(
+                color: reordering == true
+                    ? const Color(0xff39A0FF).withOpacity(0.5)
+                    : Colors.grey.withOpacity(0.25),
+                blurRadius: 8,
+                spreadRadius: 2,
+                offset: const Offset(0, 0),
+              ),
+            ],
+          ),
+          child: Row(
+            children: [
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    if (task.date != null)
+                      Padding(
+                        padding: const EdgeInsets.only(left: 2, bottom: 6),
+                        child: Text(
+                          DateFormat('MMMM d, E').format(task.date!),
+                          style: TextStyle(
+                              fontSize: 10,
+                              color: task.completed
+                                  ? Theme.of(context).disabledColor
+                                  : Theme.of(context).colorScheme.onSecondary),
+                        ),
                       ),
-                    ),
-                  Row(
-                    // crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      GestureDetector(
-                        onTap: toggle,
-                        child: AnimatedContainer(
-                          duration: const Duration(milliseconds: 250),
-                          width: 16,
-                          height: 16,
-                          decoration: BoxDecoration(
-                            color: task.completed
-                                ? Theme.of(context).disabledColor
-                                : Theme.of(context).colorScheme.primary,
-                            border: Border.all(
-                                color: Theme.of(context).disabledColor,
-                                width: 1),
-                            borderRadius: BorderRadius.circular(4),
-                          ),
-                          child: Center(
-                            child: Icon(
-                              Icons.check,
-                              size: 14,
-                              color: Theme.of(context).colorScheme.primary,
+                    Row(
+                      // crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        GestureDetector(
+                          onTap: toggle,
+                          child: AnimatedContainer(
+                            duration: const Duration(milliseconds: 250),
+                            width: 16,
+                            height: 16,
+                            decoration: BoxDecoration(
+                              color: task.completed
+                                  ? Theme.of(context).disabledColor
+                                  : Theme.of(context).colorScheme.primary,
+                              border: Border.all(
+                                  color: Theme.of(context).disabledColor,
+                                  width: 1),
+                              borderRadius: BorderRadius.circular(4),
+                            ),
+                            child: Center(
+                              child: Icon(
+                                Icons.check,
+                                size: 14,
+                                color: Theme.of(context).colorScheme.primary,
+                              ),
                             ),
                           ),
                         ),
-                      ),
-                      const SizedBox(width: 8),
-                      Expanded(
-                        child: Text(
-                          task.text,
-                          style: TextStyle(
-                            color: task.completed
-                                ? Theme.of(context).disabledColor
-                                : Theme.of(context).colorScheme.onPrimary,
-                            fontSize: 12,
-                            height: 1.5,
-                            leadingDistribution: TextLeadingDistribution.even,
-                            decoration: task.completed
-                                ? TextDecoration.lineThrough
-                                : null,
-                            decorationColor: Theme.of(context).disabledColor,
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: Text(
+                            task.text,
+                            style: TextStyle(
+                              color: task.completed
+                                  ? Theme.of(context).disabledColor
+                                  : Theme.of(context).colorScheme.onPrimary,
+                              fontSize: 12,
+                              height: 1.5,
+                              leadingDistribution: TextLeadingDistribution.even,
+                              decoration: task.completed
+                                  ? TextDecoration.lineThrough
+                                  : null,
+                              decorationColor: Theme.of(context).disabledColor,
+                            ),
                           ),
                         ),
-                      ),
-                    ],
-                  ),
-                  // if (task.date != null)
-                  //   Padding(
-                  //     padding: const EdgeInsets.only(top: 6, left: 2),
-                  //     child: Text(
-                  //       DateFormat('MMMM d, E').format(task.date!),
-                  //       style: TextStyle(
-                  //           fontSize: 10,
-                  //           color: task.completed
-                  //               ? Theme.of(context).disabledColor
-                  //               : Theme.of(context).colorScheme.onSecondary),
-                  //     ),
-                  //   ),
-                ],
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(left: 4),
-              child: GestureDetector(
-                onTap: () {
-                  editTask();
-                },
-                child: Image.asset(
-                  'assets/icons/menu_filled.png',
-                  width: 18,
-                  color: Colors.grey,
+                      ],
+                    ),
+                    // if (task.date != null)
+                    //   Padding(
+                    //     padding: const EdgeInsets.only(top: 6, left: 2),
+                    //     child: Text(
+                    //       DateFormat('MMMM d, E').format(task.date!),
+                    //       style: TextStyle(
+                    //           fontSize: 10,
+                    //           color: task.completed
+                    //               ? Theme.of(context).disabledColor
+                    //               : Theme.of(context).colorScheme.onSecondary),
+                    //     ),
+                    //   ),
+                  ],
                 ),
               ),
-            ),
-          ],
-        ),
-      ),
+              if (reordering != null)
+                Padding(
+                  padding: const EdgeInsets.only(left: 4),
+                  child: GestureDetector(
+                    onTap: () {
+                      // editTask();
+                    },
+                    child: Image.asset(
+                      'assets/icons/menu_filled.png',
+                      width: 18,
+                      color: Colors.grey,
+                    ),
+                  ),
+                ),
+            ],
+          ),
+        );
+      }),
     );
   }
 }
