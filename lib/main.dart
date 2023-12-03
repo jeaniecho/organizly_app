@@ -19,6 +19,9 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     AppBloc appBloc = AppBloc();
+    TaskBloc taskBloc = TaskBloc();
+    ProjectBloc projectBloc = ProjectBloc();
+    NoteBloc noteBloc = NoteBloc();
 
     return StreamBuilder<List>(
         stream: Rx.combineLatestList([appBloc.darkMode]),
@@ -33,9 +36,9 @@ class MyApp extends StatelessWidget {
             themeMode: darkMode ? ThemeMode.dark : ThemeMode.light,
             home: MultiProvider(providers: [
               Provider(create: (context) => appBloc),
-              Provider(create: (context) => TaskBloc()),
-              Provider(create: (context) => ProjectBloc()),
-              Provider(create: (context) => NoteBloc()),
+              Provider(create: (context) => taskBloc),
+              Provider(create: (context) => projectBloc),
+              Provider(create: (context) => noteBloc),
             ], child: const BasePage()),
           );
         });

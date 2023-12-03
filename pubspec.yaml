@@ -23,6 +23,8 @@ dependencies:
   device_info: ^2.0.3
   shared_preferences: ^2.2.2
   info_popup: ^4.1.0
+  icloud_storage: ^2.2.0
+  path_provider: ^2.1.1
 
 dev_dependencies:
   flutter_test:

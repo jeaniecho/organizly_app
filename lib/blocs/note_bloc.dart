@@ -7,7 +7,7 @@ import 'package:sqflite/sqflite.dart';
 
 class NoteBloc {
   late final Database noteDB;
-  final String dbName = 'notes';
+  static String dbName = 'notes';
 
   final BehaviorSubject<List<NoteVM>> _notes = BehaviorSubject.seeded([]);
   Stream<List<NoteVM>> get notes => _notes.stream;
@@ -35,6 +35,10 @@ class NoteBloc {
         ''',
       );
     });
+  }
+
+  closeDB() async {
+    await noteDB.close();
   }
 
   getMockNotes() {

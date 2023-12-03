@@ -7,7 +7,7 @@ import 'package:what_to_do/models/task_model.dart';
 
 class TaskBloc {
   late final Database taskDB;
-  final String dbName = 'tasks';
+  static String dbName = 'tasks';
 
   final BehaviorSubject<List<TaskVM>> _tasks = BehaviorSubject.seeded([]);
   Stream<List<TaskVM>> get tasks => _tasks.stream;
@@ -66,6 +66,10 @@ class TaskBloc {
         }
       },
     );
+  }
+
+  closeDB() async {
+    await taskDB.close();
   }
 
   getMockTasks() {

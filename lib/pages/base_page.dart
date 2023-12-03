@@ -197,6 +197,20 @@ class BasePage extends StatelessWidget {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.end,
                           children: [
+                            if (Platform.isIOS)
+                              GestureDetector(
+                                onTap: () {
+                                  icloudSync(context, appBloc);
+                                },
+                                child: Text(
+                                  'iCloud Sync',
+                                  style: TextStyle(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w500,
+                                      color: selectedColor),
+                                ),
+                              ),
+                            const SizedBox(height: 12),
                             GestureDetector(
                               onTap: () {
                                 _sendEmail();
@@ -209,17 +223,6 @@ class BasePage extends StatelessWidget {
                                     color: selectedColor),
                               ),
                             ),
-                            // const SizedBox(height: 12),
-                            // GestureDetector(
-                            //   onTap: () {},
-                            //   child: Text(
-                            //     'Share Organizly',
-                            //     style: TextStyle(
-                            //         fontSize: 14,
-                            //         fontWeight: FontWeight.w500,
-                            //         color: selectedColor),
-                            //   ),
-                            // ),
                             const SizedBox(height: 32),
                             FutureBuilder<PackageInfo>(
                                 future: PackageInfo.fromPlatform(),
@@ -497,4 +500,70 @@ Map<String, dynamic> _readIosDeviceInfo(IosDeviceInfo info) {
   var machine = info.utsname.machine;
 
   return {"OS": "$systemName $version", "Device": machine};
+}
+
+void icloudSync(BuildContext context, AppBloc appBloc) {
+  showDialog(
+      context: context,
+      builder: (context) {
+        TextEditingController taskController = TextEditingController();
+
+        return SimpleDialog(
+          backgroundColor: Theme.of(context).cardColor,
+          elevation: 0,
+          contentPadding: const EdgeInsets.all(24),
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  'iCloud Sync',
+                  style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w500,
+                      color: Theme.of(context).colorScheme.onPrimary),
+                ),
+                GestureDetector(
+                  onTap: () {
+                    Navigator.pop(context);
+                  },
+                  child: const Icon(
+                    Icons.close,
+                    size: 20,
+                    color: Color(0xff424242),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 16),
+            ElevatedButton(
+              onPressed: () {
+                appBloc.uploadToICloud();
+                Navigator.pop(context);
+              },
+              child: Text(
+                'Upload Data',
+                style: TextStyle(
+                    fontSize: 14,
+                    height: 1,
+                    color: Theme.of(context).colorScheme.tertiary),
+              ),
+            ),
+            const SizedBox(height: 6),
+            ElevatedButton(
+              onPressed: () {
+                appBloc.downloadFromICloud();
+                Navigator.pop(context);
+              },
+              child: Text(
+                'Download Data',
+                style: TextStyle(
+                    fontSize: 14,
+                    height: 1,
+                    color: Theme.of(context).colorScheme.tertiary),
+              ),
+            ),
+          ],
+        );
+      });
 }

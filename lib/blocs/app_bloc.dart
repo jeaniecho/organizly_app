@@ -1,5 +1,11 @@
+import 'package:path/path.dart';
 import 'package:rxdart/subjects.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:sqflite/sqflite.dart';
+import 'package:what_to_do/blocs/note_bloc.dart';
+import 'package:what_to_do/blocs/project_bloc.dart';
+import 'package:what_to_do/blocs/task_bloc.dart';
+import 'package:what_to_do/repos/apple_icloud_repo.dart';
 
 class AppBloc {
   final BehaviorSubject<int> _bottomIndex = BehaviorSubject.seeded(0);
@@ -40,5 +46,29 @@ class AppBloc {
   Future<bool> deleteData(String key) async {
     final prefs = await SharedPreferences.getInstance();
     return prefs.remove(key);
+  }
+
+  uploadToICloud() async {
+    AppleICloudRepo iCloudRepo = AppleICloudRepo();
+
+    List<String> dbs = ['tasks', 'projects', 'notes'];
+
+    for (String db in dbs) {
+      String dbPath = await getDatabasesPath();
+      String path = join(dbPath, '$db.db');
+      iCloudRepo.upload(path: path, dbName: db);
+    }
+  }
+
+  downloadFromICloud() async {
+    AppleICloudRepo iCloudRepo = AppleICloudRepo();
+
+    List<dynamic> dbs = [TaskBloc, ProjectBloc, NoteBloc];
+
+    for (dynamic db in dbs) {
+      await db.closeDB();
+      String path = join(await getDatabasesPath(), '${db.dbName}.db');
+      iCloudRepo.download(path: path, dbName: db);
+    }
   }
 }
