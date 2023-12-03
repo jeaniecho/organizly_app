@@ -18,10 +18,12 @@ class AppleICloudRepo extends BaseCloudRepo {
 
   @override
   upload({required String path, required String dbName}) async {
+    print('relativePath: $icloudPath/$dbName.db, destinationFilePath: $path');
+
     await ICloudStorage.upload(
       containerId: config['cloud']['apple']['ICLOUD_CONTAINER_ID'],
       filePath: path,
-      destinationRelativePath: '$icloudPath/$dbName',
+      destinationRelativePath: '$icloudPath/$dbName.db',
       onProgress: (stream) {
         stream.listen(
           (progress) => print('Upload File Progress: $progress'),
@@ -34,15 +36,23 @@ class AppleICloudRepo extends BaseCloudRepo {
   }
 
   @override
-  download({required String path, required String dbName}) async {
+  download(
+      {required String path,
+      required String dbName,
+      required Function onDone}) async {
+    print('relativePath: $icloudPath/$dbName.db, destinationFilePath: $path');
+
     await ICloudStorage.download(
       containerId: config['cloud']['apple']['ICLOUD_CONTAINER_ID'],
-      relativePath: '$icloudPath/$dbName',
+      relativePath: '$icloudPath/$dbName.db',
       destinationFilePath: path,
       onProgress: (stream) {
         stream.listen(
           (progress) => print('Download File Progress: $progress'),
-          onDone: () => print('Download File Done'),
+          onDone: () {
+            print('Download File Done');
+            onDone();
+          },
           onError: (err) => print('Download File Error: $err'),
           cancelOnError: true,
         );

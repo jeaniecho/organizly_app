@@ -18,10 +18,11 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    AppBloc appBloc = AppBloc();
     TaskBloc taskBloc = TaskBloc();
     ProjectBloc projectBloc = ProjectBloc();
     NoteBloc noteBloc = NoteBloc();
+
+    AppBloc appBloc = AppBloc(taskBloc, projectBloc, noteBloc);
 
     return StreamBuilder<List>(
         stream: Rx.combineLatestList([appBloc.darkMode]),

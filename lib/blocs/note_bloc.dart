@@ -1,31 +1,42 @@
 import 'package:rxdart/subjects.dart';
+import 'package:what_to_do/blocs/db_bloc.dart';
 import 'package:what_to_do/mocks/note_mock.dart';
 import 'package:what_to_do/models/note_model.dart';
 
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 
-class NoteBloc {
-  late final Database noteDB;
-  static String dbName = 'notes';
+class NoteBloc extends DBBloc {
+  late Database noteDB;
 
   final BehaviorSubject<List<NoteVM>> _notes = BehaviorSubject.seeded([]);
   Stream<List<NoteVM>> get notes => _notes.stream;
 
   NoteBloc() {
+    initBloc();
+  }
+
+  @override
+  initBloc() {
+    dbName = 'notes';
     initDB().then((value) {
-      noteDB = value;
+      if (value != null) {
+        noteDB = value;
+      }
       getNotes();
     });
 
     // getMockNotes();
   }
 
-  Future<Database> initDB() async {
+  Future<Database?> initDB() async {
     String path = join(await getDatabasesPath(), '$dbName.db');
-    return await openDatabase(path, version: 1, onCreate: (db, version) async {
-      await db.execute(
-        '''
+    return await openDatabase(
+      path,
+      version: 1,
+      onCreate: (db, version) async {
+        await db.execute(
+          '''
         CREATE TABLE $dbName(
             id INTEGER PRIMARY KEY, 
             pinned INTEGER, 
@@ -33,10 +44,12 @@ class NoteBloc {
             dateTime TEXT
           )
         ''',
-      );
-    });
+        );
+      },
+    );
   }
 
+  @override
   closeDB() async {
     await noteDB.close();
   }

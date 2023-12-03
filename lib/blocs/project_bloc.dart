@@ -5,13 +5,13 @@ import 'package:flutter/services.dart';
 import 'package:path/path.dart';
 import 'package:rxdart/subjects.dart';
 import 'package:sqflite/sqflite.dart';
+import 'package:what_to_do/blocs/db_bloc.dart';
 import 'package:what_to_do/mocks/project_mock.dart';
 import 'package:what_to_do/models/project_model.dart';
 import 'package:what_to_do/models/task_model.dart';
 
-class ProjectBloc {
-  late final Database projectDB;
-  static String dbName = 'projects';
+class ProjectBloc extends DBBloc {
+  late Database projectDB;
 
   final BehaviorSubject<List<ProjectVM>> _projects = BehaviorSubject.seeded([]);
   Stream<List<ProjectVM>> get projects => _projects.stream;
@@ -37,15 +37,23 @@ class ProjectBloc {
   DateTime? get pickedDateValue => _pickedDate.value;
 
   ProjectBloc() {
+    initBloc();
+  }
+
+  @override
+  initBloc() {
+    dbName = 'projects';
     initDB().then((value) {
-      projectDB = value;
+      if (value != null) {
+        projectDB = value;
+      }
       getProjects();
     });
 
     // getMockProjects();
   }
 
-  Future<Database> initDB() async {
+  Future<Database?> initDB() async {
     String path = join(await getDatabasesPath(), '$dbName.db');
     return await openDatabase(
       path,
@@ -70,6 +78,7 @@ class ProjectBloc {
     );
   }
 
+  @override
   closeDB() async {
     await projectDB.close();
   }

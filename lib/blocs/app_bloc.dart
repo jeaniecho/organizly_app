@@ -2,12 +2,17 @@ import 'package:path/path.dart';
 import 'package:rxdart/subjects.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sqflite/sqflite.dart';
+import 'package:what_to_do/blocs/db_bloc.dart';
 import 'package:what_to_do/blocs/note_bloc.dart';
 import 'package:what_to_do/blocs/project_bloc.dart';
 import 'package:what_to_do/blocs/task_bloc.dart';
 import 'package:what_to_do/repos/apple_icloud_repo.dart';
 
 class AppBloc {
+  TaskBloc taskBloc;
+  ProjectBloc projectBloc;
+  NoteBloc noteBloc;
+
   final BehaviorSubject<int> _bottomIndex = BehaviorSubject.seeded(0);
   Stream<int> get bottomIndex => _bottomIndex.stream;
   Function get setBottomIndex => _bottomIndex.add;
@@ -15,7 +20,7 @@ class AppBloc {
   final BehaviorSubject<bool> _darkMode = BehaviorSubject.seeded(false);
   Stream<bool> get darkMode => _darkMode.stream;
 
-  AppBloc() {
+  AppBloc(this.taskBloc, this.projectBloc, this.noteBloc) {
     readData('darkMode').then((value) => _darkMode.add(value ?? false));
   }
 
@@ -63,12 +68,17 @@ class AppBloc {
   downloadFromICloud() async {
     AppleICloudRepo iCloudRepo = AppleICloudRepo();
 
-    List<dynamic> dbs = [TaskBloc, ProjectBloc, NoteBloc];
+    List<DBBloc> dbs = [taskBloc, projectBloc, noteBloc];
 
-    for (dynamic db in dbs) {
+    for (DBBloc db in dbs) {
       await db.closeDB();
       String path = join(await getDatabasesPath(), '${db.dbName}.db');
-      iCloudRepo.download(path: path, dbName: db);
+      iCloudRepo.download(
+          path: path,
+          dbName: db.dbName,
+          onDone: () {
+            db.initBloc();
+          });
     }
   }
 }

@@ -2,12 +2,12 @@ import 'package:flutter/services.dart';
 import 'package:path/path.dart';
 import 'package:rxdart/subjects.dart';
 import 'package:sqflite/sqflite.dart';
+import 'package:what_to_do/blocs/db_bloc.dart';
 import 'package:what_to_do/mocks/task_mock.dart';
 import 'package:what_to_do/models/task_model.dart';
 
-class TaskBloc {
-  late final Database taskDB;
-  static String dbName = 'tasks';
+class TaskBloc extends DBBloc {
+  late Database taskDB;
 
   final BehaviorSubject<List<TaskVM>> _tasks = BehaviorSubject.seeded([]);
   Stream<List<TaskVM>> get tasks => _tasks.stream;
@@ -34,15 +34,23 @@ class TaskBloc {
   DateTime? get pickedDateValue => _pickedDate.value;
 
   TaskBloc() {
+    initBloc();
+  }
+
+  @override
+  initBloc() {
+    dbName = 'tasks';
     initDB().then((value) {
-      taskDB = value;
+      if (value != null) {
+        taskDB = value;
+      }
       getTasks();
     });
 
     // getMockTasks();
   }
 
-  Future<Database> initDB() async {
+  Future<Database?> initDB() async {
     String path = join(await getDatabasesPath(), '$dbName.db');
     return await openDatabase(
       path,
@@ -68,6 +76,7 @@ class TaskBloc {
     );
   }
 
+  @override
   closeDB() async {
     await taskDB.close();
   }
