@@ -31,7 +31,8 @@ class MyApp extends StatelessWidget {
         builder: (context, snapshot) {
           bool darkMode = snapshot.data?[0] == true;
 
-          FlutterNativeSplash.remove();
+          Future.delayed(const Duration(milliseconds: 600))
+              .then((value) => FlutterNativeSplash.remove());
 
           return MaterialApp(
             title: 'Organizly',
