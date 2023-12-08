@@ -141,6 +141,7 @@ class ProjectPage extends StatelessWidget {
                     if (projectController.text.isNotEmpty) {
                       projectBloc.addProject(ProjectVM(
                         id: DateTime.now().millisecondsSinceEpoch,
+                        index: projectBloc.projectsLength,
                         title: projectController.text,
                         tasks: [],
                         date: projectBloc.pickedDateValue,
@@ -272,6 +273,7 @@ class ProjectPage extends StatelessWidget {
                             projectBloc.editProject(project, title),
                         editDate: (date) =>
                             projectBloc.editProjectDate(project, date),
+                        toFirst: () => projectBloc.projectToFirst(project),
                         remove: () => projectBloc.removeProject(project),
                       );
                     },

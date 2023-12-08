@@ -180,6 +180,7 @@ class HomeProjects extends StatelessWidget {
                               projectBloc.editProject(project, title),
                           editDate: (date) =>
                               projectBloc.editProjectDate(project, date),
+                          toFirst: () => projectBloc.projectToFirst(project),
                           remove: () => projectBloc.removeProject(project),
                         ),
                       ),

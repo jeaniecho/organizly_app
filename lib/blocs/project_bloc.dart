@@ -15,6 +15,7 @@ class ProjectBloc extends DBBloc {
 
   final BehaviorSubject<List<ProjectVM>> _projects = BehaviorSubject.seeded([]);
   Stream<List<ProjectVM>> get projects => _projects.stream;
+  int get projectsLength => _projects.value.length;
 
   final BehaviorSubject<List<TaskVM>> _tasks = BehaviorSubject.seeded([]);
   Stream<List<TaskVM>> get tasks => _tasks.stream;
@@ -57,12 +58,13 @@ class ProjectBloc extends DBBloc {
     String path = join(await getDatabasesPath(), '$dbName.db');
     return await openDatabase(
       path,
-      version: 2,
+      version: 3,
       onCreate: (db, version) async {
         await db.execute(
           '''
         CREATE TABLE $dbName(
             id INTEGER PRIMARY KEY, 
+            project_index INTEGER,
             title TEXT,
             tasks TEXT,
             date INTEGER
@@ -72,7 +74,7 @@ class ProjectBloc extends DBBloc {
       },
       onUpgrade: (db, oldVersion, newVersion) {
         if (oldVersion < newVersion) {
-          db.execute('ALTER TABLE $dbName ADD COLUMN date INTEGER');
+          db.execute('ALTER TABLE $dbName ADD COLUMN project_index INTEGER');
         }
       },
     );
@@ -106,12 +108,15 @@ class ProjectBloc extends DBBloc {
 
       return ProjectVM(
           id: data[i]['id'],
+          index: data[i]['project_index'] ?? 0,
           title: data[i]['title'],
           tasks: tasks,
           date: data[i]['date'] == null || data[i]['date'] == 0
               ? null
               : DateTime.fromMillisecondsSinceEpoch(data[i]['date']));
     });
+
+    projects.sort((a, b) => a.index.compareTo(b.index));
 
     if (updateStream) {
       _projects.add(projects);
@@ -161,6 +166,14 @@ class ProjectBloc extends DBBloc {
       await getProjects();
     }
   }
+
+  Future<void> deleteAllProjects({bool updateStream = true}) async {
+    await projectDB.delete(dbName);
+
+    if (updateStream) {
+      getProjects();
+    }
+  }
   // db end
 
   movePage(int index, bool jump) {
@@ -202,6 +215,26 @@ class ProjectBloc extends DBBloc {
     updateProject(project.copyWith(title: title, date: project.date));
   }
 
+  projectToFirst(ProjectVM project) async {
+    List<ProjectVM> projects = _projects.value;
+
+    projects.remove(project);
+    projects.insert(0, project);
+
+    _projects.add(projects);
+
+    await deleteAllProjects(updateStream: false);
+
+    for (int i = 0; i < projects.length; i++) {
+      await insertProject(
+          projects[i].copyWith(index: i, date: projects[i].date),
+          updateStream: false);
+    }
+
+    await getProjects();
+    movePage(0, true);
+  }
+
   editProjectDate(ProjectVM project, DateTime? date) {
     updateProject(project.copyWith(date: date));
   }
@@ -237,7 +270,7 @@ class ProjectBloc extends DBBloc {
     // int index = projects.indexWhere((element) => element.id == project.id);
     List<TaskVM> tasks = project.tasks;
     tasks.removeWhere((element) => element.id == task.id);
-    tasks.add(task.copyWith(completed: !task.completed, date: project.date));
+    tasks.add(task.copyWith(completed: !task.completed, date: task.date));
     // projects[index] = project.copyWith(tasks: tasks);
 
     // _projects.add(projects);

@@ -303,6 +303,7 @@ class PendingTasks extends StatelessWidget {
                         key: const Key('task_reorder'),
                         shrinkWrap: true,
                         physics: const NeverScrollableScrollPhysics(),
+                        buildDefaultDragHandles: false,
                         proxyDecorator: proxyDecorator,
                         onReorderStart: (index) {
                           HapticFeedback.mediumImpact();

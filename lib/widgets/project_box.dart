@@ -12,6 +12,7 @@ class ProjectBox extends StatelessWidget {
   final int completedTasks;
   final Function(String title) edit;
   final Function(DateTime? date) editDate;
+  final Function() toFirst;
   final Function() remove;
   const ProjectBox(
       {required this.project,
@@ -20,6 +21,7 @@ class ProjectBox extends StatelessWidget {
       required this.completedTasks,
       required this.edit,
       required this.editDate,
+      required this.toFirst,
       required this.remove,
       super.key});
 
@@ -28,6 +30,8 @@ class ProjectBox extends StatelessWidget {
     int dateDiff = project.date?.difference(DateTime.now()).inDays ?? 0;
     int recTask =
         dateDiff <= 0 ? pendingTasks : (pendingTasks / dateDiff).ceil();
+
+    double buttonSpacing = 6;
 
     return AnimatedContainer(
       duration: const Duration(milliseconds: 300),
@@ -158,7 +162,7 @@ class ProjectBox extends StatelessWidget {
                                           .tertiary),
                                 ),
                               ),
-                              const SizedBox(height: 12),
+                              SizedBox(height: buttonSpacing),
                               Row(
                                 children: [
                                   Expanded(
@@ -226,7 +230,21 @@ class ProjectBox extends StatelessWidget {
                                     ),
                                 ],
                               ),
-                              const SizedBox(height: 12),
+                              SizedBox(height: buttonSpacing),
+                              ElevatedButton(
+                                onPressed: () {
+                                  toFirst();
+                                  Navigator.pop(context);
+                                },
+                                child: Text(
+                                  'Set to first',
+                                  style: TextStyle(
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .tertiary),
+                                ),
+                              ),
+                              SizedBox(height: buttonSpacing),
                               ElevatedButton(
                                 onPressed: () {
                                   remove();
