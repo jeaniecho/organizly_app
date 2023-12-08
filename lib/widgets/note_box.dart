@@ -85,7 +85,7 @@ class NoteBox extends StatelessWidget {
               ),
               minLines: 1,
               maxLines: 100,
-              keyboardType: TextInputType.text,
+              keyboardType: TextInputType.multiline,
               onSubmitted: submit,
               onTapOutside: (event) {
                 if (focusNode.hasPrimaryFocus) {
