@@ -26,6 +26,7 @@ dependencies:
   icloud_storage: ^2.2.0
   path_provider: ^2.1.1
   flutter_slidable: ^3.0.1
+  flutter_native_splash: ^2.3.8
 
 dev_dependencies:
   flutter_test:

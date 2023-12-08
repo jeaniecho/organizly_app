@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:provider/provider.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:what_to_do/blocs/app_bloc.dart';
@@ -9,7 +10,8 @@ import 'package:what_to_do/pages/pages.dart';
 import 'package:what_to_do/styles/themes.dart';
 
 void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
+  WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
+  FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
   runApp(const MyApp());
 }
 
@@ -28,6 +30,8 @@ class MyApp extends StatelessWidget {
         stream: Rx.combineLatestList([appBloc.darkMode]),
         builder: (context, snapshot) {
           bool darkMode = snapshot.data?[0] == true;
+
+          FlutterNativeSplash.remove();
 
           return MaterialApp(
             title: 'Organizly',
