@@ -27,6 +27,7 @@ dependencies:
   path_provider: ^2.1.1
   flutter_slidable: ^3.0.1
   flutter_native_splash: ^2.3.8
+  http: ^1.1.2
 
 dev_dependencies:
   flutter_test:

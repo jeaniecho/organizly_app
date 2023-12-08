@@ -103,7 +103,7 @@ class OGColors {
   static const black80 = Color(0xCC181E2D);
 
   // Secondary
-  static final MaterialColor secondary =
+  static const MaterialColor secondary =
       MaterialColor(_secondaryValue, <int, Color>{
     100: Color(0xFFFAFEFD),
     200: Color(0xFFB9F2EB),
@@ -116,7 +116,7 @@ class OGColors {
 
   // Yellow
   static const materialYellow = Colors.yellow;
-  static final yellow = MaterialColor(_yellowValue, <int, Color>{
+  static const yellow = MaterialColor(_yellowValue, <int, Color>{
     100: Color(0xFFFFF7E8),
     200: Color(0xFFFFF7E8),
     300: Color(0xFFFDDD9D),
@@ -127,7 +127,7 @@ class OGColors {
   });
 
   // Red
-  static final red = MaterialColor(_redValue, <int, Color>{
+  static const red = MaterialColor(_redValue, <int, Color>{
     100: Color(0xFFFFEAEA),
     200: Color(0xFFFED1D1),
     300: Color(0xFFFD9F9F),
@@ -138,7 +138,7 @@ class OGColors {
   });
 
   // Blue
-  static final blue = MaterialColor(_blueValue, <int, Color>{
+  static const blue = MaterialColor(_blueValue, <int, Color>{
     100: Color(0xFFF5FBFF),
     200: Color(0xFFC2E5FF),
     300: Color(0xFF75C5FF),
@@ -148,7 +148,7 @@ class OGColors {
     700: Color(0xFF002742),
   });
 
-  static final skyBlue = Color(0xFFE4F4FF);
+  static const skyBlue = Color(0xFFE4F4FF);
 
-  static final orange = Color(0xFFEC920B);
+  static const orange = Color(0xFFEC920B);
 }

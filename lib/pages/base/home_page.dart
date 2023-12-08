@@ -201,7 +201,6 @@ class HomeTasks extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     TaskBloc taskBloc = context.read<TaskBloc>();
-    AppBloc appBloc = context.read<AppBloc>();
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20),

@@ -18,7 +18,7 @@ class SettingsPage extends StatelessWidget {
           ),
         ),
       ),
-      body: SingleChildScrollView(
+      body: const SingleChildScrollView(
         padding: EdgeInsets.symmetric(horizontal: 20, vertical: 24),
         child: Column(
           children: [

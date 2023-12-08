@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:device_info/device_info.dart';
@@ -33,8 +34,6 @@ class BasePage extends StatelessWidget {
 
     final scaffoldKey =
         GlobalKey<ScaffoldState>(debugLabel: 'base_scaffold_key');
-
-    double themeSize = 32;
 
     return StreamBuilder<int>(
         stream: appBloc.bottomIndex,
@@ -443,7 +442,7 @@ void _sendEmail() async {
   try {
     await FlutterEmailSender.send(email);
   } catch (error) {
-    print(error.toString());
+    log(error.toString(), error: error);
   }
 }
 
@@ -506,8 +505,6 @@ void icloudSync(BuildContext context, AppBloc appBloc) {
   showDialog(
       context: context,
       builder: (context) {
-        TextEditingController taskController = TextEditingController();
-
         return SimpleDialog(
           backgroundColor: Theme.of(context).cardColor,
           elevation: 0,

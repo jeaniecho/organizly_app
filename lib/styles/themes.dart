@@ -53,7 +53,7 @@ class OGThemes {
         elevation: 0,
         splashFactory: InkRipple.splashFactory,
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-        backgroundColor: Color.fromARGB(255, 40, 111, 178),
+        backgroundColor: const Color.fromARGB(255, 40, 111, 178),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
       ),
     ),
