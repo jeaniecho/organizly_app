@@ -28,6 +28,7 @@ dependencies:
   flutter_slidable: ^3.0.1
   flutter_native_splash: ^2.3.8
   http: ^1.1.2
+  home_widget: ^0.4.0
 
 dev_dependencies:
   flutter_test:
